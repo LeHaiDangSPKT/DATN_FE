@@ -1,8 +1,13 @@
 import SortTable from "@/components/SortTable";
+import { APISelectStore } from "@/services/Store";
 import FormatMoney from "@/utils/FormatMoney";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import { Select, Option, Typography, Switch } from "@material-tailwind/react";
 import React from "react";
+type Single = {
+  id: string;
+  name: string;
+};
 
 function All() {
   const arrTitlePromotion = [
@@ -548,8 +553,18 @@ function All() {
       maxDiscountValue: 50000,
     },
   ];
+
   const [page, setPage] = React.useState<number>(1);
   const [storeId, setStoreId] = React.useState<string>("all");
+  const [storeSingle, setStoreSingle] = React.useState<Single[]>([]);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const res = await APISelectStore();
+      // setStoreSingle(data);
+      console.log("res", res);
+    };
+    fetchData();
+  }, []);
   return (
     <div>
       <div className="mb-4">

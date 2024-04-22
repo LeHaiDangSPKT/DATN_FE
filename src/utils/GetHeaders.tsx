@@ -15,7 +15,8 @@ export default function GetHeaders() {
     localStorage.removeItem("user");
     window.location.href = "/login";
     return null;
-  } else if (exp - now < 60) {
+  } else if (exp - now < 86400) {
+    //1 ngày
     const refreshToken = user?.refreshToken;
     const headers = {
       Authorization: `Bearer ${refreshToken}`,
