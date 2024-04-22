@@ -60,7 +60,7 @@ function CardPolicy(props: CardPolicyProps) {
     }
     const res = await APIUpdatePolicy(valueChange._id, valueChange.content);
     handleOpen();
-    if (res?.status == 200 || res.status == 201) {
+    if (res?.status == 200 || res?.status == 201) {
       Toast("success", res.data.message, 2000);
       setValueChange({
         ...valueChange,
@@ -68,24 +68,24 @@ function CardPolicy(props: CardPolicyProps) {
       });
       setContent(res?.data.metadata.data.content.split("\n"));
       handleEdit({
-        _id: res.data.metadata.data._id,
-        name: res.data.metadata.data.name,
-        content: res.data.metadata.data.content,
+        _id: res?.data.metadata.data._id,
+        name: res?.data.metadata.data.name,
+        content: res?.data.metadata.data.content,
       });
     } else {
-      Toast("error", res.data.message, 2000);
+      Toast("error", res?.data.message, 2000);
     }
   };
 
   const Del = async () => {
     const res = await APIRemovePolicy(data._id);
-    if (res?.status == 200 || res.status == 201) {
+    if (res?.status == 200 || res?.status == 201) {
       Toast("success", res.data.message, 2000);
       handleOpenDel();
       setOpen(false);
       handleDel(data._id);
     } else {
-      Toast("error", res.data.message, 2000);
+      Toast("error", res?.data.message, 2000);
     }
   };
 

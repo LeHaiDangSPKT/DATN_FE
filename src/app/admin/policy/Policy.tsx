@@ -143,7 +143,7 @@ function Policy() {
       return;
     }
     const res = await APIAddPolicy(policy);
-    if (res?.status == 200 || res.status == 201) {
+    if (res?.status == 200 || res?.status == 201) {
       Toast("success", res.data.message, 2000);
       setType(policy.type);
       setPolicy({ name: "", content: "", type: "" });
@@ -169,7 +169,7 @@ function Policy() {
         tab?.click();
       }
     } else {
-      Toast("error", res.data.message, 2000);
+      Toast("error", res?.data.message, 2000);
     }
   };
 

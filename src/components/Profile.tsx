@@ -76,7 +76,7 @@ function Profile(props: ProfileProps) {
       let formData = new FormData();
       formData.append("file", userInfo.avatar);
       const res = await APIUploadImage(formData);
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         avatarUrl = res.data.url;
       }
     }
@@ -87,7 +87,7 @@ function Profile(props: ProfileProps) {
       email: userInfo.email,
       phone: userInfo.phone,
     }).then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         document.getElementById("loading-page")?.classList.add("hidden");
         Toast("success", "Cập nhật thành công", 2000);
         // Set lại localstorage

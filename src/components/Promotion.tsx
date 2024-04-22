@@ -45,7 +45,7 @@ function Promotion(props: PromotionInterface) {
       return;
     }
     const res = await APISaveVoucher(id);
-    if (res?.status === 200 || res.status === 201) {
+    if (res?.status === 200 || res?.status === 201) {
       Toast("success", res.data.message, 2000);
       const newPromotion = promotion.map((item: any) => {
         if (item.id === id) {

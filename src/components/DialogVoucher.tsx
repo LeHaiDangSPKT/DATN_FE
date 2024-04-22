@@ -32,10 +32,9 @@ function DialogVoucher(props: DialogVoucherProps) {
   React.useEffect(() => {
     const fetchData = async () => {
       const res = await APIUserPromotion(storeIds);
-      console.log("res", res.data.metadata.data);
       let voucherListSaved: any = [];
       let voucherList: any = [];
-      res.data.metadata.data.map((item: any) => {
+      res?.data.metadata.data.map((item: any) => {
         if (item.isSaved) {
           voucherListSaved.push(item);
         } else {

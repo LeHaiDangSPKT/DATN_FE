@@ -27,7 +27,7 @@ export default function GetHeaders() {
         `${process.env.NEXT_PUBLIC_API_URL}/auth/refreshToken`,
         { headers }
       );
-      if (res?.status === 200 || res.status === 201) {
+      if (res?.status === 200 || res?.status === 201) {
         const data = res.data.metadata.data;
         user.accessToken = data.accessToken;
         user.refreshToken = data.refreshToken;

@@ -211,7 +211,7 @@ function Warehouse() {
   const ConfirmDeleteProduct = async () => {
     // Call api APIDeleteProduct to delete product
     await APIDeleteProduct(currentProduct._id).then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Xoá sản phẩm thành công", 2000);
         setIsShowDelete(false);
         setDeleted(!deleted);
