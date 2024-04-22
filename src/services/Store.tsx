@@ -146,3 +146,15 @@ export const APIGetAllStore = async () => {
     return res.data;
   }
 };
+
+// /api/stores/select
+export const APISelectStore = async () => {
+  const headers = GetHeaders();
+  if (headers) {
+    const res = await axiosInstance.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/stores/select`,
+      { headers }
+    );
+    return res.data.metadata.data;
+  }
+};
