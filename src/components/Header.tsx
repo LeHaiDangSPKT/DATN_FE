@@ -110,7 +110,7 @@ function Header() {
             const res = await APIGetAllCart();
             console.log(res);
             var total = 0;
-            if (res?.status == 200 || res.status == 201) {
+            if (res?.status == 200 || res?.status == 201) {
               const carts: Cart = {
                 isCheckAll: false,
                 store: res.data.metadata.data.map((item: any) => {
@@ -157,7 +157,7 @@ function Header() {
         page: 1,
         limit: 10,
       });
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         setDataNoti(res?.metadata.data.notifications);
         setCountNewNoti(
           res.metadata.data.notifications.filter(
@@ -180,9 +180,8 @@ function Header() {
 
   const OpenStore = async () => {
     const store = await APIGetMyStore();
-    console.log(store);
-    if (store.status == 200 || store.status == 201) {
-      window.location.href = "/shop/seller/" + store.data.metadata.data._id;
+    if (store?.status == 200 || store?.status == 201) {
+      window.location.href = "/shop/seller/" + store?.data.metadata.data._id;
     } else {
       window.location.href = "/shop/create";
     }

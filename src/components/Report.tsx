@@ -97,7 +97,7 @@ function Report(props: Props) {
   };
   const OK = async () => {
     await APIUpdateReport(currentId).then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         setIsShow(false);
         Toast("success", res.data.message, 2000);
         setListReport(listReport.filter((item) => item._id != currentId));
@@ -106,7 +106,7 @@ function Report(props: Props) {
   };
   const Refuse = async () => {
     await APIDeleteReport(currentId).then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         setIsShow(false);
         Toast("success", res.data.message, 2000);
         setListReport(listReport.filter((item) => item._id != currentId));

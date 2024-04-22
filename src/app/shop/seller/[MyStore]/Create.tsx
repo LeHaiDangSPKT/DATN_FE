@@ -54,7 +54,7 @@ function Create() {
         let formData = new FormData();
         formData.append("file", product.avatar[i]);
         const res = await APIUploadImage(formData);
-        if (res?.status == 200 || res.status == 201) {
+        if (res?.status == 200 || res?.status == 201) {
           listImg.push(res?.data.url);
         }
       }
@@ -68,7 +68,7 @@ function Create() {
       product.keywords = product.list_keyword.split(",");
       delete product.list_keyword;
       const res = await APICreateProduct(product);
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         document.getElementById("loading-page")?.classList.add("hidden");
         Toast("success", "Tạo sản phẩm thành công", 2000);
         setTimeout(() => {

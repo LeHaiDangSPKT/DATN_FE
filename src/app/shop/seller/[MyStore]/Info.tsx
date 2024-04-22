@@ -54,18 +54,18 @@ function Info(props: Props) {
     const fetchData = async () => {
       const res = await APIGetMyStore();
       setData({
-        id: res.data.metadata.data._id,
-        name: res.data.metadata.data.name,
-        address: res.data.metadata.data.address,
-        phoneNumber: res.data.metadata.data.phoneNumber,
-        avatar: res.data.metadata.data.avatar,
+        id: res?.data.metadata.data._id,
+        name: res?.data.metadata.data.name,
+        address: res?.data.metadata.data.address,
+        phoneNumber: res?.data.metadata.data.phoneNumber,
+        avatar: res?.data.metadata.data.avatar,
         createdAt: ConvertDate(res?.data.metadata.data.createdAt),
-        warningCount: +res.data.metadata.data.warningCount,
+        warningCount: +res?.data.metadata.data.warningCount,
       });
       setDescription(res?.data.metadata.data.description);
       const avatar = document.getElementById("avatar-preview");
       if (avatar) {
-        avatar.setAttribute("src", res.data.metadata.data.avatar);
+        avatar.setAttribute("src", res?.data.metadata.data.avatar);
         avatar.hidden = false;
       }
     };
@@ -97,7 +97,7 @@ function Info(props: Props) {
       let formData = new FormData();
       formData.append("file", data.avatar);
       const res = await APIUploadImage(formData);
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         avatarUrl = res.data.url;
       }
     }
@@ -138,7 +138,7 @@ function Info(props: Props) {
       address: data.address,
       description: description,
     }).then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         document.getElementById("loading-page")?.classList.add("hidden");
         Toast("success", "Cập nhật thành công", 2000);
       } else {

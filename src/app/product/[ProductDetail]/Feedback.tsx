@@ -48,7 +48,7 @@ function Feedback(props: Props) {
   const SendFeedback = async () => {
     await APICreateFeedback(params.ProductDetail + "", feedback).then(
       (res: any) => {
-        if (res?.status == 200 || res.status == 201) {
+        if (res?.status == 200 || res?.status == 201) {
           setFeedbacks(
             feedbacks.concat({
               ...res.metadata.data,

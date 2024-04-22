@@ -66,7 +66,7 @@ function Info() {
   };
   const Cancel = async () => {
     await APIUpdateBillUser(currentId, "CANCELLED").then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Huỷ đơn thành công", 2000);
         setIsShow(false);
         setChanged(!changed);
@@ -78,7 +78,7 @@ function Info() {
   };
   const UpGrade = async () => {
     await APIUpdateBillUser(currentId, "RETURNED").then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Hoàn đơn thành công", 2000);
         setIsShow(false);
         setChanged(!changed);

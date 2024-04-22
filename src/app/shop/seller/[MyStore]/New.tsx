@@ -75,7 +75,7 @@ function New() {
   const [currentId, setCurrentId] = React.useState<string>("");
   const UpGrade = async () => {
     await APIUpdateBill(currentId, "CONFIRMED").then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Chuyển thành thành công", 2000);
         setIsShow(false);
         setChanged(!changed);
@@ -86,7 +86,7 @@ function New() {
   };
   const Cancel = async () => {
     await APIUpdateBill(currentId, "CANCELLED").then((res) => {
-      if (res?.status == 200 || res.status == 201) {
+      if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Chuyển thành thành công", 2000);
         setIsShow(false);
         setChanged(!changed);
