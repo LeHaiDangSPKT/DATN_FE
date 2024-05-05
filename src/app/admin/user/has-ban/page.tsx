@@ -5,11 +5,11 @@ import ManagerUser from "./ManagerUser";
 
 function page() {
   return (
-    <div className="min-h-screen px-[10px] my-2 grid grid-cols-10 gap-4">
+    <div className="min-h-screen px-[10px] grid grid-cols-10 gap-4">
       <div className="col-span-2">
         <Sidebar code="user_has_ban" />
       </div>
-      <div className=" col-span-8 ">
+      <div className=" col-span-8 my-2 ">
         <ManagerUser />
       </div>
     </div>

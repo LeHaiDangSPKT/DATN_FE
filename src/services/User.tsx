@@ -31,11 +31,13 @@ export const APIGetListUser = async (
   search: string = ""
 ) => {
   const headers = GetHeaders();
+  console.log("APIGetListUser1", headers);
   if (headers) {
     const res = await axiosInstance.get(
       `${process.env.NEXT_PUBLIC_API_URL}/user/admin?page=${page}&limit=${limit}&search=${search}`,
       { headers }
     );
+    console.log("APIGetListUser", res.data);
     return res.data;
   }
 };

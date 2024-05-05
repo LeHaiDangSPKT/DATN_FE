@@ -8,6 +8,7 @@ import {
 import ConvertDate from "@/utils/ConvertDate";
 import Modal from "./Modal";
 import Toast from "@/utils/Toast";
+import { exportExcel } from "@/utils/ExportExcel";
 interface Props {
   type: string;
   status: boolean;
@@ -113,6 +114,11 @@ function Report(props: Props) {
       }
     });
   };
+
+  const ExportExcel = async () => {
+    if (status) exportExcel("reports/excel");
+    else exportExcel("stores/excel/being-reported");
+  };
   return (
     <>
       <form
@@ -158,6 +164,14 @@ function Report(props: Props) {
           </button>
         </div>
       </form>
+      <div className="flex justify-end mb-5">
+        <button
+          className="px-4 py-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={() => ExportExcel()}
+        >
+          Xuất file excel
+        </button>
+      </div>
       <SortTable
         title={arrTitle}
         totalPage={total}

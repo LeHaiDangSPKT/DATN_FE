@@ -54,15 +54,11 @@ export const APIGetStoreReputation = async (
   storeId: string,
   userId: string
 ) => {
-  const headers = GetHeaders();
-  if (headers) {
-    var userId = userId ? userId : "";
-    const res = await axiosInstance.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/store-reputation?storeId=${storeId}&userId=${userId}`,
-      { headers }
-    );
-    return res.data;
-  }
+  var userId = userId ? userId : "";
+  const res = await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-reputation?storeId=${storeId}&userId=${userId}`
+  );
+  return res.data;
 };
 
 // /api/store/123

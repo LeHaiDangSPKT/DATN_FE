@@ -8,43 +8,49 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
-    const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "")
-      : null;
+    const user =
+      localStorage.getItem("user") &&
+      JSON.parse(localStorage.getItem("user") || "");
+    const redirectUser = (redirectPath: string) => {
+      redirect(redirectPath);
+    };
+    if (
+      pathname == "/login" ||
+      pathname == "/register" ||
+      pathname == "/forgot-password"
+    ) {
+      setLoading(false);
+      return;
+    }
+    const userRoles = user?.role || [];
 
-    if (user) {
-      if (user.role.includes("USER") || user.role.includes("SELLER")) {
-        if (pathname.startsWith("/admin") || pathname.startsWith("/manager")) {
-          router.back();
-        } else {
-          setLoading(false);
-        }
-      } else if (user.role.includes("MANAGER")) {
-        if (!pathname.startsWith("/manager")) {
-          router.back();
-        } else {
-          setLoading(false);
-        }
-      } else if (user.role.includes("ADMIN")) {
-        if (!pathname.startsWith("/admin")) {
-          router.back();
-        } else {
-          if (pathname === "/admin") {
-            redirect("/admin/dashboard");
-          }
-          if (pathname === "/admin/user") {
-            redirect("/admin/user/all");
-          }
-          setLoading(false);
-        }
+    if (userRoles.some((role: string) => role.includes("ADMIN"))) {
+      if (!pathname.startsWith("/admin")) {
+        redirectUser("/admin/dashboard");
+        return;
       }
-    } else {
+    } else if (userRoles.some((role: string) => role.includes("MANAGER"))) {
+      if (!pathname.startsWith("/manager")) {
+        redirectUser("/manager/product/all");
+        return;
+      }
+    } else if (userRoles.some((role: string) => role.includes("SELLER"))) {
       if (pathname.startsWith("/admin") || pathname.startsWith("/manager")) {
-        redirect("/");
-      } else {
-        setLoading(false);
+        redirectUser("/");
+        return;
+      }
+    } else if (userRoles.some((role: string) => role.includes("USER"))) {
+      if (
+        pathname.startsWith("/shop/seller") ||
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/manager")
+      ) {
+        redirectUser("/");
+        return;
       }
     }
+
+    setLoading(false);
   }, []);
   if (loading) {
     return <FullPageLoader />;

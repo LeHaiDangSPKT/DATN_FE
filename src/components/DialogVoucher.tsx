@@ -21,11 +21,18 @@ interface DialogVoucherProps {
   handleSubmit: (value: any) => void;
   storeIds: string[];
   totalPriceGeneral: number;
+  idVoucher: string;
 }
 
 function DialogVoucher(props: DialogVoucherProps) {
-  const { isOpen, handleOpen, handleSubmit, storeIds, totalPriceGeneral } =
-    props;
+  const {
+    isOpen,
+    handleOpen,
+    handleSubmit,
+    idVoucher,
+    storeIds,
+    totalPriceGeneral,
+  } = props;
   const [voucherListSaved, setVoucherListSaved] = React.useState([] as any);
   const [voucherList, setVoucherList] = React.useState([] as any);
   const [selectedVoucher, setSelectedVoucher] = React.useState({} as any);
@@ -59,7 +66,8 @@ function DialogVoucher(props: DialogVoucherProps) {
             <div className="flex">
               <div className="pl-6 my-auto">
                 <Radio
-                  disabled={item.minSpend > totalPriceGeneral}
+                  defaultChecked={item.id === idVoucher}
+                  disabled={item.minSpend < totalPriceGeneral}
                   name="type"
                   onChange={(e) => setSelectedVoucher(item)}
                   crossOrigin={undefined}
@@ -71,7 +79,8 @@ function DialogVoucher(props: DialogVoucherProps) {
                   <img src={item.avatar} alt="" height={50} width={50} />
                   <Typography variant="h6" color="blue-gray" className="ml-2">
                     Giảm {item.value}% tối đa{" "}
-                    {FormatMoney(item.maxDiscountValue)}
+                    {FormatMoney(item.maxDiscountValue)} cho đơn tối thiếu{" "}
+                    {FormatMoney(item.minSpend)}
                   </Typography>
                 </div>
                 <Typography>
@@ -95,7 +104,8 @@ function DialogVoucher(props: DialogVoucherProps) {
             <div className="flex">
               <div className="pl-6 my-auto">
                 <Radio
-                  disabled={item.minSpend > totalPriceGeneral}
+                  defaultChecked={item.id === idVoucher}
+                  disabled={item.minSpend < totalPriceGeneral}
                   name="type"
                   onChange={(e) => setSelectedVoucher(item)}
                   crossOrigin={undefined}
@@ -107,7 +117,8 @@ function DialogVoucher(props: DialogVoucherProps) {
                   <img src={item.avatar} alt="" height={50} width={50} />
                   <Typography variant="h6" color="blue-gray" className="ml-2">
                     Giảm {item.value}% tối đa{" "}
-                    {FormatMoney(item.maxDiscountValue)}
+                    {FormatMoney(item.maxDiscountValue)} cho đơn tối thiếu{" "}
+                    {FormatMoney(item.minSpend)}
                   </Typography>
                 </div>
                 <Typography>
@@ -123,7 +134,7 @@ function DialogVoucher(props: DialogVoucherProps) {
           </Card>
         ))}
       </DialogBody>
-      <DialogFooter>
+      <DialogFooter className="flex justify-between">
         <Button
           variant="text"
           color="red"
@@ -131,6 +142,13 @@ function DialogVoucher(props: DialogVoucherProps) {
           className="mr-1"
         >
           <span>Đóng</span>
+        </Button>
+        <Button
+          variant="gradient"
+          color="red"
+          onClick={() => handleSubmit({} as any)}
+        >
+          <span>Bỏ khuyến mãi</span>
         </Button>
         <Button
           variant="gradient"

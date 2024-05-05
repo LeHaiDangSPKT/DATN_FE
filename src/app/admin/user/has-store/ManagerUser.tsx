@@ -1,14 +1,9 @@
 "use client";
 import Profile from "@/components/Profile";
 import SortTable from "@/components/SortTable";
-import {
-  APIGetAllUser,
-  APIGetListUser,
-  APIGetListUserHasStore,
-} from "@/services/User";
-import ConvertDate from "@/utils/ConvertDate";
+import { APIExport } from "@/services/ExportExcel";
+import { APIGetListUserHasStore } from "@/services/User";
 import { exportExcel } from "@/utils/ExportExcel";
-import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import { Tooltip } from "@material-tailwind/react";
@@ -92,28 +87,7 @@ function ManagerUser() {
     fetchData();
   }, [page, search]);
   const ExportExcel = async () => {
-    Toast("success", "File sẽ được tải về sau 2 giây nữa...", 2000);
-    setTimeout(async () => {
-      const data = await APIGetAllUser();
-      const dataExcel = data.metadata.data?.map((item: any, index: any) => {
-        return {
-          STT: index + 1,
-          "Tên người dùng": item.fullName,
-          Email: item.email,
-          "Giới tính": item.gender || "Khác",
-          "Số điện thoại": item.phone,
-          "Số lượng cửa hàng đang theo dõi": item.followStores.length,
-          "Số lượng bạn bè": item.friends.length,
-          "Số lượng đơn hàng đã mua": item.totalBills,
-          "Số số tiền đã mua": FormatMoney(item.totalPricePaid),
-          "Số lượng quà đã nhận": item.totalReceived,
-          "Số lần bị cảnh báo": item.warningCount,
-          "Tổng xu hiện có": item.wallet,
-          "Ngày tham gia": ConvertDate(item.createdAt),
-        };
-      });
-      exportExcel(dataExcel, "Danh sách người dùng", "Danh sách người dùng");
-    }, 2000);
+    exportExcel("user/excel/users-have-store");
   };
   return (
     <div className="min-h-screen my-5">

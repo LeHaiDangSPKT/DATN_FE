@@ -13,6 +13,7 @@ import "slick-carousel/slick/slick-theme.css";
 import ReduxProvider from "@/redux/provider";
 import "react-quill/dist/quill.snow.css";
 import ProtectRoute from "./ProtectRoute";
+import { Providers } from "./providers";
 
 const lora = Roboto({
   weight: ["400", "500", "700"],
@@ -35,11 +36,13 @@ export default async function RootLayout({
       <body className={`${lora.className} bg-[#EFEFEF]`}>
         <AuthContextProvider>
           <ReduxProvider>
-            <ProtectRoute>
-              <Header />
-              {children}
-              <Footer />
-            </ProtectRoute>
+            <Providers>
+              <ProtectRoute>
+                <Header />
+                {children}
+                <Footer />
+              </ProtectRoute>
+            </Providers>
           </ReduxProvider>
           <ToastContainer />
           <Loading />

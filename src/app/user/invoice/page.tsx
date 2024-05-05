@@ -20,8 +20,11 @@ interface Invoice {
 interface TableInvoice {
   id: string;
   productName: string[];
-  storeName: string[];
+  storeName: string;
+  storeAvatar: string;
+  storeId: string;
   price: number;
+  totalPricePayment: number;
   recievedDate: string;
   paymentMethod: string;
   createdAt: Date;
@@ -140,21 +143,19 @@ function Info() {
         createdAtDate.setDate(createdAtDate.getDate() + 3);
         arrBill.recievedDate = formatToDDMMYYYY(createdAtDate);
         arrBill.createdAt = lstProduct.createdAt;
-        arrBill.price = lstProduct.totalPayment;
+        arrBill.totalPricePayment = lstProduct.totalPricePayment;
+        arrBill.price = lstProduct.totalPricePayment + lstProduct.deliveryFee;
         arrBill.paymentMethod = lstProduct.paymentMethod;
         arrBill.productName = [] as string[];
-        arrBill.storeName = [] as string[];
+        arrBill.storeName = lstProduct.storeName;
+        arrBill.storeId = lstProduct.storeId;
+        arrBill.storeAvatar = lstProduct.storeAvatar;
         arrBill.receiverInfo = lstProduct.receiverInfo;
-        arrBill.data = lstProduct.data;
-        let deliveryFee = 0;
-        lstProduct.data?.map((item: any, index: number) => {
-          deliveryFee += item.deliveryFee;
-          arrBill.storeName.push(item.storeName);
-          item.products?.map((product: any) => {
-            arrBill.productName.push(product.name + " x " + product.quantity);
-          });
+        arrBill.data = lstProduct.products;
+        lstProduct.products?.map((product: any) => {
+          arrBill.productName.push(product.name + " x " + product.quantity);
         });
-        arrBill.deliveryFee = deliveryFee;
+        arrBill.deliveryFee = lstProduct.deliveryFee;
         arr.push(arrBill);
       });
       setData(arr);
@@ -229,7 +230,12 @@ function Info() {
                   ))}
                 </div>
               </td>
-              <td className="px-6 py-4 text-center">{item.storeName}</td>
+              <td
+                className="px-6 py-4 text-center cursor-pointer"
+                onClick={(e) => window.open(`/shop/${item.storeId}`)}
+              >
+                {item.storeName}
+              </td>
               <td className="px-6 py-4 text-center">
                 {FormatMoney(item.price)}
               </td>
@@ -237,16 +243,6 @@ function Info() {
               <td className="px-6 py-4 text-center">{item.recievedDate}</td>
               {status == "NEW" && (
                 <td className="px-6 py-4 text-center">
-                  <div
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer mb-2"
-                    onClick={(e) => {
-                      setIsShow(true);
-                      setCurrentId(item.id);
-                      setTypeMes("upGrade");
-                    }}
-                  >
-                    Hoàn đơn
-                  </div>
                   <div
                     className="font-medium text-red-600 dark:text-red-500 hover:underline cursor-pointer mb-2"
                     onClick={(e) => {

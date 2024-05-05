@@ -1,5 +1,4 @@
 import Children from "@/app/admin/Children";
-import ManagerProduct from "@/app/admin/ManagerProduct";
 import React from "react";
 
 function ManaProduct() {

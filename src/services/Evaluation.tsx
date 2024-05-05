@@ -4,14 +4,10 @@ import GetHeaders from "@/utils/GetHeaders";
 // api/evaluation?productId=654745397c3886f34c7ae2c8&userId=654745397c3886f34c7ae2c8
 export const APIGetEvaluation = async (productId: any) => {
   // var userId = userId ? userId : "";
-  const headers = GetHeaders();
-  if (headers) {
-    const res = await axiosInstance.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/evaluation?productId=${productId}`,
-      { headers }
-    );
-    return res.data;
-  }
+  const res = await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/evaluation?productId=${productId}`
+  );
+  return res.data;
 };
 
 // /api/evaluation/user?productId=123123

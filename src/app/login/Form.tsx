@@ -15,7 +15,7 @@ import { LOGIN } from "@/constants/Login";
 import Link from "next/link";
 import { UserAuth } from "../authContext";
 import Toast from "@/utils/Toast";
-import { APILogin } from "@/services/Auth";
+import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
 interface LoginForm {
   email: string;
@@ -43,7 +43,7 @@ function Form(props: FormProps) {
     Toast("success", "Đăng nhập thành công", 2000);
     setTimeout(() => {
       if (res?.data.metadata.data.role.includes("ADMIN")) {
-        window.location.href = "/admin";
+        window.location.href = "/admin/dashboard";
       } else if (res?.data.metadata.data.role.includes("MANAGER")) {
         window.location.href = "/manager/product";
       } else {
@@ -99,6 +99,11 @@ function Form(props: FormProps) {
     }
   };
 
+  const HandleGoogle = async () => {
+    const res = await APIGoogleLogin();
+    console.log(res);
+  };
+
   return (
     <FrameFormInit title="ĐĂNG NHẬP" fastLogin={fastLogin}>
       {LOGIN.map((item) => (
@@ -144,7 +149,8 @@ function Form(props: FormProps) {
         <div className="flex justify-between items-center mb-2">
           <div
             className="py-2 bg-red-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
-            onClick={(e) => handleSignIn(googleSignIn)}
+            // onClick={(e) => handleSignIn(googleSignIn)}
+            onClick={(e) => HandleGoogle()}
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FcGoogle fontSize={30} className="r1-2 mr-2" />
