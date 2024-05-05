@@ -57,6 +57,8 @@ function Payment() {
           src="https://salt.tikicdn.com/ts/upload/92/b2/78/1b3b9cda5208b323eb9ec56b84c7eb87.png"
           className="w-8 h-8 mr-2"
           alt=""
+          width={20}
+          height={20}
         />
       ),
       checked: true,
@@ -69,6 +71,8 @@ function Payment() {
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADpklEQVR4Ae2XA7D0VhSAv3uD9TNq27Zt27Ztux1PbQ1qd9RhbVvP9nqTe4pUedrU+r+ZZXC+HARKRPg7mSOgiYQhOgakDHi/PQMiwi677MLXX38NCLRstC8Nq56CqVQRVjn8fCeFntcY+/Apsp99AhqUBuD+++9nmWWW4ZfYwLQCb7/9NoEAsOC6x5PsWgVToSpKgUrtiax8KYOl6xh85gIIyGazANUFAOLxOAA46SSZpnmwNYhNdJwEC251PjE9TtdT1wForX9DDzj13wZPzoUYfh0CfgEa1jgTu7b+tzdhrGkRtOOAMDXVevYXAnayCbducWbAphrx5qVAEUZBOQd+hRkIBCwH7CSU8jkAUL8hA27j0iDh4OKjCsOo4uhMr2D5RB+qPAS7nbQfbkJjKtEzAAJBCZbEmFB8fA9EQFXx9zzIxIWdjzmLVKyM710YOQNBUDuOW7swGEIGxqN6UwYCssTigleENXY4nvmWaowugAGdmRs7NXdYAJRfoSq+DzUZYZUVFZUy2G49qdoFowuIAbdpYbQbQ4QQpgIoZs1exUM231hoblL4PiAgmF+XgXjrkqCmihkP1AyBSyWQb9l2C8Naq2vKZUBBpTxOMdtN9CbUEGuePAFB8EIh+PylhdaQTAiLLyay/lqw6CJBcBGwXej69F36cv3MWx9BQAQsF2KNS4UmAAGNsOaqQioJRkArI4mEor5W0doCTY0aRZAJCHAT8Pqz97LxDkTMgAEr5eLULRJqwLIHyyzsy26b2/gGEAANBNKeD55HqGfiSej5/G2eu/Nezt0zooAYcNKteMl5QMKZaWkQPA9KZWZFW5BIw3DPF9xw9F7kxwpYDtEz4DYuTCmWCB2NVlCXCUQmn3ZjSVAqeInwbcBBXnr0QR666hK6P+8FAImcgWACsgoQgODDsQ11aYUx4eBeaYTXn76NYm6cwY5xRvs/5bPX3qT3y37CRBRQCuItS0+SCro8nVSYSTV+4Zn7uPHYM/64e0LlQqx5WcQAKngZgUwK4jEVKoGyoO399wD+QAFLYSVaQIOygpdoqE2DY+uQgPGg54tP+Y3YzHQiaLt/d9q+nAulBIK/WPm4g7Dcw6Dyc/2LuQJ9bV//wQIg2bbPyX/7+iXNTUdhACHAsmB0aIChzp4/XADtEEZBTfMCGB8UAbYDnR+/QDFb/sOfjD7++GOKxWJ4Mprmn59kTSNifj7ZDHV9xsRwjggsscQSJJPJOc+G/yyBbwD59pkN5OE4OwAAAABJRU5ErkJggg=="
           className="w-8 h-8 mr-2"
           alt=""
+          width={20}
+          height={20}
         />
       ),
       checked: false,
@@ -93,6 +97,8 @@ function Payment() {
           src="https://salt.tikicdn.com/ts/upload/77/6a/df/a35cb9c62b9215dbc6d334a77cda4327.png"
           className="w-8 h-8 mr-2"
           alt=""
+          width={20}
+          height={20}
         />
       ),
       checked: false,
@@ -111,6 +117,7 @@ function Payment() {
   const [open, setOpen] = React.useState(false);
   const [useCoin, setUseCoin] = React.useState(false);
   const [voucher, setVoucher] = React.useState({
+    base: 0,
     amount: 0,
     id: "",
   });
@@ -119,7 +126,6 @@ function Payment() {
     afterDisscount: 0,
   });
   const store = useAppSelector((state) => state.cartPopupReducer.items);
-  console.log("store", store);
   React.useEffect(() => {
     setTotalPrice({
       general: data?.reduce((total, item) => total + item.totalPrice, 0),
@@ -130,7 +136,7 @@ function Payment() {
           0
         ) *
           data?.length -
-        coin * 100 -
+        coin * 1 -
         voucher.amount,
     });
   }, [data, coin, deliveryMethod, voucher.amount]);
@@ -357,20 +363,45 @@ function Payment() {
   };
 
   const AddVoucher = (selectedVoucher: any) => {
-    const amount =
-      (selectedVoucher.value / 100) * totalPrice.general >
-      selectedVoucher.maxDiscountValue
-        ? selectedVoucher.maxDiscountValue
-        : (selectedVoucher.value / 100) * totalPrice.general;
-    setTotalPrice({
-      ...totalPrice,
-      afterDisscount: totalPrice.afterDisscount - amount,
-    });
-    setVoucher({
-      amount,
-      id: selectedVoucher._id,
-    });
     setOpen(false);
+    console.log("selectedVoucher", selectedVoucher);
+    if (Object.keys(selectedVoucher).length !== 0) {
+      const amount = Math.floor(
+        (selectedVoucher.value / 100) * totalPrice.general >
+          selectedVoucher.maxDiscountValue
+          ? selectedVoucher.maxDiscountValue
+          : (selectedVoucher.value / 100) * totalPrice.general
+      );
+      console.log("amount", amount);
+      setVoucher({
+        base: amount,
+        amount: amount,
+        id: selectedVoucher.id,
+      });
+
+      if (totalPrice.general - coin - amount < 0) {
+        setTotalPrice({
+          ...totalPrice,
+          afterDisscount:
+            deliveryMethod.find((item) => item.checked)?.price! * data.length,
+        });
+        setCoin(totalPrice.general - amount);
+        return;
+      }
+    } else {
+      setTotalPrice({
+        ...totalPrice,
+        afterDisscount:
+          totalPrice.general -
+          coin +
+          deliveryMethod.find((item) => item.checked)?.price! * data.length,
+      });
+      setVoucher({
+        base: 0,
+        amount: 0,
+        id: "",
+      });
+    }
   };
 
   return (
@@ -393,6 +424,8 @@ function Payment() {
                         src={product.avatar}
                         className="w-full h-full"
                         alt="Loading..."
+                        width={100}
+                        height={100}
                       />
                     </div>
                     <div className="ml-4">
@@ -792,7 +825,7 @@ function Payment() {
               <div className="flex">
                 <div className="w-[70%]">Dùng xu</div>
                 <div className="w-[30%] text-right">
-                  - {FormatMoney(coin * 100)}
+                  - {FormatMoney(coin * 1)}
                 </div>
               </div>
             )}
@@ -812,9 +845,10 @@ function Payment() {
                 label={`Dùng xu (${user.wallet})`}
                 crossOrigin={undefined}
                 checked={useCoin}
-                onClick={(e) =>
-                  setUseCoin((e.target as HTMLInputElement).checked)
-                }
+                onClick={(e) => {
+                  setCoin(0);
+                  setUseCoin((e.target as HTMLInputElement).checked);
+                }}
               />
             </div>
             <div className="flex cursor-pointer" onClick={(e) => setOpen(true)}>
@@ -825,21 +859,66 @@ function Payment() {
           {useCoin && (
             <div className="flex items-center justify-between pt-4">
               <Input
+                // Press Enter to onBlur
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
                 label="Số xu"
                 type="number"
                 crossOrigin={undefined}
                 max={user.wallet}
                 min={0}
-                defaultValue={0}
-                onBlur={(e) => {
+                value={coin}
+                onChange={(e) => {
                   if (+e.target.value > +user.wallet) {
                     Toast("warning", "Không được vượt quá xu hiện có", 2000);
-                    setCoin(+user.wallet);
-                    e.target.value = user.wallet;
+                    if (+e.target.value > totalPrice.general - voucher.amount) {
+                      setCoin(totalPrice.general - voucher.amount);
+                    } else {
+                      setCoin(+user.wallet);
+                    }
+                  } else if (
+                    +e.target.value >
+                    totalPrice.general - voucher.amount
+                  ) {
+                    Toast(
+                      "warning",
+                      "Không được vượt quá số tiền sản phẩm đã kết hợp các mã giảm giá",
+                      2000
+                    );
+                    setCoin(totalPrice.general - voucher.amount);
                   } else {
                     setCoin(+e.target.value);
+                    if (
+                      totalPrice.general - +e.target.value - voucher.base <=
+                      0
+                    ) {
+                      setTotalPrice({
+                        ...totalPrice,
+                        afterDisscount:
+                          deliveryMethod.find((item) => item.checked)?.price! *
+                          data.length,
+                      });
+                      setVoucher({
+                        ...voucher,
+                        amount: totalPrice.general - +e.target.value,
+                      });
+                    } else {
+                      setTotalPrice({
+                        ...totalPrice,
+                        afterDisscount:
+                          totalPrice.general - +e.target.value - voucher.base,
+                      });
+                      setVoucher({
+                        ...voucher,
+                        amount: voucher.base,
+                      });
+                    }
                   }
                 }}
+                defaultValue={0}
               />
             </div>
           )}
@@ -859,9 +938,10 @@ function Payment() {
           <DialogVoucher
             totalPriceGeneral={totalPrice.general}
             isOpen={open}
+            idVoucher={voucher.id}
             handleOpen={setOpen}
             storeIds={storeIds}
-            handleSubmit={AddVoucher}
+            handleSubmit={(data) => AddVoucher(data)}
           />
         </div>
       </div>

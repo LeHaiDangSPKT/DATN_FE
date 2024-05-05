@@ -68,6 +68,11 @@ function ManagerStore() {
       name: "date",
     },
     {
+      title: "Trạng thái hoạt động",
+      sort: false,
+      name: "status",
+    },
+    {
       title: "",
       sort: false,
       name: "",
@@ -85,6 +90,7 @@ function ManagerStore() {
     const fetchData = async () => {
       await APIGetListStore(page || 1, 20, search).then((res) => {
         setListStore(res?.metadata);
+        console.log("res", res);
         const storeId = localStorage.getItem("storeId");
         storeId &&
           DetailStore(
@@ -115,27 +121,7 @@ function ManagerStore() {
   };
 
   const ExportExcel = async () => {
-    Toast("success", "File sẽ được tải về sau 2 giây nữa...", 2000);
-    setTimeout(async () => {
-      const data = await APIGetAllStore();
-      const dataExcel = data.metadata.data?.map((item: any, index: any) => {
-        return {
-          STT: index + 1,
-          "Tên cửa hàng": item.store.name,
-          "Địa chỉ": item.store.address,
-          "Số điện thoại 1": item.store.phoneNumber[0] || "",
-          "Số điện thoại 2": item.store.phoneNumber[1] || "",
-          "Đánh giá trung bình (sao)": item.averageStar,
-          "Người theo dõi": item.totalFollow,
-          "Đơn bán": item.totalDelivered,
-          "Bình luận": item.totalFeedback,
-          "Doanh thu": FormatMoney(item.totalRevenue),
-          "Cảnh báo": item.store.warningCount,
-          "Ngày tham gia": ConvertDate(item.store.createdAt),
-        };
-      });
-      exportExcel(dataExcel, "Danh sách cửa hàng", "Danh sách cửa hàng");
-    }, 2000);
+    exportExcel("stores/excel");
   };
   return (
     <div className="min-h-screen my-5">
@@ -212,6 +198,14 @@ function ManagerStore() {
             <td className="px-6 py-4 text-center">
               {formatToDDMMYYYY(item.createdAt)}
             </td>
+            <td
+              className={`px-6 py-4 text-center ${
+                item.status ? "text-green-500" : "text-red-500"
+              } `}
+            >
+              {item.status ? "Đang hoạt động" : "Ngừng hoạt động"}
+            </td>
+
             <td>
               <div
                 className="px-6 text-center font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"

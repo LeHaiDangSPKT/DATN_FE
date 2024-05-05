@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { CATEGORYADMIN } from "@/constants/CategoryAdmin";
 import {
   HiChevronDown,
   HiChevronRight,
@@ -8,7 +7,6 @@ import {
   HiPresentationChartBar,
   HiUserCircle,
 } from "react-icons/hi2";
-import { GrPowerShutdown } from "react-icons/gr";
 import { IoIosSettings } from "react-icons/io";
 import { GiShoppingBag } from "react-icons/gi";
 import {
@@ -72,7 +70,7 @@ function Children(props: ChildrenProps) {
   };
 
   return (
-    <div className="min-h-screen px-[10px] my-2 grid grid-cols-10 gap-4">
+    <div className="min-h-screen px-[10px] grid grid-cols-10 gap-4">
       <Card className="h-[calc(100vh-2rem)] w-full p-4 shadow-xl shadow-blue-gray-900/5 col-span-2">
         <div className="mb-2 p-4">
           <Typography variant="h5" color="blue-gray">

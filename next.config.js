@@ -5,6 +5,9 @@ const nextConfig = {
       "static.vecteezy.com",
       "static-00.iconduck.com",
       "res.cloudinary.com",
+      "lh3.googleusercontent.com",
+      "cdn.chotot.com",
+      "salt.tikicdn.com",
     ],
   },
 };

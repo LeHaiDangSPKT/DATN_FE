@@ -1,6 +1,8 @@
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
 import GetNumberInString from "@/utils/GetNumberInString";
+import Image from "next/image";
+
 import React from "react";
 interface Props {
   bill: any;
@@ -11,11 +13,12 @@ function Review(props: Props) {
   const { bill, setChanged } = props;
   console.log("bill", bill);
   return (
-    <div className="overscroll-contain hidden-scrollbar justify-center items-center flex overflow-x-hidden overflow-y-auto absolute inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
-      <div className="relative w-auto my-6 mx-auto max-w-3xl min-w-[40rem] mt-20">
+    // <div className="overscroll-contain hidden-scrollbar justify-center items-center flex overflow-x-hidden overflow-y-auto absolute inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
+    <div className="justify-center items-center flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
+      <div className="relative w-auto my-3 mx-auto max-w-3xl min-w-[40rem]">
         <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
           <div className="relative flex flex-col bg-white shadow-lg rounded-xl pointer-events-auto dark:bg-gray-800">
-            <div className="relative min-h-[8rem] bg-gray-900 text-center rounded-t-lg">
+            <div className="relative min-h-[6rem] bg-gray-900 text-center rounded-t-lg">
               <div className="absolute top-2 end-2">
                 <button
                   type="button"
@@ -72,124 +75,126 @@ function Review(props: Props) {
                 </svg>
               </span>
             </div>
-
-            <div className="p-4 sm:p-7 overflow-y-auto">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Thông tin đơn hàng
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Hoá đơn #{GetNumberInString(bill.id)}
-                </p>
-              </div>
-              {bill.data.map((data: any, index: number) => (
-                <div className="flex justify-center my-2" key={index}>
-                  {data.products.map((item: any, indexImg: number) => (
-                    <img
-                      key={indexImg}
-                      src={item.avatar[0]}
+            <div className="max-h-[65vh] overflow-y-auto">
+              <div className="p-4 sm:p-7 ">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                    Thông tin đơn hàng
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Hoá đơn #{GetNumberInString(bill.id)}
+                  </p>
+                </div>
+                {bill.data.map((data: any, index: number) => (
+                  <div className="flex justify-center my-2" key={index}>
+                    <Image
+                      src={data.avatar}
                       alt=""
-                      className="w-20 h-20 object-cover rounded-md mx-4"
+                      width={240}
+                      height={240}
+                      className="object-cover rounded-md mx-4"
                     />
-                  ))}
-                </div>
-              ))}
+                  </div>
+                ))}
 
-              <div className="mt-5 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 gap-5">
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Phương thức thanh toán:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {bill.paymentMethod == "CashOnDelivery"
-                      ? "Thanh toán tiền mặt khi nhận hàng"
-                      : bill.paymentMethod}
-                  </span>
-                </div>
+                <div className="mt-5 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 gap-5">
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Phương thức thanh toán:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {bill.paymentMethod == "CashOnDelivery"
+                        ? "Thanh toán tiền mặt khi nhận hàng"
+                        : bill.paymentMethod}
+                    </span>
+                  </div>
 
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Ngày đặt hàng:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {ConvertDate(bill.createdAt)}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Ngày dự kiến nhận hàng:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {bill.recievedDate}
-                  </span>
-                </div>
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Ngày đặt hàng:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {ConvertDate(bill.createdAt)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Ngày dự kiến nhận hàng:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {bill.recievedDate}
+                    </span>
+                  </div>
 
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Tên người nhận hàng:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {bill.receiverInfo?.fullName}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Số điện thoại:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {bill.receiverInfo?.phoneNumber}
-                  </span>
-                </div>
-                <div>
-                  <span className="block text-xs uppercase text-gray-500">
-                    Địa chỉ:
-                  </span>
-                  <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                    {bill.receiverInfo?.address}
-                  </span>
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Tên người nhận hàng:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {bill.receiverInfo?.fullName}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Số điện thoại:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {bill.receiverInfo?.phoneNumber}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-xs uppercase text-gray-500">
+                      Địa chỉ:
+                    </span>
+                    <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {bill.receiverInfo?.address}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-5 sm:mt-10 px-4">
-              <h4 className="text-xs font-semibold uppercase text-gray-800 dark:text-gray-200">
-                Hoá đơn
-              </h4>
+              <div className="mt-5 sm:mt-10 px-4">
+                <h4 className="text-xs font-semibold uppercase text-gray-800 dark:text-gray-200">
+                  Hoá đơn
+                </h4>
 
-              <ul className="mt-3 flex flex-col">
-                {bill.listProductsFullInfo?.map((item: any, index: number) => (
-                  <li
-                    key={index}
-                    className=" py-3 px-4 text-sm border text-gray-800  first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:border-gray-700 dark:text-gray-200"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span>
-                        {item.product.productName} x{" "}
-                        <span className="font-bold">
-                          {item.subInfo.quantity}
+                <ul className="mt-3 flex flex-col">
+                  {bill.data?.map((item: any, index: number) => (
+                    <li
+                      key={index}
+                      className=" py-3 px-4 text-sm border text-gray-800  first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:border-gray-700 dark:text-gray-200"
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span>
+                          {item.name} x{" "}
+                          <span className="font-bold">{item.quantity}</span>
                         </span>
-                      </span>
-                      <span>
-                        {FormatMoney(
-                          item.product.price * item.subInfo.quantity
-                        )}
-                      </span>
+                        <span>
+                          {FormatMoney(item.newPrice * item.quantity)}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                  <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
+                    <div className="flex items-center justify-between w-full">
+                      <span>Số tiền sau khi áp mã giảm giá và xu</span>
+                      <span>{FormatMoney(bill.totalPricePayment)}</span>
                     </div>
                   </li>
-                ))}
-                <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Phí giao hàng</span>
-                    <span>{FormatMoney(bill.deliveryFee)}</span>
-                  </div>
-                </li>
-                <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
-                  <div className="flex items-center justify-between w-full">
-                    <span>Tổng cộng</span>
-                    <span>{FormatMoney(bill.price + bill.deliveryFee)}</span>
-                  </div>
-                </li>
-              </ul>
+                  <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
+                    <div className="flex items-center justify-between w-full">
+                      <span>Phí giao hàng</span>
+                      <span>{FormatMoney(bill.deliveryFee)}</span>
+                    </div>
+                  </li>
+                  <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
+                    <div className="flex items-center justify-between w-full">
+                      <span>Tổng cộng</span>
+                      <span>{FormatMoney(bill.price)}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <div className="mt-5 sm:mt-10 p-4">

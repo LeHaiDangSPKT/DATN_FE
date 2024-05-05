@@ -6,6 +6,7 @@ export default function GetHeaders() {
     : {};
 
   const JWT = user?.accessToken;
+
   const jwtPayload = JSON.parse(window.atob(JWT.split(".")[1]));
   const exp = jwtPayload.exp;
   const now = Math.floor(Date.now() / 1000);
@@ -38,6 +39,8 @@ export default function GetHeaders() {
       }
     };
     RefreshToken();
+
+    return headers;
   } else {
     const authorization = `Bearer ${user?.accessToken}`;
     const headers = {

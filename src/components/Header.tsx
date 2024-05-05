@@ -85,69 +85,45 @@ function Header() {
       : null;
     user && setUser(user?.providerData[0]);
     user && setRole(user?.role);
-  }, []);
-  React.useEffect(() => {
-    // Nếu role là admin và đang ở trang khác có pathname khác /admin thì redirect về trang admin
-    const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "")
-      : null;
-    if (user) {
-      if (role.includes("ADMIN") && !pathname.startsWith("/admin")) {
-        redirect("/admin");
-      } else if (
-        role.includes("MANAGER") &&
-        !pathname.startsWith("/manager/product")
-      ) {
-        redirect("/manager/product");
-      } else {
-        if (
-          (role.includes("USER") || role.includes("SELLER")) &&
-          (pathname.startsWith("/admin") || pathname.startsWith("/manager"))
-        ) {
-          redirect("/");
-        } else {
-          const fetchAllCart = async () => {
-            const res = await APIGetAllCart();
-            console.log(res);
-            var total = 0;
-            if (res?.status == 200 || res?.status == 201) {
-              const carts: Cart = {
-                isCheckAll: false,
-                store: res.data.metadata.data.map((item: any) => {
-                  return {
-                    id: item.storeId,
-                    name: item.storeName,
-                    isChecked: false,
-                    avatar: item.storeAvatar,
-                    product: item.products.map((product: any) => {
-                      total += 1;
-                      return {
-                        id: product.id,
-                        name: product.name,
-                        avatar: product.avatar[0],
-                        type: product.newPrice == 0 ? "GIVE" : "SELL",
-                        newPrice: product.newPrice,
-                        oldPrice: product.oldPrice,
-                        quantity: product.quantity,
-                        quantityInStock: product.quantityInStock,
-                        isChecked: false,
-                      };
-                    }),
-                  };
-                }),
-              };
-              dispatch(setCartPopUp(carts));
-            }
-          };
-          if (user) {
-            fetchAllCart();
+    if (user?.providerData[0]) {
+      if (user?.role.includes("USER") || user?.role.includes("SELLER")) {
+        const fetchAllCart = async () => {
+          const res = await APIGetAllCart();
+          console.log(res);
+          var total = 0;
+          if (res?.status == 200 || res?.status == 201) {
+            const carts: Cart = {
+              isCheckAll: false,
+              store: res.data.metadata.data.map((item: any) => {
+                return {
+                  id: item.storeId,
+                  name: item.storeName,
+                  isChecked: false,
+                  avatar: item.storeAvatar,
+                  product: item.products.map((product: any) => {
+                    total += 1;
+                    return {
+                      id: product.id,
+                      name: product.name,
+                      avatar: product.avatar[0],
+                      type: product.newPrice == 0 ? "GIVE" : "SELL",
+                      newPrice: product.newPrice,
+                      oldPrice: product.oldPrice,
+                      quantity: product.quantity,
+                      quantityInStock: product.quantityInStock,
+                      isChecked: false,
+                    };
+                  }),
+                };
+              }),
+            };
+            dispatch(setCartPopUp(carts));
           }
-        }
+        };
+        fetchAllCart();
       }
-    } else {
     }
   }, []);
-
   React.useEffect(() => {
     const user = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") ?? "").providerData[0]
