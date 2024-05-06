@@ -182,3 +182,21 @@ export const APIUpdateBillUser = async (
     return res;
   }
 };
+
+// /api/bill/661d6dbe87d1627150086cd5/user/cancel
+export const APIUserCancelBill = async (
+  id: string,
+  content: string
+): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/user/cancel`,
+      {
+        reason: content,
+      },
+      { headers }
+    );
+    return res;
+  }
+};
