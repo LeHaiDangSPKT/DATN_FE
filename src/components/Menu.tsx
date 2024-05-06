@@ -32,16 +32,16 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
       </MenuHandler>
       <MenuList>
         <MenuItem>
-          <Link href="/user/profile">Tài khoản của tôi</Link>
+          <a href="/user/profile">Tài khoản của tôi</a>
         </MenuItem>
         <MenuItem>
-          <Link href="/user/store/follow">Cửa hàng theo dõi</Link>
+          <a href="/user/store/follow">Cửa hàng theo dõi</a>
         </MenuItem>
         <MenuItem>
-          <Link href="/user/product/favorite">Sản phẩm yêu thích</Link>
+          <a href="/user/product/favorite">Sản phẩm yêu thích</a>
         </MenuItem>
         <MenuItem>
-          <Link href="/user/invoice">Đơn mua</Link>
+          <a href="/user/invoice">Đơn mua</a>
         </MenuItem>
         <hr className="my-3" />
         <MenuItem>

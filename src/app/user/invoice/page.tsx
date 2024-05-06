@@ -1,17 +1,26 @@
 "use client";
-import Modal from "@/components/Modal";
 import SortTable from "@/components/SortTable";
 import {
   APIGetCountBillByStatusUser,
   APIGetListBillUser,
   APIUpdateBill,
   APIUpdateBillUser,
+  APIUserCancelBill,
 } from "@/services/Bill";
 import Toast from "@/utils/Toast";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import React from "react";
 import Review from "./review";
 import FormatMoney from "@/utils/FormatMoney";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Textarea,
+} from "@material-tailwind/react";
 interface Invoice {
   status: string;
   title: string;
@@ -48,7 +57,11 @@ function Info() {
   const [isReview, setIsReview] = React.useState(false);
   const [currentBill, setCurrentBill] = React.useState<any>({});
   const [typeMes, setTypeMes] = React.useState<string>("");
-
+  const [content, setContent] = React.useState<string>("");
+  const [alert, setAlert] = React.useState({
+    open: false,
+    message: "",
+  });
   const [currentId, setCurrentId] = React.useState("");
   interface TypeObject {
     [key: string]: {
@@ -63,21 +76,33 @@ function Info() {
       func: () => UpGrade(),
     },
     cancel: {
-      mes: "Bạn có muốn HUỶ ĐƠN này không?",
+      mes: "LÝ DO HUỶ ĐƠN",
       func: () => Cancel(),
     },
   };
   const Cancel = async () => {
-    await APIUpdateBillUser(currentId, "CANCELLED").then((res) => {
-      if (res?.status == 200 || res?.status == 201) {
-        Toast("success", "Huỷ đơn thành công", 2000);
-        setIsShow(false);
-        setChanged(!changed);
-        setStatus("CANCELLED");
-      } else {
-        Toast("error", "Chuyển thất bại", 2000);
-      }
-    });
+    if (content.trim() == "") {
+      setAlert({
+        open: true,
+        message: "Nội dung không được để trống",
+      });
+      setTimeout(() => {
+        setAlert({
+          open: false,
+          message: "",
+        });
+      }, 2000);
+      return;
+    }
+    const res = await APIUserCancelBill(currentId, content);
+    if (res?.status == 200 || res?.status == 201) {
+      Toast("success", res.data.message, 2000);
+      setIsShow(false);
+      setChanged(!changed);
+      setStatus("CANCELLED");
+    } else {
+      Toast("error", res.data.message, 2000);
+    }
   };
   const UpGrade = async () => {
     await APIUpdateBillUser(currentId, "RETURNED").then((res) => {
@@ -93,6 +118,7 @@ function Info() {
   React.useEffect(() => {
     const getInvoice = async () => {
       const res = await APIGetCountBillByStatusUser();
+      console.log("res", res);
       setInvoice(res?.data.metadata.data);
     };
     getInvoice();
@@ -258,19 +284,38 @@ function Info() {
             </tr>
           ))}
         </SortTable>
-        <Modal
-          isShow={isShow}
-          setIsShow={(data: any) => setIsShow(data)}
-          confirm={() => {
-            type[typeMes]?.func();
-          }}
-          title="Thay đổi trạng thái"
-        >
-          <div className="font-bold text-lg text-center">
-            {type[typeMes]?.mes}
-          </div>
-        </Modal>
-
+        <Dialog open={isShow} handler={setIsShow}>
+          <DialogHeader>{type[typeMes]?.mes}</DialogHeader>
+          <DialogBody className="text-center">
+            {alert.open && (
+              <Alert color="red" className="mb-4">
+                {alert.message}
+              </Alert>
+            )}
+            <Textarea
+              label="Nội dung"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="red"
+              onClick={(e: any) => setIsShow(false)}
+              className="mr-1"
+            >
+              <span>Đóng</span>
+            </Button>
+            <Button
+              variant="gradient"
+              color="green"
+              onClick={(e: any) => type[typeMes]?.func()}
+            >
+              <span>Xác nhận</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
         {isReview && (
           <Review setChanged={(data) => setIsReview(data)} bill={currentBill} />
         )}
