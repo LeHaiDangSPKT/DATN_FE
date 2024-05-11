@@ -70,8 +70,15 @@ export default function Home() {
             />
           </div>
         </div>
+        <div className="sm:hidden block w-full mt-2">
+          <div className="bg-white p-2 rounded-xl">
+            {/* <div className="flex overflow-auto"> */}
+            <Category />
+            {/* </div> */}
+          </div>
+        </div>
         <div className="flex mt-2 justify-between">
-          <div className="flex flex-col w-2/12 mr-2 ">
+          <div className="flex-col sm:flex hidden w-2/12 mr-2 ">
             <div className="bg-white p-2 rounded-xl">
               <div className="flex flex-col">
                 <div className="font-bold py-2">Danh mục</div>
@@ -81,7 +88,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-10/12">
+          <div className="flex flex-col w-full sm:w-10/12">
             <ListProductHomePage
               title="Có thể bạn sẽ thích"
               listProduct={listProduct}

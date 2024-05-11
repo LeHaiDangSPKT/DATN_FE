@@ -63,7 +63,7 @@ function Rebill() {
       );
       var arr = [] as ArrBill[];
       setTotal(data.metadata.data.total);
-      data.metadata.data.fullData.map((lstProduct: any, index: number) => {
+      data.metadata.data?.fullData?.map((lstProduct: any, index: number) => {
         var arrBill = {} as ArrBill;
         arrBill.id = lstProduct._id;
         arrBill.fullName = lstProduct.receiverInfo.fullName;

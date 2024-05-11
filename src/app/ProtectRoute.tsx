@@ -1,12 +1,12 @@
 "use client";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import FullPageLoader from "./FullPageLoader";
 
 function ProtectRoute({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [loading, setLoading] = React.useState(true);
+
   React.useEffect(() => {
     const user =
       localStorage.getItem("user") &&
@@ -39,7 +39,7 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
         redirectUser("/");
         return;
       }
-    } else if (userRoles.some((role: string) => role.includes("USER"))) {
+    } else {
       if (
         pathname.startsWith("/shop/seller") ||
         pathname.startsWith("/admin") ||
@@ -52,9 +52,7 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
 
     setLoading(false);
   }, []);
-  if (loading) {
-    return <FullPageLoader />;
-  }
+  if (loading) return <FullPageLoader state={loading} />;
 
   return children;
 }

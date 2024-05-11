@@ -189,7 +189,9 @@ export const APIUserCancelBill = async (
   content: string
 ): Promise<any> => {
   const headers = GetHeaders();
+
   if (headers) {
+    document.getElementById("loading-page")?.classList.remove("hidden");
     const res = await axiosInstance.patch(
       `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/user/cancel`,
       {
@@ -197,6 +199,29 @@ export const APIUserCancelBill = async (
       },
       { headers }
     );
+    document.getElementById("loading-page")?.classList.add("hidden");
+
+    return res;
+  }
+};
+
+// /api/bill/6616d48b30046e7638d1b623/seller/cancel
+export const APISellerCancelBill = async (
+  id: string,
+  content: string
+): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    document.getElementById("loading-page")?.classList.remove("hidden");
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/seller/cancel`,
+      {
+        reason: content,
+      },
+      { headers }
+    );
+    document.getElementById("loading-page")?.classList.add("hidden");
+
     return res;
   }
 };

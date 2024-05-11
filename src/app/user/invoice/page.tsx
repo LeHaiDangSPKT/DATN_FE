@@ -20,7 +20,10 @@ import {
   DialogFooter,
   DialogHeader,
   Textarea,
+  Typography,
 } from "@material-tailwind/react";
+import ConvertDate from "@/utils/ConvertDate";
+import DialogReasonCancel from "@/components/DialogReasonCancel";
 interface Invoice {
   status: string;
   title: string;
@@ -36,7 +39,8 @@ interface TableInvoice {
   totalPricePayment: number;
   recievedDate: string;
   paymentMethod: string;
-  createdAt: Date;
+  createdAt: string;
+  reason: string;
   receiverInfo: {
     name: string;
     phone: string;
@@ -58,6 +62,7 @@ function Info() {
   const [currentBill, setCurrentBill] = React.useState<any>({});
   const [typeMes, setTypeMes] = React.useState<string>("");
   const [content, setContent] = React.useState<string>("");
+  const [reason, setReason] = React.useState<string>("");
   const [alert, setAlert] = React.useState({
     open: false,
     message: "",
@@ -94,12 +99,13 @@ function Info() {
       }, 2000);
       return;
     }
+    setIsShow(false);
     const res = await APIUserCancelBill(currentId, content);
     if (res?.status == 200 || res?.status == 201) {
       Toast("success", res.data.message, 2000);
-      setIsShow(false);
       setChanged(!changed);
       setStatus("CANCELLED");
+      setContent("");
     } else {
       Toast("error", res.data.message, 2000);
     }
@@ -146,9 +152,19 @@ function Info() {
       name: "price",
     },
     {
+      title: "Ngày đặt",
+      sort: false,
+      name: "orderDate",
+    },
+    {
       title: "Dự kiến nhận hàng",
       sort: false,
       name: "recievedDate",
+    },
+    {
+      title: "Lý do",
+      sort: false,
+      name: "reason",
     },
     {
       title: "Thao tác",
@@ -159,7 +175,6 @@ function Info() {
   React.useEffect(() => {
     const getBill = async () => {
       const res = await APIGetListBillUser(page || 1, 20, status);
-      console.log("res", res);
       setTotalPage(res?.metadata.total);
       var arr = [] as TableInvoice[];
       res.metadata.data?.map((lstProduct: any, index: number) => {
@@ -168,7 +183,7 @@ function Info() {
         const createdAtDate = new Date(lstProduct.createdAt);
         createdAtDate.setDate(createdAtDate.getDate() + 3);
         arrBill.recievedDate = formatToDDMMYYYY(createdAtDate);
-        arrBill.createdAt = lstProduct.createdAt;
+        arrBill.createdAt = ConvertDate(lstProduct.createdAt);
         arrBill.totalPricePayment = lstProduct.totalPricePayment;
         arrBill.price = lstProduct.totalPricePayment + lstProduct.deliveryFee;
         arrBill.paymentMethod = lstProduct.paymentMethod;
@@ -177,6 +192,7 @@ function Info() {
         arrBill.storeId = lstProduct.storeId;
         arrBill.storeAvatar = lstProduct.storeAvatar;
         arrBill.receiverInfo = lstProduct.receiverInfo;
+        arrBill.reason = lstProduct.reason;
         arrBill.data = lstProduct.products;
         lstProduct.products?.map((product: any) => {
           arrBill.productName.push(product.name + " x " + product.quantity);
@@ -228,7 +244,13 @@ function Info() {
         <SortTable
           currentPage={page}
           setPage={(data) => setPage(data)}
-          title={status == "NEW" ? arrTitle : arrTitle.slice(0, 5)}
+          title={
+            status == "NEW"
+              ? arrTitle.filter((item) => item.name != "reason")
+              : status == "CANCELLED" || status == "REFUND" || status == "BACK"
+              ? arrTitle.slice(0, 7)
+              : arrTitle.slice(0, 6)
+          }
           totalPage={totalPage}
         >
           {data?.map((item, index) => (
@@ -265,8 +287,23 @@ function Info() {
               <td className="px-6 py-4 text-center">
                 {FormatMoney(item.price)}
               </td>
-
+              <td className="px-6 py-4 text-center">{item.createdAt}</td>
               <td className="px-6 py-4 text-center">{item.recievedDate}</td>
+
+              {(status == "CANCELLED" ||
+                status == "REFUND" ||
+                status == "BACK") && (
+                <td className="px-6 py-4 text-center">
+                  <div
+                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer mb-2"
+                    onClick={(e) => {
+                      setReason(item.reason);
+                    }}
+                  >
+                    Xem
+                  </div>
+                </td>
+              )}
               {status == "NEW" && (
                 <td className="px-6 py-4 text-center">
                   <div
@@ -284,35 +321,28 @@ function Info() {
             </tr>
           ))}
         </SortTable>
-        <Dialog open={isShow} handler={setIsShow}>
-          <DialogHeader>{type[typeMes]?.mes}</DialogHeader>
+        <DialogReasonCancel
+          isShow={isShow}
+          setIsShow={setIsShow}
+          title={type[typeMes]?.mes}
+          alert={alert}
+          content={content}
+          setContent={(data) => setContent(data)}
+          submit={() => type[typeMes]?.func()}
+        />
+        <Dialog open={reason ? true : false} handler={(e) => false}>
+          <DialogHeader>Lý do chi tiết</DialogHeader>
           <DialogBody className="text-center">
-            {alert.open && (
-              <Alert color="red" className="mb-4">
-                {alert.message}
-              </Alert>
-            )}
-            <Textarea
-              label="Nội dung"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
+            <Typography>{reason}</Typography>
           </DialogBody>
           <DialogFooter>
             <Button
               variant="text"
               color="red"
-              onClick={(e: any) => setIsShow(false)}
+              onClick={(e: any) => setReason("")}
               className="mr-1"
             >
               <span>Đóng</span>
-            </Button>
-            <Button
-              variant="gradient"
-              color="green"
-              onClick={(e: any) => type[typeMes]?.func()}
-            >
-              <span>Xác nhận</span>
             </Button>
           </DialogFooter>
         </Dialog>

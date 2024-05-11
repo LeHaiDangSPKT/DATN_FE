@@ -7,13 +7,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loading from "@/components/Loading";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ReduxProvider from "@/redux/provider";
 import "react-quill/dist/quill.snow.css";
 import ProtectRoute from "./ProtectRoute";
 import { Providers } from "./providers";
+import FullPageLoader from "./FullPageLoader";
 
 const lora = Roboto({
   weight: ["400", "500", "700"],
@@ -45,7 +45,7 @@ export default async function RootLayout({
             </Providers>
           </ReduxProvider>
           <ToastContainer />
-          <Loading />
+          <FullPageLoader />
         </AuthContextProvider>
       </body>
     </html>

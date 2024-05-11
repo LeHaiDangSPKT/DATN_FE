@@ -15,7 +15,7 @@ function ListProductHomePage(props: any) {
           listHighLight.map((item: any, index: number) => {
             return (
               <div
-                className={`px-4 py-2 border-2 rounded-2xl hover:bg-slate-100 hover:cursor-pointer hover:border-slate-100 mr-2 ${
+                className={`px-4 py-2 border-2 rounded-2xl hover:bg-slate-100 hover:cursor-pointer hover:border-slate-100 mr-2 text-center ${
                   check == index && "bg-slate-100 border-slate-100"
                 }`}
                 key={index}
@@ -31,6 +31,15 @@ function ListProductHomePage(props: any) {
           infinite: false,
           slidesToShow: 4,
           slidesToScroll: 1,
+          responsive: [
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+              },
+            },
+          ],
         }}
         buttonRight={true}
         buttonLeft={true}

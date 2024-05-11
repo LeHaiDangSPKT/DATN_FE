@@ -347,7 +347,7 @@ function Payment() {
     const res = await APICreateBill(obj);
     console.log("res", res);
     if (res?.status == 200 || res?.status == 201) {
-      Toast("success", "Đặt hàng thành công", 2000);
+      // Toast("success", "Đặt hàng thành công", 2000);
       if (res?.data.metadata.data.urlPayment) {
         window.location.href = res.data.metadata.data.urlPayment;
         localStorage.removeItem("listProductIdChecked");

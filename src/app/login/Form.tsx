@@ -125,17 +125,12 @@ function Form(props: FormProps) {
           )}
         </div>
       ))}
-      <div className="w-full mt-2 flex justify-between">
+      <div className="w-full mt-2 flex justify-between text-center">
         <Link href="/forget-password" className="font-bold cursor-pointer">
           Quên mật khẩu
         </Link>
         <Link href="/sign-up" className="font-bold cursor-pointer">
-          <div className="flex items-center">
-            <div className="mr-2">
-              <FaLongArrowAltLeft></FaLongArrowAltLeft>
-            </div>
-            Chưa có tài khoản?
-          </div>
+          <div className="flex items-center">Chưa có tài khoản?</div>
         </Link>
       </div>
 
@@ -154,7 +149,7 @@ function Form(props: FormProps) {
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FcGoogle fontSize={30} className="r1-2 mr-2" />
-              <span>Log in with Google</span>
+              <span className="hidden sm:block">Log in with Google</span>
             </div>
           </div>
           <div
@@ -163,7 +158,7 @@ function Form(props: FormProps) {
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FaFacebook fontSize={30} className="r1-2 mr-2" />
-              <span>Log in with Facebook</span>
+              <span className="hidden sm:block">Log in with Facebook</span>
             </div>
           </div>
         </div>

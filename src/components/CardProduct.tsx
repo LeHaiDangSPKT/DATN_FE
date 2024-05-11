@@ -14,6 +14,7 @@ import { AppDispatch, useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { addItemtoCartPopup } from "@/redux/features/cart/cartpopup-slice";
 import { APIAddProductInCart } from "@/services/Cart";
+import FormatMoney from "@/utils/FormatMoney";
 
 function CardProduct(props: any) {
   const { data } = props;
@@ -87,11 +88,16 @@ function CardProduct(props: any) {
       </CardHeader>
       <CardBody>
         <div className="font-semibold text-base text-center line-clamp-2 h-12">
-          {data.productName}
+          {data.name}
         </div>
+        <Typography
+          color="red"
+          className="font-medium text-center line-through"
+        >
+          {data.oldPrice ? FormatMoney(data.oldPrice) : ""}
+        </Typography>
         <Typography color="blue-gray" className="font-medium text-center">
-          {data.price != 0 && Number(data.newPrice).toLocaleString("en-US", {})}{" "}
-          <sup>đ</sup>
+          {FormatMoney(data.newPrice)}
         </Typography>
         <div
           className="text-sm text-center opacity-75 pt-1 line-clamp-3 leading-[1.2rem] h-16"
@@ -116,7 +122,7 @@ function CardProduct(props: any) {
           className="flex items-center justify-center bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
         >
           <FaCartPlus className="w-[20px] h-[20px] mr-2 hover:fill-[#59595b] " />
-          Thêm vào giỏ hàng
+          <span className="hidden sm:block"> Thêm vào giỏ hàng</span>
         </Button>
       </CardFooter>
     </Card>

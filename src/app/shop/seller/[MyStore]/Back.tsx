@@ -14,7 +14,7 @@ interface ArrBill {
   totalPrice: number;
 }
 
-function Cancel() {
+function Back() {
   const arrTitle = [
     {
       title: "STT",
@@ -58,12 +58,12 @@ function Cancel() {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const data = await APIGetListBill(page || 1, 20, "CANCELLED").then(
+      const data = await APIGetListBill(page || 1, 20, "BACK").then(
         (res) => res
       );
       var arr = [] as ArrBill[];
       setTotal(data.metadata.data.total);
-      data.metadata.data.fullData.map((lstProduct: any, index: number) => {
+      data.metadata.data?.fullData?.map((lstProduct: any, index: number) => {
         var arrBill = {} as ArrBill;
         arrBill.id = lstProduct._id;
         arrBill.fullName = lstProduct.receiverInfo.fullName;
@@ -130,4 +130,4 @@ function Cancel() {
   );
 }
 
-export default Cancel;
+export default Back;
