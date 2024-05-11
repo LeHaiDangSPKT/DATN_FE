@@ -40,7 +40,7 @@ function Create() {
     delete objCopied.keywords;
     if (+objCopied.newPrice > +objCopied.oldPrice) {
       document.getElementById("loading-page")?.classList.add("hidden");
-      Toast("error", "Giá mới không được lớn hơn giá cũ", 2000);
+      Toast("error", "Giá sau khi smar phải nhỏ hơn giá trước giảm", 2000);
       return;
     }
     if (
@@ -56,6 +56,10 @@ function Create() {
         const res = await APIUploadImage(formData);
         if (res?.status == 200 || res?.status == 201) {
           listImg.push(res?.data.url);
+        } else {
+          document.getElementById("loading-page")?.classList.add("hidden");
+          Toast("error", "Ảnh có kích thước quá lớn", 2000);
+          return;
         }
       }
       product.avatar = listImg;
@@ -74,6 +78,9 @@ function Create() {
         setTimeout(() => {
           dispatch(setCategoryStore(CATEGORYSTORE[CATEGORYSTORE.length - 2]));
         }, 2000);
+      } else {
+        document.getElementById("loading-page")?.classList.add("hidden");
+        Toast("error", "Tạo sản phẩm thất bại", 2000);
       }
     } else {
       document.getElementById("loading-page")?.classList.add("hidden");

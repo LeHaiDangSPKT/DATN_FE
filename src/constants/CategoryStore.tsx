@@ -7,7 +7,7 @@
 // Đơn huỷ
 // Quản lý kho
 
-import Cancel from "@/app/shop/seller/[MyStore]/Cancel";
+import Cancel from "@/app/shop/seller/[MyStore]/Back";
 import Create from "@/app/shop/seller/[MyStore]/Create";
 import Home from "@/app/shop/seller/[MyStore]/Home";
 import Info from "@/app/shop/seller/[MyStore]/Info";
@@ -55,8 +55,8 @@ export const CATEGORYSTORE = [
     element: Rebill,
   },
   {
-    title: "Đơn huỷ",
-    value: "cancel",
+    title: "Đơn trả",
+    value: "back",
     element: Cancel,
   },
   {
@@ -65,7 +65,7 @@ export const CATEGORYSTORE = [
     element: Warehouse,
   },
   {
-    title: "Cài đặt thông tin",
+    title: "Thông tin cửa hàng",
     value: "info",
     element: Info,
   },

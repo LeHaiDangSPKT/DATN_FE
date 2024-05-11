@@ -1,13 +1,7 @@
 "use client";
 import React from "react";
-import {
-  HiChevronDown,
-  HiChevronRight,
-  HiCog6Tooth,
-  HiPresentationChartBar,
-  HiUserCircle,
-} from "react-icons/hi2";
-import { GrPowerShutdown } from "react-icons/gr";
+import { HiChevronDown, HiChevronRight, HiUserCircle } from "react-icons/hi2";
+import { GrUserWorker } from "react-icons/gr";
 import { IoIosSettings } from "react-icons/io";
 import { GiShoppingBag } from "react-icons/gi";
 import {
@@ -16,17 +10,14 @@ import {
   AccordionHeader,
   Avatar,
   Card,
-  Chip,
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
   Typography,
 } from "@material-tailwind/react";
 import { FaInbox, FaStore } from "react-icons/fa";
 
 import { PowerIcon } from "@heroicons/react/24/solid";
-import { redirect } from "next/navigation";
 interface ChildrenProps {
   code: string;
 }
@@ -205,6 +196,14 @@ function Sidebar(props: ChildrenProps) {
             </List>
           </AccordionBody>
         </Accordion>
+        <a href="/admin/shipper" className="text-initial">
+          <ListItem selected={code == "shipper"}>
+            <ListItemPrefix>
+              <GrUserWorker className="h-5 w-5" />
+            </ListItemPrefix>
+            Shipper
+          </ListItem>
+        </a>
         {role?.some((item) => item == "ADMIN") && (
           <a href="/admin/policy" className="text-initial">
             <ListItem selected={code == "policy"}>

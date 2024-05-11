@@ -78,7 +78,7 @@ export const APIDeleteProduct = async (id: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/product/${id}`,
       { headers }
     );
-    return res.data;
+    return res;
   }
 };
 

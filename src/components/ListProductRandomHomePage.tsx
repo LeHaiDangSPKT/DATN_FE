@@ -33,7 +33,7 @@ function ListProductRandomHomePage(props: Props) {
       <div className="flex justify-between font-bold">
         <div>Các sản phẩm khác</div>
       </div>
-      <div className="grid grid-cols-4 gap-y-4 mt-5">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 mt-5">
         {lstProduct.map((item: any, index: any) => {
           return <CardProduct className="col-span-1" key={index} data={item} />;
         })}

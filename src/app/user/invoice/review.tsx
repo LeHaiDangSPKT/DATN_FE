@@ -114,7 +114,7 @@ function Review(props: Props) {
                       Ngày đặt hàng:
                     </span>
                     <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                      {ConvertDate(bill.createdAt)}
+                      {bill.createdAt}
                     </span>
                   </div>
                   <div>

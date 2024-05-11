@@ -22,7 +22,7 @@ function Footer() {
   const pathname = usePathname();
   if (!arrPathName.some((path) => pathname.includes(path))) {
     return (
-      <footer className="flex justify-between items-center h-[277px] w-full bg-[#A3C0FA] px-[10%] bottom-0">
+      <footer className="hidden sm:flex justify-between items-center h-[277px] w-full bg-[#A3C0FA] px-[10%] bottom-0">
         <div className="flex flex-col items-start">
           <span className="text-[16px] font-bold">VỀ DTEx</span>
           <span className="text-[16px]">Giới Thiệu Về DTEx</span>

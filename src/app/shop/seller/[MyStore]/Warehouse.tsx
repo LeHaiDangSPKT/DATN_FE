@@ -74,14 +74,9 @@ function Warehouse() {
       name: "quantity",
     },
     {
-      title: "Số lượng đã bán",
+      title: "Số lượng đã bán/tặng",
       sort: true,
       name: "quantitySold",
-    },
-    {
-      title: "Số lượng đã tặng",
-      sort: true,
-      name: "quantityGive",
     },
     {
       title: "Doanh số",
@@ -211,6 +206,7 @@ function Warehouse() {
   const ConfirmDeleteProduct = async () => {
     // Call api APIDeleteProduct to delete product
     await APIDeleteProduct(currentProduct._id).then((res) => {
+      console.log(res);
       if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Xoá sản phẩm thành công", 2000);
         setIsShowDelete(false);
@@ -227,7 +223,7 @@ function Warehouse() {
     <>
       <SortTable
         title={arrTitle}
-        totalPage={data.total}
+        totalPage={data?.total}
         sort={(data) => SortbyField(data)}
         currentPage={page}
         setPage={(data) => setPage(data)}
@@ -257,8 +253,9 @@ function Warehouse() {
               {FormatMoney(item.newPrice)}
             </td>
             <td className="px-6 py-4 text-center">{item.quantity}</td>
-            <td className="px-6 py-4 text-center">{item.quantitySold}</td>
-            <td className="px-6 py-4 text-center">{item.quantityGive}</td>
+            <td className="px-6 py-4 text-center">
+              {item.quantitySold || item.quantityGive}
+            </td>
             <td className="px-6 py-4 text-center">
               {FormatMoney(item.revenue)}
             </td>
@@ -297,7 +294,7 @@ function Warehouse() {
                 </>
               ) : (
                 <div className="font-medium text-blue-600 dark:text-blue-500">
-                  Đã có đơn đặt
+                  Đã có người dùng tương tác
                 </div>
               )}
             </td>

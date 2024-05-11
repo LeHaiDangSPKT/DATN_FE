@@ -1,6 +1,11 @@
+import DialogReasonCancel from "@/components/DialogReasonCancel";
 import Modal from "@/components/Modal";
 import SortTable from "@/components/SortTable";
-import { APIGetListBill, APIUpdateBill } from "@/services/Bill";
+import {
+  APIGetListBill,
+  APISellerCancelBill,
+  APIUpdateBill,
+} from "@/services/Bill";
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
@@ -66,6 +71,11 @@ function New() {
       name: "action",
     },
   ];
+  const [content, setContent] = React.useState<string>("");
+  const [alert, setAlert] = React.useState({
+    open: false,
+    message: "",
+  });
   const [data, setData] = React.useState<ArrBill[]>();
   const [changed, setChanged] = React.useState<boolean>(false);
   const [page, setPage] = React.useState<number>(1);
@@ -85,15 +95,28 @@ function New() {
     });
   };
   const Cancel = async () => {
-    await APIUpdateBill(currentId, "CANCELLED").then((res) => {
-      if (res?.status == 200 || res?.status == 201) {
-        Toast("success", "Chuyển thành thành công", 2000);
-        setIsShow(false);
-        setChanged(!changed);
-      } else {
-        Toast("error", "Chuyển thất bại", 2000);
-      }
-    });
+    if (content.trim() == "") {
+      setAlert({
+        open: true,
+        message: "Nội dung không được để trống",
+      });
+      setTimeout(() => {
+        setAlert({
+          open: false,
+          message: "",
+        });
+      }, 2000);
+      return;
+    }
+    setIsShow(false);
+    const res = await APISellerCancelBill(currentId, content);
+    if (res?.status == 200 || res?.status == 201) {
+      Toast("success", res.data.message, 2000);
+      setChanged(!changed);
+      setContent("");
+    } else {
+      Toast("error", "Chuyển thất bại", 2000);
+    }
   };
   const type: TypeObject = {
     upGrade: {
@@ -101,7 +124,7 @@ function New() {
       func: () => UpGrade(),
     },
     cancel: {
-      mes: "Bạn có muốn HUỶ đơn này không?",
+      mes: "LÝ DO HUỶ ĐƠN",
       func: () => Cancel(),
     },
   };
@@ -110,24 +133,21 @@ function New() {
       const data = await APIGetListBill(page || 1, 20, "NEW").then(
         (res) => res
       );
+      console.log(data);
       var arr = [] as ArrBill[];
-      setTotal(data.metadata.data.total);
-      data.metadata.data.fullData.map((lstProduct: any, index: number) => {
+      setTotal(data.metadata.total);
+      data.metadata.data.map((lstProduct: any, index: number) => {
         var arrBill = {} as ArrBill;
         arrBill.id = lstProduct._id;
         arrBill.fullName = lstProduct.receiverInfo.fullName;
         arrBill.phoneNumber = lstProduct.receiverInfo.phoneNumber;
         arrBill.address = lstProduct.receiverInfo.address;
         arrBill.date = ConvertDate(lstProduct.createdAt);
-        arrBill.totalPrice = lstProduct.totalPrice;
+        arrBill.totalPrice = lstProduct.totalPricePayment;
         arrBill.infoProduct = [] as string[];
-        lstProduct.listProductsFullInfo?.map((item: any, index: number) => {
-          if (item.product) {
-            arrBill.infoProduct?.push(
-              item.product.productName + " x " + item.subInfo.quantity
-            );
-          }
-        });
+        lstProduct.products.map((item: any, index: number) =>
+          arrBill.infoProduct?.push(item.name + " x " + item.quantity)
+        );
         arr.push(arrBill);
       });
       setData(arr);
@@ -198,7 +218,16 @@ function New() {
           </tr>
         ))}
       </SortTable>
-      <Modal
+      <DialogReasonCancel
+        isShow={isShow}
+        setIsShow={setIsShow}
+        title={type[typeMes]?.mes}
+        alert={alert}
+        content={content}
+        setContent={(data) => setContent(data)}
+        submit={() => type[typeMes]?.func()}
+      />
+      {/* <Modal
         isShow={isShow}
         setIsShow={(data: any) => setIsShow(data)}
         confirm={() => {
@@ -209,7 +238,7 @@ function New() {
         <div className="font-bold text-lg text-center">
           {type[typeMes]?.mes}
         </div>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

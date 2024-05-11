@@ -251,10 +251,17 @@ function Home(props: HomeProps) {
   React.useEffect(() => {
     const fetchData = async () => {
       const data = await APIGetCountBillByStatus().then((res) => res);
+      console.log("sdada", data);
       setDataState({
-        NEW: data.metadata.data.NEW,
-        CONFIRMED: data.metadata.data.CONFIRMED,
-        DELIVERING: data.metadata.data.DELIVERING,
+        NEW:
+          data.metadata.data.find((item: any) => item.status == "NEW").count ||
+          0,
+        CONFIRMED:
+          data.metadata.data.find((item: any) => item.status == "CONFIRMED")
+            .count || 0,
+        DELIVERING:
+          data.metadata.data.find((item: any) => item.status == "DELIVERING")
+            .count || 0,
       });
     };
     fetchData();

@@ -67,7 +67,7 @@ function DialogVoucher(props: DialogVoucherProps) {
               <div className="pl-6 my-auto">
                 <Radio
                   defaultChecked={item.id === idVoucher}
-                  disabled={item.minSpend < totalPriceGeneral}
+                  disabled={item.minSpend > totalPriceGeneral}
                   name="type"
                   onChange={(e) => setSelectedVoucher(item)}
                   crossOrigin={undefined}
@@ -105,7 +105,7 @@ function DialogVoucher(props: DialogVoucherProps) {
               <div className="pl-6 my-auto">
                 <Radio
                   defaultChecked={item.id === idVoucher}
-                  disabled={item.minSpend < totalPriceGeneral}
+                  disabled={item.minSpend > totalPriceGeneral}
                   name="type"
                   onChange={(e) => setSelectedVoucher(item)}
                   crossOrigin={undefined}

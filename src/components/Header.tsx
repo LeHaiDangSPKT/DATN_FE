@@ -167,7 +167,7 @@ function Header() {
       <>
         {(role.includes("USER") || role.includes("SELLER") || !role) && (
           <header className="h-[60px]">
-            <div className="flex justify-between items-center w-full h-[60px] bg-[#D2E0FB] px-[10%] fixed top-0 left-0 right-0 z-10">
+            <div className="flex justify-between items-center w-full h-[60px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0 z-10">
               <img
                 className="cursor-pointer w-[8%]"
                 src="/logo.png"
@@ -177,9 +177,13 @@ function Header() {
                 }}
               />
 
-              <div className="flex items-center rounded-3xl w-[400px] h-[40px] bg-[#E1E9F7] px-2">
+              <div className="flex items-center rounded-3xl w-[200px] sm:w-[400px] h-[40px] bg-[#E1E9F7] px-2">
                 <div className="p-2">
-                  <FaSistrix className="w-[24px] h-[24px] hover:cursor-pointer" />
+                  <FaSistrix
+                    className="hover:cursor-pointer"
+                    width={24}
+                    height={24}
+                  />
                 </div>
                 <input
                   type="text"
@@ -371,13 +375,13 @@ function Header() {
                   <MenuHeaderInfoUser user={user} />
                 </div>
               ) : (
-                <div className="flex items-center">
+                <div className="block sm:flex items-center text-center">
                   <div onClick={(e) => (window.location.href = "/login")}>
                     <span className="text-[14px] font-medium cursor-pointer">
                       Đăng Nhập
                     </span>
                   </div>
-                  <div className="border-r border-gray-400 mx-3 h-6"></div>
+                  <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
                   <div onClick={(e) => (window.location.href = "/sign-up")}>
                     <span className="text-[14px] font-medium cursor-pointer">
                       Đăng Ký
