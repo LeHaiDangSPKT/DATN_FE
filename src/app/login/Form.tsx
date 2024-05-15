@@ -2,14 +2,8 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import FrameFormInit from "@/components/FrameFormInit";
-// import Input from "@/components/Input";
-import CheckValidInput from "@/utils/CheckValidInput";
 import { Input } from "@material-tailwind/react";
-import {
-  FaFacebook,
-  FaLongArrowAltLeft,
-  FaWindowRestore,
-} from "react-icons/fa";
+import { FaFacebook, FaLongArrowAltLeft } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { LOGIN } from "@/constants/Login";
 import Link from "next/link";
@@ -17,10 +11,6 @@ import { UserAuth } from "../authContext";
 import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
-interface LoginForm {
-  email: string;
-  password: string;
-}
 
 interface FormProps {
   fastLogin?: boolean;
@@ -46,6 +36,8 @@ function Form(props: FormProps) {
         window.location.href = "/admin/dashboard";
       } else if (res?.data.metadata.data.role.includes("MANAGER")) {
         window.location.href = "/manager/product";
+      } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
+        window.location.href = "/shipper";
       } else {
         if (window.location.pathname == "/login") {
           window.location.href = "/";

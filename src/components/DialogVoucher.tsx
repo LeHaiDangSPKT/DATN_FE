@@ -39,6 +39,7 @@ function DialogVoucher(props: DialogVoucherProps) {
   React.useEffect(() => {
     const fetchData = async () => {
       const res = await APIUserPromotion(storeIds);
+      console.log("ssssss", res);
       let voucherListSaved: any = [];
       let voucherList: any = [];
       res?.data.metadata.data.map((item: any) => {
@@ -88,8 +89,9 @@ function DialogVoucher(props: DialogVoucherProps) {
                 </Typography>
                 <Progress
                   className="mt-2"
-                  value={item.usagePercent}
-                  label={item.usagePercent >= 50 ? "Đã sử dụng" : ""}
+                  color="blue"
+                  value={item.usagePercent * 100}
+                  label={item.usagePercent * 100 >= 50 ? "Đã sử dụng" : ""}
                 />
               </CardBody>
             </div>
@@ -126,8 +128,9 @@ function DialogVoucher(props: DialogVoucherProps) {
                 </Typography>
                 <Progress
                   className="mt-2"
-                  value={item.usagePercent}
-                  label={item.usagePercent >= 50 ? "Đã sử dụng" : ""}
+                  color="blue"
+                  value={item.usagePercent * 100}
+                  label={item.usagePercent * 100 >= 50 ? "Đã sử dụng" : ""}
                 />
               </CardBody>
             </div>
@@ -152,7 +155,7 @@ function DialogVoucher(props: DialogVoucherProps) {
         </Button>
         <Button
           variant="gradient"
-          color="green"
+          color="blue"
           onClick={() => handleSubmit(selectedVoucher)}
         >
           <span>Xác nhận</span>

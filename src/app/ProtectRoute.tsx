@@ -39,11 +39,17 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
         redirectUser("/");
         return;
       }
+    } else if (userRoles.some((role: string) => role.includes("SHIPPER"))) {
+      if (!pathname.startsWith("/shipper")) {
+        redirectUser("/shipper");
+        return;
+      }
     } else {
       if (
         pathname.startsWith("/shop/seller") ||
         pathname.startsWith("/admin") ||
-        pathname.startsWith("/manager")
+        pathname.startsWith("/manager") ||
+        pathname.startsWith("/shiper")
       ) {
         redirectUser("/");
         return;

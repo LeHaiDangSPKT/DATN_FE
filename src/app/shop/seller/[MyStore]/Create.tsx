@@ -40,7 +40,7 @@ function Create() {
     delete objCopied.keywords;
     if (+objCopied.newPrice > +objCopied.oldPrice) {
       document.getElementById("loading-page")?.classList.add("hidden");
-      Toast("error", "Giá sau khi smar phải nhỏ hơn giá trước giảm", 2000);
+      Toast("error", "Giá sau khi giảm phải nhỏ hơn giá trước giảm", 2000);
       return;
     }
     if (

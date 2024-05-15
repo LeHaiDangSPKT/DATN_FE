@@ -6,6 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   Textarea,
+  Typography,
 } from "@material-tailwind/react";
 import React from "react";
 interface props {
@@ -19,25 +20,55 @@ interface props {
   content: string;
   setContent: (value: string) => void;
   submit: () => void;
+  isChangeStateBill?: boolean;
+  contentChangeStateBill?: string;
+  currentCustomer?: string;
 }
 
 function DialogReasonCancel(props: props) {
-  const { isShow, setIsShow, title, alert, content, setContent, submit } =
-    props;
+  const {
+    isShow,
+    setIsShow,
+    title,
+    alert,
+    content,
+    setContent,
+    submit,
+    isChangeStateBill,
+    contentChangeStateBill,
+    currentCustomer,
+  } = props;
   return (
     <Dialog open={isShow} handler={setIsShow}>
-      <DialogHeader>{title}</DialogHeader>
+      <DialogHeader className="text-center">{title}</DialogHeader>
       <DialogBody className="text-center">
-        {alert.open && (
-          <Alert color="red" className="mb-4">
-            {alert.message}
-          </Alert>
+        {isChangeStateBill ? (
+          <>
+            <Typography variant="h5" color="black">
+              {contentChangeStateBill}
+            </Typography>
+            <Typography
+              variant="h6"
+              color="black"
+              className="italic font-light"
+            >
+              {currentCustomer && `(Đơn của: ${currentCustomer})`}
+            </Typography>
+          </>
+        ) : (
+          <>
+            {alert.open && (
+              <Alert color="red" className="mb-4">
+                {alert.message}
+              </Alert>
+            )}
+            <Textarea
+              label="Nội dung"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          </>
         )}
-        <Textarea
-          label="Nội dung"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
       </DialogBody>
       <DialogFooter>
         <Button

@@ -43,6 +43,9 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
         <MenuItem>
           <a href="/user/invoice">Đơn mua</a>
         </MenuItem>
+        <MenuItem>
+          <a href="/shipper/fill-form">Trở thành shipper</a>
+        </MenuItem>
         <hr className="my-3" />
         <MenuItem>
           <span className="text-red-500" onClick={(e) => logOut()}>

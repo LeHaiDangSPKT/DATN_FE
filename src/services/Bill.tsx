@@ -225,3 +225,65 @@ export const APISellerCancelBill = async (
     return res;
   }
 };
+
+// /api/bill/seller/66370f6d9c6fb0ff4489222f?status=DELIVERED
+export const APISellerUpdateStatus = async (
+  id: string,
+  status: string
+): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/seller/${id}?status=${status}`,
+      {},
+      { headers }
+    );
+    return res;
+  }
+};
+
+// PATCH: api/bill/:billId/user/confirm-delivered
+export const APIUserConfirmDelivered = async (id: string): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/user/confirm-delivered`,
+      {},
+      { headers }
+    );
+    return res;
+  }
+};
+
+// /api/bill/:billId/refund
+export const APIRefundBill = async (
+  id: string,
+  reason: string
+): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    document.getElementById("loading-page")?.classList.remove("hidden");
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/refund`,
+      { reason },
+      { headers }
+    );
+    document.getElementById("loading-page")?.classList.add("hidden");
+    return res;
+  }
+};
+
+// api/bill/6616d48b30046e7638d1b623/confirm-refund
+export const APIConfirmRefund = async (id: string): Promise<any> => {
+  const headers = GetHeaders();
+  if (headers) {
+    document.getElementById("loading-page")?.classList.remove("hidden");
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/bill/${id}/confirm-refund`,
+      {},
+      { headers }
+    );
+    document.getElementById("loading-page")?.classList.add("hidden");
+    return res;
+  }
+};
