@@ -91,23 +91,19 @@ function Shipped() {
         (res) => res
       );
       var arr = [] as ArrBill[];
-      setTotal(data.metadata.data.total);
-      data.metadata.data?.fullData?.map((lstProduct: any, index: number) => {
+      setTotal(data.metadata.total);
+      data.metadata.data.map((lstProduct: any, index: number) => {
         var arrBill = {} as ArrBill;
         arrBill.id = lstProduct._id;
         arrBill.fullName = lstProduct.receiverInfo.fullName;
         arrBill.phoneNumber = lstProduct.receiverInfo.phoneNumber;
         arrBill.address = lstProduct.receiverInfo.address;
         arrBill.date = ConvertDate(lstProduct.createdAt);
-        arrBill.totalPrice = lstProduct.totalPrice;
+        arrBill.totalPrice = lstProduct.totalPriceInit;
         arrBill.infoProduct = [] as string[];
-        lstProduct.listProductsFullInfo?.map((item: any, index: number) => {
-          if (item.product) {
-            arrBill.infoProduct?.push(
-              item.product.productName + " x " + item.subInfo.quantity
-            );
-          }
-        });
+        lstProduct.products.map((item: any, index: number) =>
+          arrBill.infoProduct?.push(item.name + " x " + item.quantity)
+        );
         arr.push(arrBill);
       });
       setData(arr);

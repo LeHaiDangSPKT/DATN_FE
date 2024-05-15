@@ -42,6 +42,8 @@ function Sidebar(props: ChildrenProps) {
       setOpen(1);
     } else if (code.startsWith("store")) {
       setOpen(2);
+    } else if (code.startsWith("shipper")) {
+      setOpen(3);
     }
   }, [code]);
   return (
@@ -196,14 +198,60 @@ function Sidebar(props: ChildrenProps) {
             </List>
           </AccordionBody>
         </Accordion>
-        <a href="/admin/shipper" className="text-initial">
-          <ListItem selected={code == "shipper"}>
-            <ListItemPrefix>
-              <GrUserWorker className="h-5 w-5" />
-            </ListItemPrefix>
-            Shipper
+        <Accordion
+          open={open === 3}
+          icon={
+            <HiChevronDown
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${
+                open === 3 ? "rotate-180" : ""
+              }`}
+            />
+          }
+        >
+          <ListItem className="p-0" selected={open === 3}>
+            <AccordionHeader
+              onClick={() => handleOpen(3)}
+              className="border-b-0 p-3"
+            >
+              <ListItemPrefix>
+                <GrUserWorker className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="mr-auto font-normal">
+                Quản lý shipper
+              </Typography>
+            </AccordionHeader>
           </ListItem>
-        </a>
+          <AccordionBody className="py-1">
+            <List className="p-0">
+              <a href="/admin/shipper" className="text-initial">
+                <ListItem
+                  className={code == "shipper" ? "bg-blue-gray-50" : ""}
+                >
+                  <ListItemPrefix>
+                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Danh sách shipper
+                </ListItem>
+              </a>
+              <a
+                href="/admin/shipper/not-yet-approval"
+                className="text-initial"
+              >
+                <ListItem
+                  className={
+                    code == "shipper-not-yet-approval" ? "bg-blue-gray-50" : ""
+                  }
+                >
+                  <ListItemPrefix>
+                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                  </ListItemPrefix>
+                  Danh sách đơn đăng ký trở thành shipper
+                </ListItem>
+              </a>
+            </List>
+          </AccordionBody>
+        </Accordion>
         {role?.some((item) => item == "ADMIN") && (
           <a href="/admin/policy" className="text-initial">
             <ListItem selected={code == "policy"}>

@@ -11,7 +11,6 @@ interface Props {
 
 function Review(props: Props) {
   const { bill, setChanged } = props;
-  console.log("bill", bill);
   return (
     // <div className="overscroll-contain hidden-scrollbar justify-center items-center flex overflow-x-hidden overflow-y-auto absolute inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
     <div className="justify-center items-center flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
@@ -175,6 +174,7 @@ function Review(props: Props) {
                       </div>
                     </li>
                   ))}
+
                   <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
                     <div className="flex items-center justify-between w-full">
                       <span>Số tiền sau khi áp mã giảm giá và xu</span>
@@ -190,7 +190,9 @@ function Review(props: Props) {
                   <li className="inline-flex items-center gap-x-2 py-3 px-4 text-sm font-semibold bg-gray-50 border text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-slate-800 dark:border-gray-700 dark:text-gray-200">
                     <div className="flex items-center justify-between w-full">
                       <span>Tổng cộng</span>
-                      <span>{FormatMoney(bill.price)}</span>
+                      <span>
+                        {FormatMoney(bill.totalPricePayment + bill.deliveryFee)}
+                      </span>
                     </div>
                   </li>
                 </ul>

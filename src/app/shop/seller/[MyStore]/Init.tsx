@@ -1,11 +1,12 @@
+"use client";
 import DialogReasonCancel from "@/components/DialogReasonCancel";
-import Modal from "@/components/Modal";
 import SortTable from "@/components/SortTable";
 import {
   APIGetListBill,
   APISellerCancelBill,
-  APIUpdateBill,
+  APISellerUpdateStatus,
 } from "@/services/Bill";
+import { APIUpdateStatusBill } from "@/services/Shipper";
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
@@ -26,9 +27,11 @@ interface ArrBill {
   infoProduct: string[];
   date: string;
   totalPrice: number;
+  isFindShipper: boolean;
 }
-
-function New() {
+// Includes New and Preparing
+function Init(props: { state: string }) {
+  const { state } = props;
   const arrTitle = [
     {
       title: "STT",
@@ -81,18 +84,32 @@ function New() {
   const [page, setPage] = React.useState<number>(1);
   const [total, setTotal] = React.useState<number>(0);
   const [isShow, setIsShow] = React.useState<boolean>(false);
+  const [isChangeStateBill, setIsChangeStateBill] =
+    React.useState<boolean>(false);
   const [typeMes, setTypeMes] = React.useState<string>("");
   const [currentId, setCurrentId] = React.useState<string>("");
+  const [currentCustomer, setCurrentCustomer] = React.useState<string>("");
   const UpGrade = async () => {
-    await APIUpdateBill(currentId, "CONFIRMED").then((res) => {
+    setIsShow(false);
+    if (state == "new") {
+      const res = await APISellerUpdateStatus(currentId, "CONFIRMED");
       if (res?.status == 200 || res?.status == 201) {
-        Toast("success", "Chuyển thành thành công", 2000);
-        setIsShow(false);
+        Toast("success", res.data.message, 2000);
         setChanged(!changed);
+        setIsChangeStateBill(false);
       } else {
-        Toast("error", "Chuyển thất bại", 2000);
+        Toast("error", res.data.message, 2000);
       }
-    });
+    } else {
+      const res = await APIUpdateStatusBill(currentId);
+      if (res?.status == 200 || res?.status == 201) {
+        Toast("success", res.data.message, 2000);
+        setChanged(!changed);
+        setIsChangeStateBill(false);
+      } else {
+        Toast("error", res?.data.message, 2000);
+      }
+    }
   };
   const Cancel = async () => {
     if (content.trim() == "") {
@@ -120,7 +137,7 @@ function New() {
   };
   const type: TypeObject = {
     upGrade: {
-      mes: "Bạn có muốn chuyển thành đơn ĐANG CHUẨN BỊ không?",
+      mes: "CHUYỂN ĐƠN",
       func: () => UpGrade(),
     },
     cancel: {
@@ -130,10 +147,11 @@ function New() {
   };
   React.useEffect(() => {
     const fetchData = async () => {
-      const data = await APIGetListBill(page || 1, 20, "NEW").then(
-        (res) => res
-      );
-      console.log(data);
+      const data = await APIGetListBill(
+        page || 1,
+        20,
+        state.toLocaleUpperCase()
+      ).then((res) => res);
       var arr = [] as ArrBill[];
       setTotal(data.metadata.total);
       data.metadata.data.map((lstProduct: any, index: number) => {
@@ -143,7 +161,8 @@ function New() {
         arrBill.phoneNumber = lstProduct.receiverInfo.phoneNumber;
         arrBill.address = lstProduct.receiverInfo.address;
         arrBill.date = ConvertDate(lstProduct.createdAt);
-        arrBill.totalPrice = lstProduct.totalPricePayment;
+        arrBill.totalPrice = lstProduct.totalPriceInit;
+        arrBill.isFindShipper = lstProduct.isFindShipper;
         arrBill.infoProduct = [] as string[];
         lstProduct.products.map((item: any, index: number) =>
           arrBill.infoProduct?.push(item.name + " x " + item.quantity)
@@ -192,33 +211,51 @@ function New() {
             <td className="px-6 py-4 text-center">
               {FormatMoney(item.totalPrice)}
             </td>
-
-            <td className="px-6 py-4 text-center">
-              <div
-                className="font-medium text-red-600 dark:text-red-500 hover:underline cursor-pointer mb-2"
-                onClick={(e) => {
-                  setIsShow(true);
-                  setTypeMes("cancel");
-                  setCurrentId(item.id);
-                }}
-              >
-                Huỷ đơn
-              </div>
-              <div
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
-                onClick={(e) => {
-                  setIsShow(true);
-                  setTypeMes("upGrade");
-                  setCurrentId(item.id);
-                }}
-              >
-                Chuyển đơn
-              </div>
-            </td>
+            {state == "confirmed" && item.isFindShipper ? (
+              <td className="px-6 py-4 text-center">
+                <div className="font-medium text-blue-600 dark:text-blue-500">
+                  Đang tìm shipper
+                </div>
+              </td>
+            ) : (
+              <td className="px-6 py-4 text-center">
+                <div
+                  className="font-medium text-red-600 dark:text-red-500 hover:underline cursor-pointer mb-2"
+                  onClick={(e) => {
+                    setIsShow(true);
+                    setTypeMes("cancel");
+                    setCurrentId(item.id);
+                    setIsChangeStateBill(false);
+                  }}
+                >
+                  Huỷ đơn
+                </div>
+                <div
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    setIsShow(true);
+                    setTypeMes("upGrade");
+                    setCurrentId(item.id);
+                    setIsChangeStateBill(true);
+                    setCurrentCustomer(
+                      item.fullName + " - " + FormatMoney(item.totalPrice)
+                    );
+                  }}
+                >
+                  Chuyển đơn
+                </div>
+              </td>
+            )}
           </tr>
         ))}
       </SortTable>
       <DialogReasonCancel
+        isChangeStateBill={isChangeStateBill}
+        contentChangeStateBill={`${
+          state == "new"
+            ? "Chuyển thành đơn đang chuẩn bị"
+            : "Chuyển đơn cho shipper"
+        }`}
         isShow={isShow}
         setIsShow={setIsShow}
         title={type[typeMes]?.mes}
@@ -226,21 +263,10 @@ function New() {
         content={content}
         setContent={(data) => setContent(data)}
         submit={() => type[typeMes]?.func()}
+        currentCustomer={currentCustomer}
       />
-      {/* <Modal
-        isShow={isShow}
-        setIsShow={(data: any) => setIsShow(data)}
-        confirm={() => {
-          type[typeMes]?.func();
-        }}
-        title="Thay đổi trạng thái"
-      >
-        <div className="font-bold text-lg text-center">
-          {type[typeMes]?.mes}
-        </div>
-      </Modal> */}
     </>
   );
 }
 
-export default New;
+export default Init;

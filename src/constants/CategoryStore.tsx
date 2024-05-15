@@ -11,8 +11,7 @@ import Cancel from "@/app/shop/seller/[MyStore]/Back";
 import Create from "@/app/shop/seller/[MyStore]/Create";
 import Home from "@/app/shop/seller/[MyStore]/Home";
 import Info from "@/app/shop/seller/[MyStore]/Info";
-import New from "@/app/shop/seller/[MyStore]/New";
-import Preparing from "@/app/shop/seller/[MyStore]/Preparing";
+import Init from "@/app/shop/seller/[MyStore]/Init";
 import Rebill from "@/app/shop/seller/[MyStore]/Rebill";
 import Shipped from "@/app/shop/seller/[MyStore]/Shipped";
 import Shipping from "@/app/shop/seller/[MyStore]/Shipping";
@@ -32,12 +31,12 @@ export const CATEGORYSTORE = [
   {
     title: "Đơn mới",
     value: "new",
-    element: New,
+    element: () => <Init state="new" />,
   },
   {
     title: "Đơn đang chuẩn bị",
-    value: "preparing",
-    element: Preparing,
+    value: "confirmed",
+    element: () => <Init state="confirmed" />,
   },
   {
     title: "Đơn đang giao",

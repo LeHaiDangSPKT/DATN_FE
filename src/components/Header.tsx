@@ -31,6 +31,7 @@ function Header() {
     "/admin",
     "/manager",
     "/error",
+    // "/shipper/fill-form",
   ];
   const pathname = usePathname();
   const [user, setUser] = React.useState<UserInterface>();
@@ -167,7 +168,7 @@ function Header() {
       <>
         {(role.includes("USER") || role.includes("SELLER") || !role) && (
           <header className="h-[60px]">
-            <div className="flex justify-between items-center w-full h-[60px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0 z-10">
+            <div className="flex z-10 justify-between items-center w-full h-[60px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
               <img
                 className="cursor-pointer w-[8%]"
                 src="/logo.png"
@@ -376,14 +377,31 @@ function Header() {
                 </div>
               ) : (
                 <div className="block sm:flex items-center text-center">
-                  <div onClick={(e) => (window.location.href = "/login")}>
-                    <span className="text-[14px] font-medium cursor-pointer">
+                  <div
+                    className="sm:my-0 -my-2"
+                    onClick={(e) =>
+                      (window.location.href = "/shipper/fill-form")
+                    }
+                  >
+                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
+                      Trở thành shipper
+                    </span>
+                  </div>
+                  <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
+                  <div
+                    className="sm:my-0 -my-2"
+                    onClick={(e) => (window.location.href = "/login")}
+                  >
+                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
                       Đăng Nhập
                     </span>
                   </div>
                   <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
-                  <div onClick={(e) => (window.location.href = "/sign-up")}>
-                    <span className="text-[14px] font-medium cursor-pointer">
+                  <div
+                    className="sm:my-0 -my-2"
+                    onClick={(e) => (window.location.href = "/sign-up")}
+                  >
+                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
                       Đăng Ký
                     </span>
                   </div>
