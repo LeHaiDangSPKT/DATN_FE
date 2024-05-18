@@ -427,7 +427,14 @@ function Page() {
                     fill="#E53935"
                   />
                 </svg>
-                <Typography variant="small" className="font-medium">
+                <Typography
+                  variant="small"
+                  className="font-medium"
+                  onClick={(e) => {
+                    localStorage.removeItem("user");
+                    window.location.href = "/login";
+                  }}
+                >
                   Đăng xuất
                 </Typography>
               </MenuItem>

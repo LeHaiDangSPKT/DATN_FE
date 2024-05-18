@@ -1,9 +1,5 @@
 "use client";
-import { APIGetAllNotification } from "@/services/Notification";
-import React, { useState, useEffect } from "react";
-import Notification from "./Notification";
-import LoadingPopup from "./LoadingPopup";
-import { APIGetAllCartPaging } from "@/services/Cart";
+import React from "react";
 
 function FramePopup({ children }: { children: any }) {
   return (
