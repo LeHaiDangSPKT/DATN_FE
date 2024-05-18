@@ -1,7 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { AuthContextProvider } from "../app/authContext";
-import { Roboto, Lora } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -34,19 +33,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${lora.className} bg-[#EFEFEF]`}>
-        <AuthContextProvider>
-          <ReduxProvider>
-            <Providers>
-              <ProtectRoute>
-                <Header />
-                {children}
-                <Footer />
-              </ProtectRoute>
-            </Providers>
-          </ReduxProvider>
-          <ToastContainer />
-          <FullPageLoader />
-        </AuthContextProvider>
+        <ReduxProvider>
+          <Providers>
+            <ProtectRoute>
+              <Header />
+              {children}
+              <Footer />
+            </ProtectRoute>
+          </Providers>
+        </ReduxProvider>
+        <ToastContainer />
+        <FullPageLoader />
       </body>
     </html>
   );

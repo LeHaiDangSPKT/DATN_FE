@@ -17,10 +17,17 @@ import { usePathname } from "next/navigation";
 import { MenuHeaderInfoUser } from "./Menu";
 import Chat from "./chat/page";
 import { IoClose } from "react-icons/io5";
-import { Badge, Menu, MenuHandler, MenuList } from "@material-tailwind/react";
+import {
+  Badge,
+  Button,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+} from "@material-tailwind/react";
 import { NotificationInterface } from "@/types/Notification";
 import Notification from "./Notification";
-
+import { useRouter } from "next/navigation";
 function Header() {
   const [test, setTest] = React.useState(false);
   const arrPathName = [
@@ -37,8 +44,14 @@ function Header() {
   const [role, setRole] = React.useState("");
   const [countNewNoti, setCountNewNoti] = React.useState(0);
   const [dataNoti, setDataNoti] = React.useState<NotificationInterface[]>([]);
-  const [pageNoti, setPageNoti] = React.useState(1);
+  const [dataNotiCheck, setDataNotiCheck] = React.useState<
+    NotificationInterface[]
+  >([]);
 
+  const [pageNoti, setPageNoti] = React.useState(1);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const handleMenuOpen = () => setIsMenuOpen(!isMenuOpen);
   const [isShowCart, setIsShowCart] = React.useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const dataCarts = useAppSelector((state) => state.cartPopupReducer.items);
@@ -87,7 +100,6 @@ function Header() {
           }
         };
         fetchAllCart();
-
         const socket = io("https://dtex-be.onrender.com/notification", {
           auth: {
             authorization: "Bearer " + user?.accessToken,
@@ -98,26 +110,30 @@ function Header() {
           page: 1,
           limit: 10,
         });
+        socket.emit("countNewNotifications");
 
         // Listen for getNotifications event
         socket.on("getNotifications", (data) => {
           const dataNotiFetch = data.data as NotificationInterface[];
+          setDataNotiCheck(dataNotiFetch);
           setDataNoti((prev) => [...prev, ...dataNotiFetch]);
-          setCountNewNoti((prev) => {
-            return (
-              prev + dataNotiFetch.filter((item: any) => !item.isRead).length
-            );
-          });
         });
         socket.on("sendNotification", (data) => {
           setCountNewNoti((prev) => prev + 1);
           setDataNoti((prev) => [data, ...prev]);
         });
-
+        socket.on("countNewNotifications", (data) => {
+          setCountNewNoti(data);
+        });
         socket.on("readNotification", (data) => {
+          console.log("read noti", data);
           setDataNoti((prev) =>
             prev.map((item) => {
-              return { ...item, isRead: true };
+              if (item.id == data.id) {
+                return { ...item, isRead: true };
+              } else {
+                return item;
+              }
             })
           );
           setCountNewNoti((prev) => prev - 1);
@@ -141,9 +157,18 @@ function Header() {
       window.location.href = "/shop/create";
     }
   };
+  const router = useRouter();
 
-  const ReadNoti = async (id: string, link: string) => {
-    socket.emit("readNotification");
+  const ReadNoti = async (id: string, link: string, isRead: boolean) => {
+    if (!isRead) {
+      socket.emit("readNotification", {
+        notificationIds: [id],
+      });
+    }
+    link && router.push(link);
+    setIsMenuOpen(false);
+
+    // console.log("read noti", id, link);
   };
   if (!arrPathName.some((path) => pathname.includes(path))) {
     return (
@@ -264,7 +289,7 @@ function Header() {
                     </div>
                     <div className="group py-6 flex flex-col justify-center items-center mr-10">
                       {countNewNoti > 0 && isShowCart ? (
-                        <Menu>
+                        <Menu open={isMenuOpen} handler={handleMenuOpen}>
                           <MenuHandler>
                             <Badge withBorder content={countNewNoti}>
                               <MenuHandler>
@@ -272,18 +297,20 @@ function Header() {
                               </MenuHandler>
                             </Badge>
                           </MenuHandler>
-                          <MenuList className="mt-6 max-h-72">
-                            <Notification
-                              dataNoti={dataNoti}
-                              fetchData={() => {
-                                socket.emit("getNotifications", {
-                                  page: pageNoti + 1,
-                                  limit: 2,
-                                });
-                                setPageNoti(pageNoti + 1);
-                              }}
-                            />
-                          </MenuList>
+                          <Notification
+                            readNoti={(id, link, isRead) =>
+                              ReadNoti(id, link, isRead)
+                            }
+                            dataNotiCheck={dataNotiCheck}
+                            dataNoti={dataNoti}
+                            fetchData={() => {
+                              socket.emit("getNotifications", {
+                                page: pageNoti + 1,
+                                limit: 10,
+                              });
+                              setPageNoti(pageNoti + 1);
+                            }}
+                          />
                         </Menu>
                       ) : (
                         <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />

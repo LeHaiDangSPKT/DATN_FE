@@ -7,7 +7,7 @@ function FullPageLoader(props: any) {
     <>
       <section
         id="loading-page"
-        className={`bg-blue-200 fixed place-items-center grid h-screen w-screen max-w-screen gap-4 top-0 left-0 z-50 hidden-scrollbar ${
+        className={`bg-blue-200 fixed place-items-center grid h-screen w-screen max-w-screen gap-4 top-0 left-0 z-[99999] hidden-scrollbar ${
           !state && "hidden"
         }`}
       >
