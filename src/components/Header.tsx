@@ -3,24 +3,23 @@ import Link from "next/link";
 import React from "react";
 import { FaBell, FaCartPlus, FaSistrix, FaStore } from "react-icons/fa";
 import FramePopup from "./FramePopup";
-import { APIGetAllNotification } from "@/services/Notification";
 import { UserInterface } from "@/types/User";
-import Notification from "./Notification";
 import { APIGetAllCart } from "@/services/Cart";
-import { Cart, Order } from "@/types/Cart";
+import { Cart } from "@/types/Cart";
 import { APIGetMyStore } from "@/services/Store";
 import { setCartPopUp } from "@/redux/features/cart/cartpopup-slice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import FormatMoney from "@/utils/FormatMoney";
-import { UserAuth } from "@/app/authContext";
 import io from "socket.io-client";
 import { BiSolidMessageRounded } from "react-icons/bi";
-import { redirect, usePathname } from "next/navigation";
-
+import { usePathname } from "next/navigation";
 import { MenuHeaderInfoUser } from "./Menu";
 import Chat from "./chat/page";
 import { IoClose } from "react-icons/io5";
+import { Badge, Menu, MenuHandler, MenuList } from "@material-tailwind/react";
+import { NotificationInterface } from "@/types/Notification";
+import Notification from "./Notification";
 
 function Header() {
   const [test, setTest] = React.useState(false);
@@ -37,7 +36,8 @@ function Header() {
   const [user, setUser] = React.useState<UserInterface>();
   const [role, setRole] = React.useState("");
   const [countNewNoti, setCountNewNoti] = React.useState(0);
-  const [dataNoti, setDataNoti] = React.useState([]);
+  const [dataNoti, setDataNoti] = React.useState<NotificationInterface[]>([]);
+  const [pageNoti, setPageNoti] = React.useState(1);
 
   const [isShowCart, setIsShowCart] = React.useState(true);
   const dispatch = useDispatch<AppDispatch>();
@@ -45,41 +45,7 @@ function Header() {
   const totalCart = useAppSelector((state) => state.cartPopupReducer.totalCart);
   const [search, setSearch] = React.useState("");
   const [socket, setSocket] = React.useState<any>();
-  // React.useEffect(() => {
-  //   const socket = io("https://dtex-be.onrender.com/conversation", {
-  //     auth: {
-  //       token:
-  //         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWUyMTQ5ZDA2OTAzNzkwOGVhYTA0NzciLCJpYXQiOjE3MDkzOTIyMTUsImV4cCI6MTcwOTQ3ODYxNX0.lBNjxxTcWIohP2svcb8uNhbqyjQY23gOIwBSsh_7LE0",
-  //     },
-  //   });
-  //   setSocket(socket);
-  // }, []);
 
-  // const Test = () => {
-  //   console.log(socket);
-  //   // socket.emit(
-  //   //   "sendMessage",
-  //   //   {
-  //   //     text: "Hi Dang 2",
-  //   //     receiverId: "65e2c72b24f295a6d1ae4fe3",
-  //   //   },
-  //   //   (data: any) => {
-  //   //     console.log("ABCD", data);
-  //   //   }
-  //   // );
-  //   socket.join("65e2da218231ac059e34b2d8");
-  //   const aa = io.of("/conversation");
-  //   aa.emit(
-  //     "getPreviewConversations",
-  //     {
-  //       page: 1,
-  //       limit: 10,
-  //     },
-  //     (data: any) => {
-  //       console.log("ABCD", data);
-  //     }
-  //   );
-  // };
   React.useEffect(() => {
     const user = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") ?? "")
@@ -90,7 +56,6 @@ function Header() {
       if (user?.role.includes("USER") || user?.role.includes("SELLER")) {
         const fetchAllCart = async () => {
           const res = await APIGetAllCart();
-          console.log(res);
           var total = 0;
           if (res?.status == 200 || res?.status == 201) {
             const carts: Cart = {
@@ -122,29 +87,42 @@ function Header() {
           }
         };
         fetchAllCart();
+
+        const socket = io("https://dtex-be.onrender.com/notification", {
+          auth: {
+            authorization: "Bearer " + user?.accessToken,
+          },
+        });
+        setSocket(socket);
+        socket.emit("getNotifications", {
+          page: 1,
+          limit: 10,
+        });
+
+        // Listen for getNotifications event
+        socket.on("getNotifications", (data) => {
+          const dataNotiFetch = data.data as NotificationInterface[];
+          setDataNoti((prev) => [...prev, ...dataNotiFetch]);
+          setCountNewNoti((prev) => {
+            return (
+              prev + dataNotiFetch.filter((item: any) => !item.isRead).length
+            );
+          });
+        });
+        socket.on("sendNotification", (data) => {
+          setCountNewNoti((prev) => prev + 1);
+          setDataNoti((prev) => [data, ...prev]);
+        });
+
+        socket.on("readNotification", (data) => {
+          setDataNoti((prev) =>
+            prev.map((item) => {
+              return { ...item, isRead: true };
+            })
+          );
+          setCountNewNoti((prev) => prev - 1);
+        });
       }
-    }
-  }, []);
-  React.useEffect(() => {
-    const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "").providerData[0]
-      : null;
-    const fetchAllNoti = async () => {
-      const res = await APIGetAllNotification({
-        page: 1,
-        limit: 10,
-      });
-      if (res?.status == 200 || res?.status == 201) {
-        setDataNoti(res?.metadata.data.notifications);
-        setCountNewNoti(
-          res.metadata.data.notifications.filter(
-            (item: any) => item.status == false
-          ).length
-        );
-      }
-    };
-    if (user && user.role != "Admin") {
-      // fetchAllNoti();
     }
   }, []);
   React.useEffect(() => {
@@ -162,6 +140,10 @@ function Header() {
     } else {
       window.location.href = "/shop/create";
     }
+  };
+
+  const ReadNoti = async (id: string, link: string) => {
+    socket.emit("readNotification");
   };
   if (!arrPathName.some((path) => pathname.includes(path))) {
     return (
@@ -213,7 +195,13 @@ function Header() {
                     <div className="border-r border-gray-400 mx-10 h-6"></div>
 
                     <div className="group py-6 flex flex-col justify-center items-center mr-10">
-                      <FaCartPlus className="w-[24px] h-[24px]  hover:fill-[#59595b] " />
+                      {dataCarts?.store?.length! > 0 && isShowCart ? (
+                        <Badge withBorder content={totalCart}>
+                          <FaCartPlus className="w-[24px] h-[24px]  hover:fill-[#59595b] " />
+                        </Badge>
+                      ) : (
+                        <FaCartPlus className="w-[24px] h-[24px]  hover:fill-[#59595b] " />
+                      )}
                       {dataCarts?.store?.length! > 0 && isShowCart && (
                         <>
                           <div className="group-hover:block group-hover:shadow-inner hidden">
@@ -271,45 +259,34 @@ function Header() {
                               </>
                             </FramePopup>
                           </div>
-
-                          <div
-                            className={`flex justify-center items-center w-[20px] h-[20px] ${"bg-[#6499FF]"} rounded-full absolute mt-[-24px] ml-[30px]`}
-                          >
-                            <span className="text-[12px] text-white">
-                              {totalCart}
-                            </span>
-                          </div>
                         </>
                       )}
                     </div>
-
                     <div className="group py-6 flex flex-col justify-center items-center mr-10">
-                      <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
-                      {dataNoti.length > 0 && isShowCart && (
-                        <>
-                          <div className="group-hover:block group-hover:shadow-inner hidden">
-                            <FramePopup>
-                              {dataNoti.map((item, index) => (
-                                <Notification
-                                  key={index}
-                                  data={item}
-                                  setCountNewNoti={() =>
-                                    setCountNewNoti((prev) => prev - 1)
-                                  }
-                                />
-                              ))}
-                            </FramePopup>
-                          </div>
-                          {countNewNoti > 0 && (
-                            <div
-                              className={`flex justify-center items-center w-[20px] h-[20px] ${"bg-[#6499FF]"} rounded-full absolute mt-[-24px] ml-[30px]`}
-                            >
-                              <span className="text-[12px] text-white">
-                                {countNewNoti}
-                              </span>
-                            </div>
-                          )}
-                        </>
+                      {countNewNoti > 0 && isShowCart ? (
+                        <Menu>
+                          <MenuHandler>
+                            <Badge withBorder content={countNewNoti}>
+                              <MenuHandler>
+                                <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+                              </MenuHandler>
+                            </Badge>
+                          </MenuHandler>
+                          <MenuList className="mt-6 max-h-72">
+                            <Notification
+                              dataNoti={dataNoti}
+                              fetchData={() => {
+                                socket.emit("getNotifications", {
+                                  page: pageNoti + 1,
+                                  limit: 2,
+                                });
+                                setPageNoti(pageNoti + 1);
+                              }}
+                            />
+                          </MenuList>
+                        </Menu>
+                      ) : (
+                        <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
                       )}
                     </div>
 
@@ -324,7 +301,7 @@ function Header() {
                       {dataNoti.length > 0 && isShowCart && (
                         <>
                           <div className="group-hover:block group-hover:shadow-inner hidden">
-                            <FramePopup>
+                            {/* <FramePopup>
                               {dataNoti.map((item, index) => (
                                 <Notification
                                   key={index}
@@ -334,7 +311,7 @@ function Header() {
                                   }
                                 />
                               ))}
-                            </FramePopup>
+                            </FramePopup> */}
                           </div>
                           {countNewNoti > 0 && (
                             <div
