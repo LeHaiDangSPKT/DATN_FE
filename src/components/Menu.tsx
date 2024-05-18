@@ -1,22 +1,16 @@
-import { UserAuth } from "@/app/authContext";
 import { UserInterface } from "@/types/User";
 import {
   Menu,
   MenuHandler,
-  Button,
   MenuList,
   MenuItem,
-  Checkbox,
 } from "@material-tailwind/react";
-
-import Link from "next/link";
 
 interface MenuHeaderInfoUserProps {
   user: UserInterface;
 }
 
 export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
-  const { logOut } = UserAuth();
   const { user } = props;
   return (
     <Menu>
@@ -48,9 +42,7 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
         </MenuItem>
         <hr className="my-3" />
         <MenuItem>
-          <span className="text-red-500" onClick={(e) => logOut()}>
-            Đăng xuất
-          </span>
+          <span className="text-red-500">Đăng xuất</span>
         </MenuItem>
       </MenuList>
     </Menu>

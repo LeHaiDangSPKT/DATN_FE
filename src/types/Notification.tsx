@@ -7,6 +7,6 @@ export interface NotificationInterface {
   subjectId: string;
   subjectName: string;
   type: string;
-  updatedAt: string;
+  createdAt: string;
   link: string;
 }

@@ -4,6 +4,7 @@ import {
   Avatar,
   Badge,
   MenuItem,
+  MenuList,
   Spinner,
   Typography,
 } from "@material-tailwind/react";
@@ -12,7 +13,9 @@ import React from "react";
 
 interface NotificationProps {
   dataNoti: NotificationInterface[];
+  dataNotiCheck: NotificationInterface[];
   fetchData: () => void;
+  readNoti: (id: string, link: string, isRead: boolean) => void;
 }
 function ClockIcon() {
   return (
@@ -32,8 +35,10 @@ function ClockIcon() {
     </svg>
   );
 }
+// Use forwardRef to pass the ref to the parent component
+
 function Notification(props: NotificationProps) {
-  const { dataNoti, fetchData } = props;
+  const { dataNoti, fetchData, dataNotiCheck, readNoti } = props;
   const { ref, inView } = useInView();
   React.useEffect(() => {
     if (inView) {
@@ -41,13 +46,15 @@ function Notification(props: NotificationProps) {
     }
   }, [inView]);
   return (
-    <div>
-      <div className="flex flex-col gap-2">
+    <MenuList className="mt-6 max-h-72">
+      <div className="outline-none">
         {dataNoti.map((item: NotificationInterface, index: number) => (
           <MenuItem
-            key={index}
-            className="flex items-center gap-4 py-2 pl-2 pr-8 bg-[#D2E0FB] hover:bg-[#c1d2f6]"
-            //   onClick={(e) => ReadNoti(item.id, item.link)}
+            key={item.id}
+            className={`flex items-center gap-4 py-2 pl-2 pr-8 ${
+              index != 0 && "my-2"
+            } ${!item.isRead && "bg-[#D2E0FB]"}`}
+            onClick={(e) => readNoti(item.id, item.link, item.isRead)}
           >
             <Avatar
               variant="circular"
@@ -67,7 +74,7 @@ function Notification(props: NotificationProps) {
 
               <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
                 <ClockIcon />
-                <span>{DifferenceTime(new Date(item.updatedAt))}</span>
+                <span>{DifferenceTime(new Date(item.createdAt))}</span>
               </Typography>
             </div>
             {!item.isRead && (
@@ -77,14 +84,16 @@ function Notification(props: NotificationProps) {
             )}
           </MenuItem>
         ))}
+        {dataNoti.length >= 10 && dataNotiCheck.length > 0 && (
+          <div
+            className="flex justify-center items-center p-4 col-span-1 sm:col-span-2 md:col-span-3"
+            ref={ref}
+          >
+            <Spinner />
+          </div>
+        )}
       </div>
-      <div
-        className="flex justify-center items-center p-4 col-span-1 sm:col-span-2 md:col-span-3"
-        ref={ref}
-      >
-        <Spinner />
-      </div>
-    </div>
+    </MenuList>
   );
 }
 

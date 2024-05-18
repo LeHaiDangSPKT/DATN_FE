@@ -7,7 +7,6 @@ import { FaFacebook, FaLongArrowAltLeft } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { LOGIN } from "@/constants/Login";
 import Link from "next/link";
-import { UserAuth } from "../authContext";
 import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
@@ -69,7 +68,6 @@ function Form(props: FormProps) {
       Login();
     },
   });
-  const { googleSignIn, facebookSignIn } = UserAuth();
   React.useEffect(() => {
     const listener = (event: { code: string; preventDefault: () => void }) => {
       if (event.code === "Enter" || event.code === "NumpadEnter") {
@@ -146,7 +144,7 @@ function Form(props: FormProps) {
           </div>
           <div
             className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
-            onClick={(e) => handleSignIn(facebookSignIn)}
+            // onClick={(e) => handleSignIn(facebookSignIn)}
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FaFacebook fontSize={30} className="r1-2 mr-2" />

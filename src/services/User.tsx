@@ -4,10 +4,14 @@ import axiosInstance from "@/utils/axiosInterceptor";
 export const APIGetUserById = async (id: string) => {
   const headers = GetHeaders();
   if (headers) {
+    document.getElementById("loading-page")?.classList.remove("hidden");
+
     const res = await axiosInstance.get(
       `${process.env.NEXT_PUBLIC_API_URL}/user/user/${id}`,
       { headers }
     );
+    document.getElementById("loading-page")?.classList.add("hidden");
+
     return res.data;
   }
 };
