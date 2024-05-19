@@ -82,22 +82,11 @@ export const APIDeleteProduct = async (id: string) => {
   }
 };
 
-// api/product/random
-export const APIGetListProductRandom = async (
-  limit?: any,
-  date?: any,
-  ids?: any
-) => {
+// /api/product/random?limit=10&date=2024-03-01T17:48:06.276Z
+export const APIGetListProductRandom = async (limit: number) => {
   document.getElementById("loading-page")?.classList.remove("hidden");
-  var limit = limit ? limit : 10;
-  var date = date ? date : "";
-  var ids = ids ? ids : [];
-  const res = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/product/random?limit=${limit}&date=${date}`,
-    ids
-    // {
-    //   ids: ids,
-    // }
+  const res = await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/product/random?limit=${limit}&page=1`
   );
   document.getElementById("loading-page")?.classList.add("hidden");
   return res.data;

@@ -63,6 +63,7 @@ function CardProduct(props: any) {
           store: {
             id: product.storeId,
             name: product.storeName,
+            avatar: product.storeAvatar,
             isChecked: false,
           },
         })
