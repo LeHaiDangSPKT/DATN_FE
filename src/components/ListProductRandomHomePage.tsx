@@ -7,27 +7,16 @@ interface Props {
 
 function ListProductRandomHomePage(props: Props) {
   const { showButton } = props;
-  const [lstProduct, setLstProduct] = React.useState<any[]>([]); // Update the type of lstProduct to any[]
-  const [showMore, setShowMore] = React.useState<boolean>(false); // Update the type of lstProduct to any[]
-  const [nextCursor, setNextCursor] = React.useState<string>(""); // Update the type of lstProduct to any[
-  const [listIdCurrent, setListIdCurrent] = React.useState<any[]>([]);
+  const [lstProduct, setLstProduct] = React.useState<any[]>([]);
+  const [limit, setLimit] = React.useState<number>(30);
   React.useEffect(() => {
     const fetchData = async () => {
-      await APIGetListProductRandom(30, nextCursor || "", listIdCurrent).then(
-        (res: any) => {
-          setNextCursor(res?.metadata.data.nextCursor);
-          var listId = res.metadata.data.products
-            .map((item: any) => item._id)
-            .concat(listIdCurrent);
-          setListIdCurrent(listId);
-          const lst = JSON.parse(JSON.stringify(lstProduct));
-          lst.push(...res.metadata.data.products);
-          setLstProduct(lst);
-        }
-      );
+      await APIGetListProductRandom(limit).then((res: any) => {
+        setLstProduct(res);
+      });
     };
     fetchData();
-  }, [showMore]);
+  }, [limit]);
   return (
     <div className="flex flex-col bg-white p-4 rounded-xl mb-2">
       <div className="flex justify-between font-bold">
@@ -43,7 +32,7 @@ function ListProductRandomHomePage(props: Props) {
           <button
             type="button"
             className=" mt-3 flex w-fit justify-center text-white items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  rounded-lg py-2 px-5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            onClick={() => setShowMore(!showMore)}
+            onClick={() => setLimit(limit + 10)}
           >
             <span>Hiển thị thêm</span>
           </button>

@@ -119,6 +119,7 @@ function ProductDetail() {
           store: {
             id: product.storeId,
             name: product.storeName,
+            avatar: product.storeAvatar,
             isChecked: false,
           },
         })

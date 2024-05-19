@@ -1,35 +1,36 @@
 "use client";
-import Link from "next/link";
 import React from "react";
-import { FaBell, FaCartPlus, FaSistrix, FaStore } from "react-icons/fa";
-import FramePopup from "./FramePopup";
+import { FaBell, FaSistrix, FaStore } from "react-icons/fa";
 import { UserInterface } from "@/types/User";
+import { ConservationInterface } from "@/types/Conversation";
 import { APIGetAllCart } from "@/services/Cart";
 import { Cart } from "@/types/Cart";
 import { APIGetMyStore } from "@/services/Store";
 import { setCartPopUp } from "@/redux/features/cart/cartpopup-slice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/redux/store";
-import FormatMoney from "@/utils/FormatMoney";
 import io from "socket.io-client";
-import { BiSolidMessageRounded } from "react-icons/bi";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MenuHeaderInfoUser } from "./Menu";
 import Chat from "./chat/page";
 import { IoClose } from "react-icons/io5";
 import {
+  Avatar,
   Badge,
-  Button,
+  Drawer,
+  IconButton,
   Menu,
   MenuHandler,
-  MenuItem,
-  MenuList,
+  Typography,
 } from "@material-tailwind/react";
 import { NotificationInterface } from "@/types/Notification";
 import Notification from "./Notification";
-import { useRouter } from "next/navigation";
+import CartPopup from "./CartPopup";
+import FormatMoney from "@/utils/FormatMoney";
+import Popup from "./chat/Popup";
+
 function Header() {
-  const [test, setTest] = React.useState(false);
+  const [openChat, setOpenChat] = React.useState(false);
   const arrPathName = [
     "/login",
     "/sign-up",
@@ -47,10 +48,12 @@ function Header() {
   const [dataNotiCheck, setDataNotiCheck] = React.useState<
     NotificationInterface[]
   >([]);
-
+  const [dataChatCheck, setDataChatCheck] = React.useState<
+    ConservationInterface[]
+  >([]);
   const [pageNoti, setPageNoti] = React.useState(1);
+  const [pageChat, setPageChat] = React.useState(1);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
   const handleMenuOpen = () => setIsMenuOpen(!isMenuOpen);
   const [isShowCart, setIsShowCart] = React.useState(true);
   const dispatch = useDispatch<AppDispatch>();
@@ -58,7 +61,24 @@ function Header() {
   const totalCart = useAppSelector((state) => state.cartPopupReducer.totalCart);
   const [search, setSearch] = React.useState("");
   const [socket, setSocket] = React.useState<any>();
+  const [socketChat, setSocketChat] = React.useState<any>();
+  const [open, setOpen] = React.useState(false);
+  const [countUnread, setCountUnread] = React.useState(0);
+  const openDrawer = () => setOpen(true);
+  const closeDrawer = () => setOpen(false);
+  const [dataDrawer, setDataDrawer] = React.useState({
+    storeId: "",
+    storeName: "",
+    storeAvatar: "",
+    data: [] as any,
+  });
+  const [listPreview, setListPreview] = React.useState<ConservationInterface[]>(
+    []
+  );
 
+  // const [li]
+
+  const router = useRouter();
   React.useEffect(() => {
     const user = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") ?? "")
@@ -105,31 +125,37 @@ function Header() {
             authorization: "Bearer " + user?.accessToken,
           },
         });
+        const socketChat = io("https://dtex-be.onrender.com/conversation", {
+          auth: {
+            authorization: "Bearer " + user?.accessToken,
+          },
+        });
         setSocket(socket);
+        setSocketChat(socketChat);
         socket.emit("getNotifications", {
           page: 1,
           limit: 10,
         });
-        socket.emit("countNewNotifications");
-
-        // Listen for getNotifications event
         socket.on("getNotifications", (data) => {
           const dataNotiFetch = data.data as NotificationInterface[];
           setDataNotiCheck(dataNotiFetch);
           setDataNoti((prev) => [...prev, ...dataNotiFetch]);
         });
+
+        socket.emit("countNewNotifications");
+        socket.on("countNewNotifications", (data) => {
+          setCountNewNoti(data);
+        });
+
         socket.on("sendNotification", (data) => {
           setCountNewNoti((prev) => prev + 1);
           setDataNoti((prev) => [data, ...prev]);
         });
-        socket.on("countNewNotifications", (data) => {
-          setCountNewNoti(data);
-        });
+
         socket.on("readNotification", (data) => {
-          console.log("read noti", data);
           setDataNoti((prev) =>
             prev.map((item) => {
-              if (item.id == data.id) {
+              if (item.id == data[0].id) {
                 return { ...item, isRead: true };
               } else {
                 return item;
@@ -137,6 +163,25 @@ function Header() {
             })
           );
           setCountNewNoti((prev) => prev - 1);
+        });
+
+        socketChat.emit("getPreviewConversations", {
+          page: 1,
+          limit: 10,
+        });
+        socketChat.on("getPreviewConversations", (data) => {
+          console.log(data);
+          setDataChatCheck(data);
+          setListPreview((prev) => [...prev, ...data]);
+        });
+
+        socketChat.emit("countUnread");
+        socketChat.on("countUnread", (data) => {
+          setCountUnread(data);
+        });
+
+        socketChat.on("getConversation", (data) => {
+          console.log(data);
         });
       }
     }
@@ -157,8 +202,6 @@ function Header() {
       window.location.href = "/shop/create";
     }
   };
-  const router = useRouter();
-
   const ReadNoti = async (id: string, link: string, isRead: boolean) => {
     if (!isRead) {
       socket.emit("readNotification", {
@@ -167,15 +210,13 @@ function Header() {
     }
     link && router.push(link);
     setIsMenuOpen(false);
-
-    // console.log("read noti", id, link);
   };
   if (!arrPathName.some((path) => pathname.includes(path))) {
     return (
       <>
         {(role.includes("USER") || role.includes("SELLER") || !role) && (
-          <header className="h-[60px]">
-            <div className="flex z-10 justify-between items-center w-full h-[60px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
+          <header className="h-[70px]">
+            <div className="flex z-10 justify-between items-center w-full h-[70px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
               <img
                 className="cursor-pointer w-[8%]"
                 src="/logo.png"
@@ -219,91 +260,46 @@ function Header() {
                     </div>
                     <div className="border-r border-gray-400 mx-10 h-6"></div>
 
-                    <div className="group py-6 flex flex-col justify-center items-center mr-10">
-                      {dataCarts?.store?.length! > 0 && isShowCart ? (
-                        <Badge withBorder content={totalCart}>
-                          <FaCartPlus className="w-[24px] h-[24px]  hover:fill-[#59595b] " />
-                        </Badge>
-                      ) : (
-                        <FaCartPlus className="w-[24px] h-[24px]  hover:fill-[#59595b] " />
-                      )}
-                      {dataCarts?.store?.length! > 0 && isShowCart && (
-                        <>
-                          <div className="group-hover:block group-hover:shadow-inner hidden">
-                            <FramePopup>
-                              <div
-                                className="text-center rounded-lg cursor-pointer hover:bg-[#c1d2f6] px-1  text-blue-500 font-bold py-2"
-                                onClick={() => (window.location.href = "/cart")}
-                              >
-                                Xem tất cả
-                              </div>
-                              <>
-                                {dataCarts?.store.map((store, index) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="flex flex-col items-start mb-2 border-b-2 border-[#90b0f4] max-w-full"
-                                    >
-                                      <div>
-                                        <Link
-                                          href={`/shop/${store.id}`}
-                                          className="flex items-center hover:bg-[#c1d2f6] p-2 rounded-lg"
-                                        >
-                                          <span className="text-[14px] font-bold p-2">
-                                            {store.name}
-                                          </span>
-                                        </Link>
-                                      </div>
-                                      {store.product.length > 0 &&
-                                        store.product.map((product, index) => (
-                                          <Link
-                                            key={index}
-                                            href={`/product/${product.id}`}
-                                          >
-                                            <div className="flex justify-between products-center w-[500px] cursor-pointer hover:bg-[#c1d2f6] p-2 rounded-lg">
-                                              <img
-                                                className="rounded-full w-[54px] h-[54px] mr-2"
-                                                src={product.avatar}
-                                                alt="Loading..."
-                                              />
-                                              <span className="text-[12px]">
-                                                x{product.quantity}
-                                              </span>
-                                              <p className="text-[12px] mr-2 text-ellipsis line-clamp-1 overflow-hidden max-w-[50%]">
-                                                {product.name}
-                                              </p>
-                                              <span className="text-[12px]">
-                                                {FormatMoney(product.newPrice)}
-                                              </span>
-                                            </div>
-                                          </Link>
-                                        ))}
-                                    </div>
-                                  );
-                                })}
-                              </>
-                            </FramePopup>
-                          </div>
-                        </>
+                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                      {isShowCart && (
+                        <CartPopup
+                          dataCarts={dataCarts}
+                          totalCart={totalCart}
+                          clickMenuItem={(store) => {
+                            setDataDrawer({
+                              storeId: store.id,
+                              storeName: store.name,
+                              storeAvatar: store.avatar,
+                              data: store.product,
+                            });
+                            openDrawer();
+                          }}
+                        />
                       )}
                     </div>
-                    <div className="group py-6 flex flex-col justify-center items-center mr-10">
-                      {countNewNoti > 0 && isShowCart ? (
+                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                      {isShowCart && (
                         <Menu open={isMenuOpen} handler={handleMenuOpen}>
-                          <MenuHandler>
-                            <Badge withBorder content={countNewNoti}>
-                              <MenuHandler>
+                          <Badge
+                            withBorder
+                            content={countNewNoti}
+                            invisible={countNewNoti == 0}
+                          >
+                            <MenuHandler>
+                              <IconButton variant="text">
                                 <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
-                              </MenuHandler>
-                            </Badge>
-                          </MenuHandler>
+                              </IconButton>
+                            </MenuHandler>
+                          </Badge>
                           <Notification
                             readNoti={(id, link, isRead) =>
                               ReadNoti(id, link, isRead)
                             }
+                            countNewNoti={countNewNoti}
                             dataNotiCheck={dataNotiCheck}
                             dataNoti={dataNoti}
                             fetchData={() => {
+                              console.log("getNotifications");
                               socket.emit("getNotifications", {
                                 page: pageNoti + 1,
                                 limit: 10,
@@ -312,47 +308,34 @@ function Header() {
                             }}
                           />
                         </Menu>
-                      ) : (
-                        <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+                      )}
+                    </div>
+                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                      {isShowCart && (
+                        <Popup
+                          countUnread={countUnread}
+                          data={listPreview}
+                          dataCheck={dataChatCheck}
+                          fetchData={() => {
+                            socketChat.emit("getPreviewConversations", {
+                              page: pageChat + 1,
+                              limit: 10,
+                            });
+                            setPageChat(pageChat + 1);
+                          }}
+                          OpenCoversation={(id) => {
+                            setOpenChat(true);
+                            socketChat.emit("getConversation", {
+                              page: 1,
+                              limit: 10,
+                              receiverId: id,
+                            });
+                          }}
+                        />
                       )}
                     </div>
 
-                    <div
-                      className="group py-6 flex flex-col justify-center items-center"
-                      onClick={(e) => {
-                        setTest(true);
-                        // Test();
-                      }}
-                    >
-                      <BiSolidMessageRounded className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
-                      {dataNoti.length > 0 && isShowCart && (
-                        <>
-                          <div className="group-hover:block group-hover:shadow-inner hidden">
-                            {/* <FramePopup>
-                              {dataNoti.map((item, index) => (
-                                <Notification
-                                  key={index}
-                                  data={item}
-                                  setCountNewNoti={() =>
-                                    setCountNewNoti((prev) => prev - 1)
-                                  }
-                                />
-                              ))}
-                            </FramePopup> */}
-                          </div>
-                          {countNewNoti > 0 && (
-                            <div
-                              className={`flex justify-center items-center w-[20px] h-[20px] ${"bg-[#6499FF]"} rounded-full absolute mt-[-24px] ml-[30px]`}
-                            >
-                              <span className="text-[12px] text-white">
-                                {countNewNoti}
-                              </span>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                    {test && (
+                    {openChat && (
                       <div className="fixed bottom-[-30px] right-0 w-1/3">
                         <div className="flex flex-col flex-auto p-6">
                           <div className="rounded-2xl bg-gray-100 p-4">
@@ -362,7 +345,7 @@ function Header() {
                                   Tên cửa hàng
                                 </span>
                               </div>
-                              <div onClick={(e) => setTest(false)}>
+                              <div onClick={(e) => setOpenChat(false)}>
                                 <IoClose className="w-6 h-6" />
                               </div>
                             </div>
@@ -412,6 +395,120 @@ function Header() {
                 </div>
               )}
             </div>
+            <Drawer open={open} onClose={closeDrawer} className="p-4">
+              <div className="mb-6 flex items-center justify-between">
+                <div
+                  className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
+                  onClick={() => {
+                    document
+                      .getElementById("loading-page")
+                      ?.classList.remove("hidden");
+                    closeDrawer();
+                    router.push(`/shop/${dataDrawer.storeId}`);
+                  }}
+                >
+                  <Avatar
+                    variant="circular"
+                    alt="tania andrew"
+                    src={dataDrawer.storeAvatar}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <Typography
+                      variant="small"
+                      color="gray"
+                      className="font-semibold"
+                    >
+                      {dataDrawer.storeName}
+                    </Typography>
+                  </div>
+                </div>
+                <IconButton
+                  variant="text"
+                  color="blue-gray"
+                  onClick={closeDrawer}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="h-5 w-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </IconButton>
+              </div>
+              <Typography
+                variant="small"
+                color="gray"
+                className="font-semibold"
+              >
+                Danh sách sản phẩm:
+              </Typography>
+              {dataDrawer.data.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
+                  onClick={() => {
+                    document
+                      .getElementById("loading-page")
+                      ?.classList.remove("hidden");
+                    closeDrawer();
+                    router.push(`/product/${item.id}`);
+                  }}
+                >
+                  <Avatar
+                    variant="circular"
+                    alt="tania andrew"
+                    src={item.avatar}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <Typography
+                      variant="small"
+                      color="gray"
+                      className="font-semibold"
+                    >
+                      {item.name}
+                    </Typography>
+                    <Typography
+                      variant="small"
+                      color="gray"
+                      className="font-semibold"
+                    >
+                      Giá tiền: {FormatMoney(item.newPrice)}
+                    </Typography>
+                  </div>
+                </div>
+              ))}
+
+              {/* Tổng tiền */}
+              <div className="flex items-center justify-between mt-6 ">
+                <Typography
+                  variant="small"
+                  color="gray"
+                  className="font-semibold text-red-400"
+                >
+                  Tổng tiền:
+                </Typography>
+                <Typography
+                  variant="small"
+                  color="gray"
+                  className="font-semibold text-red-400"
+                >
+                  {FormatMoney(
+                    dataDrawer.data.reduce(
+                      (total: number, item: any) => total + item.newPrice,
+                      0
+                    )
+                  )}
+                </Typography>
+              </div>
+            </Drawer>
           </header>
         )}
       </>

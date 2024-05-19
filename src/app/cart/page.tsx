@@ -1,21 +1,19 @@
 "use client";
 import Cart from "@/components/Cart";
-import DialogVoucher from "@/components/DialogVoucher";
 import FrameCart from "@/components/FrameCart";
 import { clickAll } from "@/redux/features/cart/cartpopup-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import React from "react";
-import { FaCartPlus } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
 function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
   const dataCarts = useAppSelector((state) => state.cartPopupReducer.items);
   const totalCart = useAppSelector((state) => state.cartPopupReducer.totalCart);
-  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
     localStorage.removeItem("listProductIdChecked");
   }, []);
   const totalChecked = useAppSelector(
