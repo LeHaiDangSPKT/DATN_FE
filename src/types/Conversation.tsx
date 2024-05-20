@@ -8,4 +8,20 @@ export interface ConservationInterface {
   receiverAvatar: string;
   receiverId: string;
   receiverName: string;
+  receiverRole: string;
+  senderRole: string;
+}
+
+export interface ConversationDetailInterface {
+  conversationId: string;
+  data: {
+    id: string;
+    text: string;
+    isRead: boolean;
+    isMine: boolean;
+    createdAt: string;
+  }[];
+  receiverAvatar: string;
+  receiverId: string;
+  receiverName: string;
 }

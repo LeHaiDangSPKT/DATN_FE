@@ -15,17 +15,19 @@ import { ConservationInterface } from "@/types/Conversation";
 import ClockIcon from "../ClockIcon";
 import DifferenceTime from "@/utils/DifferenceTime";
 import { useInView } from "react-intersection-observer";
-
+import { PiStorefrontFill } from "react-icons/pi";
 interface Props {
   countUnread: number;
   data: ConservationInterface[];
   fetchData: () => void;
   dataCheck: ConservationInterface[];
-  OpenCoversation: (id: string) => void;
+  OpenConversation: (id: string, idConversation: string) => void;
+  role: string;
 }
 
 function Popup(props: Props) {
-  const { countUnread, data, fetchData, dataCheck, OpenCoversation } = props;
+  const { countUnread, data, fetchData, dataCheck, OpenConversation, role } =
+    props;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const handleMenuOpen = () => setIsMenuOpen(!isMenuOpen);
   const { ref, inView } = useInView();
@@ -36,10 +38,14 @@ function Popup(props: Props) {
   }, [inView]);
   return (
     <Menu open={isMenuOpen} handler={handleMenuOpen}>
-      <Badge withBorder content={countUnread} invisible={countUnread == 0}>
+      <Badge withBorder content={countUnread} invisible={!countUnread}>
         <MenuHandler>
           <IconButton variant="text">
-            <BiSolidMessageRounded className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+            {role == "USER" ? (
+              <BiSolidMessageRounded className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+            ) : (
+              <PiStorefrontFill className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+            )}
           </IconButton>
         </MenuHandler>
         <MenuList className={`max-h-96`}>
@@ -50,7 +56,9 @@ function Popup(props: Props) {
                 className={`flex items-center justify-between gap-4 py-2 pl-2 pr-8 w-96 ${
                   index != 0 && "my-2"
                 } ${!item.isReadLastMessage && !item.isMine && "bg-[#D2E0FB]"}`}
-                onClick={(e) => OpenCoversation(item.receiverId)}
+                onClick={(e) =>
+                  OpenConversation(item.receiverId, item.conversationId)
+                }
               >
                 <div className="flex items-center">
                   <Avatar
@@ -102,7 +110,7 @@ function Popup(props: Props) {
                     color="gray"
                     className="font-semibold"
                   >
-                    Bạn chưa có thông báo
+                    Bạn chưa có tin nhắn
                   </Typography>
                 </div>
               </MenuItem>

@@ -125,7 +125,7 @@ function Payment() {
     general: 0,
     afterDisscount: 0,
   });
-  const store = useAppSelector((state) => state.cartPopupReducer.items);
+  const store = useAppSelector((state) => state?.cartPopupReducer.items);
   React.useEffect(() => {
     setTotalPrice({
       general: data?.reduce((total, item) => total + item.totalPrice, 0),

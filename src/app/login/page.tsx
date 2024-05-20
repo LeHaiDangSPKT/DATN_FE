@@ -6,14 +6,9 @@ import FrameInit from "@/components/FrameInit";
 import Form from "./Form";
 
 function Login() {
-  // const handleSignOut = async () => {
-  //   try {
-  //     await logOut();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
+  React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+  }, []);
   return (
     <div>
       <FrameInit />
