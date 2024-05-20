@@ -14,6 +14,9 @@ import * as Yup from "yup";
 import { Input } from "@material-tailwind/react";
 
 function SignUp() {
+  React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+  }, []);
   const signUpForm = useFormik({
     initialValues: {
       name: "",

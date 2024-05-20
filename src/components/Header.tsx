@@ -2,7 +2,10 @@
 import React from "react";
 import { FaBell, FaSistrix, FaStore } from "react-icons/fa";
 import { UserInterface } from "@/types/User";
-import { ConservationInterface } from "@/types/Conversation";
+import {
+  ConservationInterface,
+  ConversationDetailInterface,
+} from "@/types/Conversation";
 import { APIGetAllCart } from "@/services/Cart";
 import { Cart } from "@/types/Cart";
 import { APIGetMyStore } from "@/services/Store";
@@ -28,6 +31,7 @@ import Notification from "./Notification";
 import CartPopup from "./CartPopup";
 import FormatMoney from "@/utils/FormatMoney";
 import Popup from "./chat/Popup";
+import { ROLE_CHAT } from "@/constants/Conversation";
 
 function Header() {
   const [openChat, setOpenChat] = React.useState(false);
@@ -48,7 +52,16 @@ function Header() {
   const [dataNotiCheck, setDataNotiCheck] = React.useState<
     NotificationInterface[]
   >([]);
-  const [dataChatCheck, setDataChatCheck] = React.useState<
+  const [dataChatCheckUser, setDataChatCheckUser] = React.useState<
+    ConservationInterface[]
+  >([]);
+  const [dataChatCheckSeller, setDataChatCheckSeller] = React.useState<
+    ConservationInterface[]
+  >([]);
+  const [listPreviewUser, setListPreviewUser] = React.useState<
+    ConservationInterface[]
+  >([]);
+  const [listPreviewSeller, setListPreviewSeller] = React.useState<
     ConservationInterface[]
   >([]);
   const [pageNoti, setPageNoti] = React.useState(1);
@@ -63,20 +76,39 @@ function Header() {
   const [socket, setSocket] = React.useState<any>();
   const [socketChat, setSocketChat] = React.useState<any>();
   const [open, setOpen] = React.useState(false);
-  const [countUnread, setCountUnread] = React.useState(0);
-  const openDrawer = () => setOpen(true);
-  const closeDrawer = () => setOpen(false);
+  const [countUnreadUser, setCountUnreadUser] = React.useState(0);
+  const [countUnreadSeller, setCountUnreadSeller] = React.useState(0);
+  const [currentRole, setCurrentRole] = React.useState({
+    receiverRole: "",
+    senderRole: "",
+  });
+  const openDrawer = () => {
+    setOpen(true);
+    setTimeout(() => {
+      const header = document.querySelector("header")
+        ?.childNodes[1] as HTMLElement;
+      header?.classList.remove("absolute");
+      header?.classList.add("fixed");
+    }, 100);
+  };
+  const closeDrawer = () => {
+    setOpen(false);
+  };
   const [dataDrawer, setDataDrawer] = React.useState({
     storeId: "",
     storeName: "",
     storeAvatar: "",
     data: [] as any,
   });
-  const [listPreview, setListPreview] = React.useState<ConservationInterface[]>(
-    []
-  );
 
-  // const [li]
+  const [chatDetail, setChatDetail] =
+    React.useState<ConversationDetailInterface>({
+      conversationId: "",
+      data: [],
+      receiverAvatar: "",
+      receiverId: "",
+      receiverName: "",
+    });
 
   const router = useRouter();
   React.useEffect(() => {
@@ -86,7 +118,10 @@ function Header() {
     user && setUser(user?.providerData[0]);
     user && setRole(user?.role);
     if (user?.providerData[0]) {
-      if (user?.role.includes("USER") || user?.role.includes("SELLER")) {
+      if (
+        user?.role.includes(ROLE_CHAT.USER) ||
+        user?.role.includes(ROLE_CHAT.SELLER)
+      ) {
         const fetchAllCart = async () => {
           const res = await APIGetAllCart();
           var total = 0;
@@ -165,23 +200,89 @@ function Header() {
           setCountNewNoti((prev) => prev - 1);
         });
 
+        // Chat
+
         socketChat.emit("getPreviewConversations", {
           page: 1,
           limit: 10,
+          senderRole: ROLE_CHAT.USER,
+        });
+        socketChat.emit("getPreviewConversations", {
+          page: 1,
+          limit: 10,
+          senderRole: ROLE_CHAT.SELLER,
         });
         socketChat.on("getPreviewConversations", (data) => {
-          console.log(data);
-          setDataChatCheck(data);
-          setListPreview((prev) => [...prev, ...data]);
+          console.log("getPreviewConversations ON", data);
+          if (data.role == ROLE_CHAT.USER) {
+            setDataChatCheckUser(data.data);
+            setListPreviewUser((prev) => [...prev, ...data.data]);
+          } else {
+            setDataChatCheckSeller(data.data);
+            setListPreviewSeller((prev) => [...prev, ...data.data]);
+          }
         });
 
-        socketChat.emit("countUnread");
+        socketChat.emit("countUnread", {
+          senderRole: ROLE_CHAT.USER,
+        });
+        socketChat.emit("countUnread", {
+          senderRole: ROLE_CHAT.SELLER,
+        });
         socketChat.on("countUnread", (data) => {
-          setCountUnread(data);
+          if (data.role == ROLE_CHAT.USER) {
+            setCountUnreadUser(data.count);
+          } else {
+            setCountUnreadSeller(data.count);
+          }
         });
 
         socketChat.on("getConversation", (data) => {
-          console.log(data);
+          console.log("getConversation ON", data);
+          if (chatDetail.conversationId == data.conversationId) {
+            setChatDetail((prev) => {
+              return {
+                ...data,
+                data: [...data.data, ...prev.data],
+              };
+            });
+          } else {
+            setChatDetail(data);
+          }
+        });
+
+        socketChat.on("getPreviewConversationsOne", (data) => {
+          console.log("getPreviewConversationsOne ON", data);
+          if (data.role == ROLE_CHAT.USER) {
+            setListPreviewUser((prev) => {
+              return prev.map((item) => {
+                if (item.conversationId == data.data.conversationId) {
+                  return data.data;
+                } else {
+                  return item;
+                }
+              });
+            });
+          } else {
+            setListPreviewSeller((prev) => {
+              return prev.map((item) => {
+                if (item.conversationId == data.data.conversationId) {
+                  return data.data;
+                } else {
+                  return item;
+                }
+              });
+            });
+          }
+        });
+        socketChat.on("getConversationOne", (data) => {
+          console.log("getConversationOne ON", data);
+          setChatDetail((prev) => {
+            return {
+              ...prev,
+              data: [...prev.data, data],
+            };
+          });
         });
       }
     }
@@ -211,10 +312,22 @@ function Header() {
     link && router.push(link);
     setIsMenuOpen(false);
   };
+  const SendMessage = (text: string) => {
+    if (text.trim()) {
+      socketChat.emit("sendMessage", {
+        text: text.trim(),
+        receiverId: chatDetail.receiverId,
+        senderRole: currentRole.senderRole,
+        receiverRole: currentRole.receiverRole,
+      });
+    }
+  };
   if (!arrPathName.some((path) => pathname.includes(path))) {
     return (
       <>
-        {(role.includes("USER") || role.includes("SELLER") || !role) && (
+        {(role.includes(ROLE_CHAT.USER) ||
+          role.includes(ROLE_CHAT.SELLER) ||
+          !role) && (
           <header className="h-[70px]">
             <div className="flex z-10 justify-between items-center w-full h-[70px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
               <img
@@ -313,43 +426,93 @@ function Header() {
                     <div className="py-6 flex flex-col justify-center items-center mr-5">
                       {isShowCart && (
                         <Popup
-                          countUnread={countUnread}
-                          data={listPreview}
-                          dataCheck={dataChatCheck}
+                          role={ROLE_CHAT.USER}
+                          countUnread={countUnreadUser}
+                          data={listPreviewUser}
+                          dataCheck={dataChatCheckUser}
                           fetchData={() => {
                             socketChat.emit("getPreviewConversations", {
                               page: pageChat + 1,
                               limit: 10,
+                              senderRole: ROLE_CHAT.USER,
                             });
                             setPageChat(pageChat + 1);
                           }}
-                          OpenCoversation={(id) => {
+                          OpenConversation={(receiverId, idConversation) => {
                             setOpenChat(true);
-                            socketChat.emit("getConversation", {
-                              page: 1,
-                              limit: 10,
-                              receiverId: id,
+                            setCurrentRole({
+                              senderRole: ROLE_CHAT.USER,
+                              receiverRole: ROLE_CHAT.SELLER,
                             });
+                            if (chatDetail.conversationId != idConversation) {
+                              socketChat.emit("getConversation", {
+                                page: 1,
+                                limit: 10,
+                                receiverId: receiverId,
+                                senderRole: ROLE_CHAT.USER,
+                                receiverRole: ROLE_CHAT.SELLER,
+                              });
+                            }
                           }}
                         />
                       )}
                     </div>
-
+                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                      {isShowCart && (
+                        <Popup
+                          role={ROLE_CHAT.SELLER}
+                          countUnread={countUnreadSeller}
+                          data={listPreviewSeller}
+                          dataCheck={dataChatCheckSeller}
+                          fetchData={() => {
+                            socketChat.emit("getPreviewConversations", {
+                              page: pageChat + 1,
+                              limit: 10,
+                              senderRole: ROLE_CHAT.SELLER,
+                            });
+                            setPageChat(pageChat + 1);
+                          }}
+                          OpenConversation={(receiverId, idConversation) => {
+                            setOpenChat(true);
+                            setCurrentRole({
+                              senderRole: ROLE_CHAT.SELLER,
+                              receiverRole: ROLE_CHAT.USER,
+                            });
+                            if (chatDetail.conversationId != idConversation) {
+                              socketChat.emit("getConversation", {
+                                page: 1,
+                                limit: 10,
+                                receiverId: receiverId,
+                                senderRole: ROLE_CHAT.SELLER,
+                                receiverRole: ROLE_CHAT.USER,
+                              });
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
                     {openChat && (
-                      <div className="fixed bottom-[-30px] right-0 w-1/3">
+                      <div className="fixed bottom-[-30px] right-0 w-1/3 cursor-default">
                         <div className="flex flex-col flex-auto p-6">
                           <div className="rounded-2xl bg-gray-100 p-4">
                             <div className="flex justify-between items-center">
                               <div>
                                 <span className="text-lg font-bold">
-                                  Tên cửa hàng
+                                  {chatDetail.receiverName}
                                 </span>
                               </div>
-                              <div onClick={(e) => setOpenChat(false)}>
+                              <div
+                                className="cursor-pointer"
+                                onClick={(e) => setOpenChat(false)}
+                              >
                                 <IoClose className="w-6 h-6" />
                               </div>
                             </div>
-                            <Chat />
+                            <Chat
+                              data={chatDetail}
+                              userCurrent={user}
+                              SendMessage={(message) => SendMessage(message)}
+                            />
                           </div>
                         </div>
                       </div>
@@ -366,9 +529,13 @@ function Header() {
                 <div className="block sm:flex items-center text-center">
                   <div
                     className="sm:my-0 -my-2"
-                    onClick={(e) =>
-                      (window.location.href = "/shipper/fill-form")
-                    }
+                    onClick={(e) => {
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+
+                      router.push("/shipper/fill-form");
+                    }}
                   >
                     <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
                       Trở thành shipper
@@ -377,7 +544,13 @@ function Header() {
                   <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
                   <div
                     className="sm:my-0 -my-2"
-                    onClick={(e) => (window.location.href = "/login")}
+                    onClick={(e) => {
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+
+                      router.push("/login");
+                    }}
                   >
                     <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
                       Đăng Nhập
@@ -386,7 +559,13 @@ function Header() {
                   <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
                   <div
                     className="sm:my-0 -my-2"
-                    onClick={(e) => (window.location.href = "/sign-up")}
+                    onClick={(e) => {
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+
+                      router.push("/sign-up");
+                    }}
                   >
                     <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
                       Đăng Ký

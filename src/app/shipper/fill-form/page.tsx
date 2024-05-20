@@ -16,6 +16,9 @@ import Toast from "@/utils/Toast";
 import { APICreateShippers } from "@/services/Shipper";
 
 function FillForm() {
+  React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+  }, []);
   const [file, setFile] = React.useState<File | null>(null);
   const fieldsSubmit = [
     {
