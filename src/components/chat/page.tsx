@@ -2,20 +2,44 @@ import React from "react";
 import { ConversationDetailInterface } from "@/types/Conversation";
 import Message from "./Message";
 import { UserInterface } from "@/types/User";
-
+import Image from "next/image";
+import typing from "../../../public/typing.gif";
 interface ChatProps {
   data: ConversationDetailInterface;
   userCurrent: UserInterface;
   SendMessage: (text: string) => void;
+  storeAvatar: string;
+  roleChat: {
+    receiverRole: string;
+    senderRole: string;
+  };
+  socketChat: any;
 }
 
 function Chat(props: ChatProps) {
-  const { data, userCurrent, SendMessage } = props;
+  const { data, userCurrent, SendMessage, storeAvatar, roleChat, socketChat } =
+    props;
   const [messages, setMessages] = React.useState("");
+  const [isTyping, setIsTyping] = React.useState({
+    isTyping: false,
+    name: "",
+  });
   React.useEffect(() => {
     const element = document.querySelector(".overflow-y-scroll");
     element?.scrollTo(0, element.scrollHeight);
   }, [data]);
+  React.useEffect(() => {
+    const handleIsTyping = (res: any) => {
+      setIsTyping({ isTyping: true, name: res.name });
+      setTimeout(() => {
+        setIsTyping({ isTyping: false, name: res.name });
+      }, 2000);
+    };
+    socketChat.on("isTyping", handleIsTyping);
+    return () => {
+      socketChat.off("isTyping", handleIsTyping);
+    };
+  }, []);
   return (
     <div>
       <div className="flex flex-col overflow-x-auto mb-4">
@@ -24,7 +48,13 @@ function Chat(props: ChatProps) {
             {data.data.map((item, index) => (
               <Message
                 key={index}
-                avatar={item.isMine ? userCurrent.avatar : data.receiverAvatar}
+                avatar={
+                  item.isMine
+                    ? roleChat.senderRole == "SELLER"
+                      ? storeAvatar
+                      : userCurrent.avatar
+                    : data.receiverAvatar
+                }
                 text={item.text}
                 isMine={item.isMine}
               />
@@ -32,6 +62,15 @@ function Chat(props: ChatProps) {
           </div>
         </div>
       </div>
+      {isTyping.isTyping && (
+        <div className="flex items-center">
+          <span className="text-gray-500 text-sm italic">
+            {isTyping.name} đang soạn tin nhắn
+          </span>
+          <Image src={typing} alt="" width={40} height={40} />
+        </div>
+      )}
+
       <div className="flex items-center h-16 rounded-xl bg-white w-full">
         <input
           type="text"
@@ -44,8 +83,19 @@ function Chat(props: ChatProps) {
               setMessages("");
             }
           }}
+          onFocus={() =>
+            socketChat.emit("focusChat", {
+              senderRole: roleChat.senderRole,
+              receiverId: data.receiverId,
+              receiverRole: roleChat.receiverRole,
+            })
+          }
           onChange={(e) => {
             setMessages(e.currentTarget.value);
+            socketChat.emit("isTyping", {
+              senderRole: roleChat.senderRole,
+              isTyping: true,
+            });
           }}
         />
         <div className="ml-4 mr-2">

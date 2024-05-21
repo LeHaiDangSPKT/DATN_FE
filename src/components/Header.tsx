@@ -46,6 +46,7 @@ function Header() {
   ];
   const pathname = usePathname();
   const [user, setUser] = React.useState<UserInterface>();
+  const [storeAvatar, setStoreAvater] = React.useState("");
   const [role, setRole] = React.useState("");
   const [countNewNoti, setCountNewNoti] = React.useState(0);
   const [dataNoti, setDataNoti] = React.useState<NotificationInterface[]>([]);
@@ -231,6 +232,7 @@ function Header() {
           senderRole: ROLE_CHAT.SELLER,
         });
         socketChat.on("countUnread", (data) => {
+          console.log("countUnread ON", data);
           if (data.role == ROLE_CHAT.USER) {
             setCountUnreadUser(data.count);
           } else {
@@ -285,10 +287,16 @@ function Header() {
             };
           });
         });
+      }
 
-        socketChat.on("sendMessage", (data) => {
-          console.log("sendMessage ON", data);
-        });
+      if (user?.role.includes(ROLE_CHAT.SELLER)) {
+        const fetchInforStore = async () => {
+          const store = await APIGetMyStore();
+          if (store?.status == 200 || store?.status == 201) {
+            setStoreAvater(store.data.metadata.data.avatar);
+          }
+        };
+        fetchInforStore();
       }
     }
   }, []);
@@ -321,18 +329,27 @@ function Header() {
     setIsMenuOpen(false);
   };
   const SendMessage = (text: string) => {
-    console.log("SendMessage", {
-      text: text.trim(),
-      receiverId: chatDetail.receiverId,
-      senderRole: roleChat.senderRole,
-      receiverRole: roleChat.receiverRole,
-    });
     if (text.trim()) {
       socketChat.emit("sendMessage", {
         text: text.trim(),
         receiverId: chatDetail.receiverId,
         senderRole: roleChat.senderRole,
         receiverRole: roleChat.receiverRole,
+      });
+      setChatDetail((prev) => {
+        return {
+          ...prev,
+          data: [
+            ...prev.data,
+            {
+              id: "",
+              text: text.trim(),
+              isRead: true,
+              isMine: true,
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        };
       });
     }
   };
@@ -469,6 +486,13 @@ function Header() {
                               senderRole: senderRole,
                             });
                             if (chatDetail.conversationId != idConversation) {
+                              console.log(
+                                "PRE getConversation",
+                                receiverId,
+                                idConversation,
+                                senderRole,
+                                receiverRole
+                              );
                               socketChat.emit("getConversation", {
                                 page: 1,
                                 limit: 10,
@@ -538,6 +562,9 @@ function Header() {
                               </div>
                             </div>
                             <Chat
+                              socketChat={socketChat}
+                              roleChat={roleChat}
+                              storeAvatar={storeAvatar}
                               data={chatDetail}
                               userCurrent={user}
                               SendMessage={(message) => SendMessage(message)}

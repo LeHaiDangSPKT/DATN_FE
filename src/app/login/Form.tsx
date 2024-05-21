@@ -10,14 +10,12 @@ import Link from "next/link";
 import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 interface FormProps {
   fastLogin?: boolean;
 }
 function Form(props: FormProps) {
   const { fastLogin } = props;
-  const router = useRouter();
   const Login = async () => {
     const res = await APILogin(
       loginForm.values.email,
@@ -33,16 +31,15 @@ function Form(props: FormProps) {
     ] = `Bearer ${res.data.metadata.data.accessToken}`;
     Toast("success", "Đăng nhập thành công", 2000);
     setTimeout(() => {
-      document.getElementById("loading-page")?.classList.remove("hidden");
       if (res?.data.metadata.data.role.includes("ADMIN")) {
-        router.push("/admin/dashboard");
+        window.location.href = "/admin/dashboard";
       } else if (res?.data.metadata.data.role.includes("MANAGER")) {
-        router.push("/manager/product");
+        window.location.href = "/manager/product";
       } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
-        router.push("/shipper");
+        window.location.href = "/shipper";
       } else {
         if (window.location.pathname == "/login") {
-          router.push("/");
+          window.location.href = "/";
         } else {
           window.location.reload();
         }
@@ -83,14 +80,6 @@ function Form(props: FormProps) {
       document.removeEventListener("keydown", listener);
     };
   }, [loginForm]);
-
-  const handleSignIn = async (func: () => void) => {
-    try {
-      func();
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const HandleGoogle = async () => {
     const res = await APIGoogleLogin();
