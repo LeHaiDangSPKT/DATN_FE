@@ -11,7 +11,7 @@ function Message(props: Props) {
   return (
     <div
       className={`p-3 rounded-lg ${
-        isMine ? "col-start-6 col-end-13" : "col-start-1 col-end-10"
+        isMine ? "col-start-4 col-end-13" : "col-start-1 col-end-10"
       }`}
     >
       <div
