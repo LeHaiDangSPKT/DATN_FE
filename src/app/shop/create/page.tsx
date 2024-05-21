@@ -7,10 +7,12 @@ import { APIGetUserById } from "@/services/User";
 import CheckValidInput from "@/utils/CheckValidInput";
 import Toast from "@/utils/Toast";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 const ReactQuill =
   typeof window === "object" ? require("react-quill") : () => false;
 function CreateStore() {
+  const router = useRouter();
   const [acceptPolicy, setAcceptPolicy] = React.useState(false);
   const [store, setStore] = React.useState<any>({});
   React.useEffect(() => {
@@ -41,8 +43,8 @@ function CreateStore() {
       if (store?.status == 200 || store?.status == 201) {
         Toast("error", "Bạn đã có cửa hàng", 2000);
         setTimeout(() => {
-          window.location.href =
-            "/shop/seller/" + store?.data.metadata.data._id;
+          document.getElementById("loading-page")?.classList.remove("hidden");
+          router.push("/shop/seller/" + store?.data.metadata.data._id);
         }, 2000);
       }
     };
@@ -143,7 +145,8 @@ function CreateStore() {
         } else {
           Toast("error", storeRes.message, 2000);
         }
-        window.location.href = "/shop/seller/" + storeRes.metadata?.data._id;
+        document.getElementById("loading-page")?.classList.remove("hidden");
+        router.push("/shop/seller/" + storeRes.metadata?.data._id);
       } else {
         Toast("error", "Bạn chưa chọn ảnh", 2000);
       }

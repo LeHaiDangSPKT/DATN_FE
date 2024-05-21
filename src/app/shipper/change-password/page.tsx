@@ -3,8 +3,10 @@ import React from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import Toast from "@/utils/Toast";
 import { APIChangePassword } from "@/services/Shipper";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const router = useRouter();
   const [oldPassword, setOldPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -44,8 +46,9 @@ function Page() {
     if (res?.status === 200 || res?.status === 201) {
       Toast("success", res?.data.message, 3000);
       setTimeout(() => {
+        document.getElementById("loading-page")?.classList.remove("hidden");
         localStorage.removeItem("user");
-        window.location.href = "/login";
+        router.push("/login");
       }, 2000);
     } else {
       Toast("error", res?.data.message, 3000);
@@ -117,7 +120,12 @@ function Page() {
           <Button
             className="mt-2"
             fullWidth
-            onClick={(e) => (window.location.href = "/shipper")}
+            onClick={(e) => {
+              document
+                .getElementById("loading-page")
+                ?.classList.remove("hidden");
+              router.push("/shipper");
+            }}
           >
             Quay lại trang chủ
           </Button>

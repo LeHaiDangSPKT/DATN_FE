@@ -21,7 +21,12 @@ interface Props {
   data: ConservationInterface[];
   fetchData: () => void;
   dataCheck: ConservationInterface[];
-  OpenConversation: (id: string, idConversation: string) => void;
+  OpenConversation: (
+    id: string,
+    idConversation: string,
+    senderRole: string,
+    receiverRole: string
+  ) => void;
   role: string;
 }
 
@@ -52,12 +57,17 @@ function Popup(props: Props) {
           <div className="outline-none">
             {data.map((item: ConservationInterface, index: number) => (
               <MenuItem
-                key={item.receiverId}
+                key={index}
                 className={`flex items-center justify-between gap-4 py-2 pl-2 pr-8 w-96 ${
                   index != 0 && "my-2"
                 } ${!item.isReadLastMessage && !item.isMine && "bg-[#D2E0FB]"}`}
                 onClick={(e) =>
-                  OpenConversation(item.receiverId, item.conversationId)
+                  OpenConversation(
+                    item.receiverId,
+                    item.conversationId,
+                    item.senderRole,
+                    item.receiverRole
+                  )
                 }
               >
                 <div className="flex items-center">

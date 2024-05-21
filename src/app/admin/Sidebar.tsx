@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { FaInbox, FaStore } from "react-icons/fa";
-
+import { useRouter } from "next/navigation";
 import { PowerIcon } from "@heroicons/react/24/solid";
 interface ChildrenProps {
   code: string;
@@ -31,6 +31,8 @@ function Sidebar(props: ChildrenProps) {
   const handleOpen = (value: number) => {
     setOpen(open === value ? 0 : value);
   };
+  const router = useRouter();
+
   React.useEffect(() => {
     const user = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user") as string)
@@ -46,6 +48,7 @@ function Sidebar(props: ChildrenProps) {
       setOpen(3);
     }
   }, [code]);
+
   return (
     <Card className="min-h-[calc(100vh-2rem)] h-[calc(100vh-2rem)] w-[19%] p-4 shadow-xl shadow-blue-gray-900/5 fixed overflow-y-auto hidden-scrollbar my-2 ">
       <div className="mb-2 p-4">
@@ -275,7 +278,8 @@ function Sidebar(props: ChildrenProps) {
           className="text-red-500 hover:text-red-500"
           onClick={(e) => {
             localStorage.removeItem("user");
-            window.location.href = "/login";
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/login");
           }}
         >
           <ListItemPrefix>

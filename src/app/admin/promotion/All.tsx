@@ -21,7 +21,6 @@ import {
   Select,
   Option,
   Typography,
-  Switch,
   Dialog,
   DialogHeader,
   DialogBody,

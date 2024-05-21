@@ -3,11 +3,9 @@ import Profile from "@/components/Profile";
 import SortTable from "@/components/SortTable";
 import { APIGetListUser } from "@/services/User";
 import { exportExcel } from "@/utils/ExportExcel";
-import Toast from "@/utils/Toast";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import React from "react";
 import Image from "next/image";
-import { APIExport } from "@/services/ExportExcel";
 
 interface ListUser {
   total: number;

@@ -8,7 +8,9 @@ import { useDispatch } from "react-redux";
 function MyStore() {
   const dispatch = useDispatch<AppDispatch>();
   const dataCarts = useAppSelector((state) => state.categoryStoreReducer.items);
-
+  React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+  }, []);
   return (
     <div className="min-h-screen px-[150px] my-4 grid grid-cols-10 gap-4">
       <div className="flex flex-col bg-white rounded-md p-2 mb-5 col-span-2">

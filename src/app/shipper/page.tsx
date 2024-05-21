@@ -41,6 +41,7 @@ import ConvertDate from "@/utils/ConvertDate";
 import Toast from "@/utils/Toast";
 import { APIUploadImage } from "@/services/UploadImage";
 import TableBillShipper from "./table";
+import { useRouter } from "next/navigation";
 
 type Shipper = {
   id: string;
@@ -75,6 +76,7 @@ type BillForShipperProps = {
 };
 
 function Page() {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [totalPage, setTotalPage] = React.useState(0);
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -317,7 +319,12 @@ function Page() {
             </List>
           </div>
         </Drawer>
-        <div onClick={(e) => (window.location.href = "/shipper")}>
+        <div
+          onClick={(e) => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/shipper");
+          }}
+        >
           <Image src="/logo.png" alt="logo" width={100} height={100} />
         </div>
         <div>
@@ -389,9 +396,13 @@ function Page() {
 
               <MenuItem
                 className="flex items-center gap-2"
-                onClick={(e) =>
-                  (window.location.href = "/shipper/change-password")
-                }
+                onClick={(e) => {
+                  document
+                    .getElementById("loading-page")
+                    ?.classList.remove("hidden");
+
+                  router.push("/shipper/change-password");
+                }}
               >
                 <svg
                   width="16"
@@ -432,7 +443,10 @@ function Page() {
                   className="font-medium"
                   onClick={(e) => {
                     localStorage.removeItem("user");
-                    window.location.href = "/login";
+                    document
+                      .getElementById("loading-page")
+                      ?.classList.remove("hidden");
+                    router.push("/login");
                   }}
                 >
                   Đăng xuất

@@ -8,7 +8,7 @@ import { UserInterface } from "@/types/User";
 import ConvertToShortFormat from "@/utils/ConvertToShortFormat";
 import Toast from "@/utils/Toast";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { FaHeart, FaShareAlt, FaShopify, FaShoppingCart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -30,6 +30,7 @@ import { APIReportUser } from "@/services/Report";
 import Promotion from "@/components/Promotion";
 
 function ProductDetail() {
+  const router = useRouter();
   const [product, setProduct] = React.useState({} as any);
   const [currentImage, setCurrentImage] = React.useState(0);
   const [user, setUser] = React.useState<UserInterface>();
@@ -125,15 +126,14 @@ function ProductDetail() {
         })
       );
       await APIAddProductInCart(product._id);
-      if (buyNow) {
-        window.location.href = "/cart";
-      }
     } else {
-      if (buyNow) {
-        window.location.href = "/cart";
-      } else {
+      if (!buyNow) {
         Toast("success", "Sản phẩm đã có trong giỏ hàng", 2000);
       }
+    }
+    if (buyNow) {
+      document.getElementById("loading-page")?.classList.remove("hidden");
+      router.push("/cart");
     }
   };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Line, Pie } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart,
   CategoryScale,
@@ -12,15 +12,12 @@ import {
 } from "chart.js";
 import Image from "next/image";
 import {
-  APIGetCharityByYear,
   APIGetCountBillAdmin,
-  APIGetCountBillByStatus,
-  APIGetRevenueByYear,
   APIGetRevenueByYearAdmin,
   APIGetUserMostBill,
 } from "@/services/Bill";
 import FormatMoney from "@/utils/FormatMoney";
-import { FaBoxOpen, FaKaaba, FaStore, FaUser } from "react-icons/fa";
+import { FaBoxOpen, FaStore, FaUser } from "react-icons/fa";
 import { MdAttachMoney } from "react-icons/md";
 import FormatDecimal from "@/utils/FormatDecimal";
 import SortTable from "@/components/SortTable";

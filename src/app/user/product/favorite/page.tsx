@@ -1,11 +1,8 @@
 "use client";
 import SortTable from "@/components/SortTable";
-import {
-  APIGetListProductFavorite,
-  APIGetListStoreFollow,
-} from "@/services/User";
+import { APIGetListProductFavorite } from "@/services/User";
 import FormatMoney from "@/utils/FormatMoney";
-import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
+import { useRouter } from "next/navigation";
 import React from "react";
 interface Product {
   _id: string;
@@ -34,6 +31,7 @@ interface ListProduct {
   data: Product[];
 }
 function ProductFavorite() {
+  const router = useRouter();
   const [page, setPage] = React.useState<number>(1);
   const [search, setSearch] = React.useState<string>("");
   const [listProduct, setListProduct] = React.useState<ListProduct>(
@@ -145,7 +143,12 @@ function ProductFavorite() {
             </td>
             <td
               className="px-6 py-4 text-center cursor-pointer"
-              onClick={(e) => (window.location.href = `/product/${item._id}`)}
+              onClick={(e) => {
+                document
+                  .getElementById("loading-page")
+                  ?.classList.remove("hidden");
+                router.push(`/product/${item._id}`);
+              }}
             >
               {item.name}
             </td>

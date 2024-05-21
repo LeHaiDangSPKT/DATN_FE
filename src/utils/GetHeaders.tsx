@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { redirect } from "next/navigation";
 export default function GetHeaders() {
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") ?? "")
@@ -14,7 +14,7 @@ export default function GetHeaders() {
   if (exp - now < 0) {
     document.getElementById("loading-page")?.classList.remove("hidden");
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    redirect("/login");
     return null;
   } else if (exp - now < 86400) {
     //1 ngày
@@ -35,7 +35,8 @@ export default function GetHeaders() {
         localStorage.setItem("user", JSON.stringify(user));
       } else {
         localStorage.removeItem("user");
-        window.location.href = "/login";
+        document.getElementById("loading-page")?.classList.remove("hidden");
+        redirect("/login");
       }
     };
     RefreshToken();

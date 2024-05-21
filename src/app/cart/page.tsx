@@ -5,6 +5,7 @@ import { clickAll } from "@/redux/features/cart/cartpopup-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 
@@ -16,6 +17,7 @@ function CartPage() {
     document.getElementById("loading-page")?.classList.add("hidden");
     localStorage.removeItem("listProductIdChecked");
   }, []);
+  const router = useRouter();
   const totalChecked = useAppSelector(
     (state) => state.cartPopupReducer.totalChecked
   );
@@ -80,7 +82,11 @@ function CartPage() {
                   if (totalChecked === 0) {
                     Toast("warning", "Vui lòng chọn sản phẩm", 2000);
                   } else {
-                    window.location.href = "/payment";
+                    document
+                      .getElementById("loading-page")
+                      ?.classList.remove("hidden");
+
+                    router.push("/payment");
                   }
                 }}
               >

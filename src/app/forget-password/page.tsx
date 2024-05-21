@@ -2,25 +2,19 @@
 import React from "react";
 import FrameFormInit from "@/components/FrameFormInit";
 import { Input } from "@material-tailwind/react";
-import CheckValidInput from "@/utils/CheckValidInput";
 import FrameInit from "@/components/FrameInit";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import * as Yup from "yup";
-import { LOGIN } from "@/constants/Login";
 import Link from "next/link";
 import Toast from "@/utils/Toast";
-import { APIForgetPassword, APILogin } from "@/services/Auth";
+import { APIForgetPassword } from "@/services/Auth";
 import { FORGETPASSWORD } from "@/constants/ForgetPassword";
-import { APISendOTP, APISendOTPForget, APIVerifyOTP } from "@/services/UserOTP";
+import { APISendOTPForget, APIVerifyOTP } from "@/services/UserOTP";
 import { useFormik } from "formik";
-interface ForgetPasswordForm {
-  email: string;
-  otp: string;
-  password: string;
-  repassword: string;
-}
+import { useRouter } from "next/navigation";
 
 function ForgetPassword() {
+  const router = useRouter();
   const forgetForm = useFormik({
     initialValues: {
       email: "",
@@ -98,7 +92,8 @@ function ForgetPassword() {
       }
       Toast("success", "Cập nhật thành công", 2000);
       setTimeout(() => {
-        window.location.href = "/login";
+        document.getElementById("loading-page")?.classList.remove("hidden");
+        router.push("/login");
       }, 2000);
     }
   };
