@@ -19,15 +19,6 @@ export interface Order {
   updatedAt: string;
   __v: number;
 }
-
-// export interface Cart {
-//   data: Product[];
-//   store: {
-//     _id: string;
-//     storeName: string;
-//   };
-// }
-
 export interface Cart {
   isCheckAll: boolean;
   store: {

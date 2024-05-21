@@ -13,7 +13,9 @@ import Toast from "@/utils/Toast";
 import { Checkbox, Input } from "@material-tailwind/react";
 import React from "react";
 import { FaCartPlus, FaTruckFast, FaTruckField } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 function Payment() {
+  const router = useRouter();
   const [isShow, setIsShow] = React.useState(false);
   const [isUpdate_Add, setIsUpdate_Add] = React.useState({
     state: false,
@@ -175,6 +177,7 @@ function Payment() {
     setData(listProducts);
   }, [store]);
   React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
     const fetchData = async () => {
       const res = await APIGetUserById(
         JSON.parse(localStorage.getItem("user")!).providerData[0]._id
@@ -195,7 +198,8 @@ function Payment() {
         console.log("user", user);
         setUser(user);
       } else {
-        window.location.href = "/login";
+        document.getElementById("loading-page")?.classList.remove("hidden");
+        router.push("/login");
       }
     };
     fetchData();
@@ -345,17 +349,10 @@ function Payment() {
     };
     console.log(obj);
     const res = await APICreateBill(obj);
-    console.log("res", res);
     if (res?.status == 200 || res?.status == 201) {
-      // Toast("success", "Đặt hàng thành công", 2000);
       if (res?.data.metadata.data.urlPayment) {
-        window.location.href = res.data.metadata.data.urlPayment;
+        router.push(res.data.metadata.data.urlPayment);
         localStorage.removeItem("listProductIdChecked");
-      } else {
-        // setTimeout(() => {
-        //   localStorage.removeItem("listProductIdChecked");
-        //   window.location.href = "/";
-        // }, 2000);
       }
     } else {
       Toast("error", "Đặt hàng thất bại", 2000);

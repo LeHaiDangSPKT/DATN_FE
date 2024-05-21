@@ -2,7 +2,6 @@
 import SortTable from "@/components/SortTable";
 import React from "react";
 import Image from "next/image";
-import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import { APIActiveShippers, APIGetListShippers } from "@/services/Shipper";
 import {
   Button,

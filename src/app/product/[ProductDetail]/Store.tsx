@@ -6,7 +6,7 @@ import {
   APIGetStoreReputation,
 } from "@/services/Store";
 import Toast from "@/utils/Toast";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import React from "react";
 import { FaPlus, FaTelegramPlane } from "react-icons/fa";
@@ -20,6 +20,7 @@ interface Props {
 function Store(props: Props) {
   const { product, setShowLogin, setShowReport, setType } = props;
   const params = useParams();
+  const router = useRouter();
   const [productsOrderCurrent, setProductsOrderCurrent] = React.useState([]);
   const [user, setUser] = React.useState<any>(null);
   const [storeInfo, setStoreInfo] = React.useState({
@@ -92,7 +93,12 @@ function Store(props: Props) {
           <div className="flex flex-col">
             <div
               className="font-bold cursor-pointer"
-              onClick={(e) => (window.location.href = `/shop/${storeInfo.id}`)}
+              onClick={(e) => {
+                document
+                  .getElementById("loading-page")
+                  ?.classList.remove("hidden");
+                router.push(`/shop/${storeInfo.id}`);
+              }}
             >
               {storeInfo.name}
             </div>

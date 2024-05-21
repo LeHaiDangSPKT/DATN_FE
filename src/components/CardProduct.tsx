@@ -15,11 +15,14 @@ import { useDispatch } from "react-redux";
 import { addItemtoCartPopup } from "@/redux/features/cart/cartpopup-slice";
 import { APIAddProductInCart } from "@/services/Cart";
 import FormatMoney from "@/utils/FormatMoney";
+import { useRouter } from "next/navigation";
 
 function CardProduct(props: any) {
   const { data } = props;
+  const router = useRouter();
   const DetailProduct = () => {
-    window.location.href = "/product/" + data._id;
+    document.getElementById("loading-page")?.classList.remove("hidden");
+    router.push("/product/" + data._id);
   };
 
   const [showLogin, setShowLogin] = React.useState(false);
@@ -114,7 +117,10 @@ function CardProduct(props: any) {
               e.preventDefault();
               Toast("error", "Bạn cần đăng nhập để mua hàng", 2000);
               setTimeout(() => {
-                window.location.href = "/login";
+                document
+                  .getElementById("loading-page")
+                  ?.classList.remove("hidden");
+                router.push("/login");
               }, 2000);
             } else {
               AddToCart(data);

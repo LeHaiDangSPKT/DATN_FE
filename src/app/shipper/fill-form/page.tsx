@@ -14,8 +14,10 @@ import {
 import React from "react";
 import Toast from "@/utils/Toast";
 import { APICreateShippers } from "@/services/Shipper";
+import { useRouter } from "next/navigation";
 
 function FillForm() {
+  const router = useRouter();
   React.useEffect(() => {
     document.getElementById("loading-page")?.classList.add("hidden");
   }, []);
@@ -86,7 +88,8 @@ function FillForm() {
         if (res?.status == 200 || res?.status == 201) {
           Toast("success", "Gửi đăng ký thành công", 2000);
           setTimeout(() => {
-            window.location.href = "/";
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/");
           }, 1000);
         } else {
           Toast("error", "Gửi đăng ký thất bại", 2000);

@@ -3,10 +3,7 @@ import React from "react";
 import Info from "../seller/[MyStore]/Info";
 import { APIGetStoreById } from "@/services/Store";
 import { useParams } from "next/navigation";
-import {
-  APIGetListProductInStore,
-  APIGetListProductOtherInStore,
-} from "@/services/Product";
+import { APIGetListProductInStore } from "@/services/Product";
 import CardProduct from "@/components/CardProduct";
 import Promotion from "@/components/Promotion";
 interface DetailStore {
@@ -77,36 +74,6 @@ function DetailStore() {
         <div className="grid grid-cols-4 gap-4">
           {productsOrderCurrent.map((item: any, index: number) => (
             <CardProduct key={index} data={item} />
-
-            // <div
-            //   key={index}
-            //   className="p-1 rounded-sm flex flex-col hover:cursor-pointer hover:shadow-[0px_0px_20px_rgba(0,0,0,0.1)]"
-            //   onClick={(e) => (window.location.href = `/product/${item._id}`)}
-            // >
-            //   <img
-            //     src={item?.avatar[0]}
-            //     className="rounded-t-md inset-0 w-full h-[214px] object-cover hover:shadow-xl"
-            //     alt=""
-            //   />
-            //   <div className="px-2  mt-2">
-            //     <div className="text-ellipsis line-clamp-3 h-[64px] mb-4 text-sm">
-            //       {item.productName}
-            //     </div>
-            //     <div className="flex justify-between items-center font-bold mb-2">
-            //       <div className={item.price != 0 ? "" : "hidden"}>
-            //         {Number(item.price).toLocaleString("en-US", {})}{" "}
-            //         <sup>đ</sup>
-            //       </div>
-            //       <div className="text-sm leading-7">
-            //         Còn lại: {item.quantity}
-            //       </div>
-            //     </div>
-            //     <hr />
-            //     <div className="text-center my-2">
-            //       {item.price != 0 ? "Hàng bán" : "Hàng tặng"}
-            //     </div>
-            //   </div>
-            // </div>
           ))}
         </div>
       </div>

@@ -1,14 +1,8 @@
 "use client";
 import SortTable from "@/components/SortTable";
-import {
-  APIGetAllUser,
-  APIGetListUser,
-  APIGetListUserBanned,
-  APIGetListUserWarning,
-} from "@/services/User";
+import { APIGetListUserBanned } from "@/services/User";
 import ConvertDate from "@/utils/ConvertDate";
 import { exportExcel } from "@/utils/ExportExcel";
-import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import Image from "next/image";
@@ -17,7 +11,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   Collapse,
   Dialog,
   DialogBody,

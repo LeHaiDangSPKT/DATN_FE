@@ -56,6 +56,6 @@ export const APIAddProductInCart = async (productId: string): Promise<any> => {
       return res.data;
     }
   } catch (error) {
-    window.location.href = "/login";
+    console.log(error);
   }
 };

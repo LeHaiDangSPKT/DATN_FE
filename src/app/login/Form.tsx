@@ -10,12 +10,14 @@ import Link from "next/link";
 import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface FormProps {
   fastLogin?: boolean;
 }
 function Form(props: FormProps) {
   const { fastLogin } = props;
+  const router = useRouter();
   const Login = async () => {
     const res = await APILogin(
       loginForm.values.email,
@@ -31,15 +33,16 @@ function Form(props: FormProps) {
     ] = `Bearer ${res.data.metadata.data.accessToken}`;
     Toast("success", "Đăng nhập thành công", 2000);
     setTimeout(() => {
+      document.getElementById("loading-page")?.classList.remove("hidden");
       if (res?.data.metadata.data.role.includes("ADMIN")) {
-        window.location.href = "/admin/dashboard";
+        router.push("/admin/dashboard");
       } else if (res?.data.metadata.data.role.includes("MANAGER")) {
-        window.location.href = "/manager/product";
+        router.push("/manager/product");
       } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
-        window.location.href = "/shipper";
+        router.push("/shipper");
       } else {
         if (window.location.pathname == "/login") {
-          window.location.href = "/";
+          router.push("/");
         } else {
           window.location.reload();
         }

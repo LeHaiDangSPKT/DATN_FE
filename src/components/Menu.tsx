@@ -1,4 +1,6 @@
 import { UserInterface } from "@/types/User";
+import { usePathname, useRouter } from "next/navigation";
+
 import {
   Menu,
   MenuHandler,
@@ -12,6 +14,8 @@ interface MenuHeaderInfoUserProps {
 
 export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
   const { user } = props;
+  const router = useRouter();
+
   return (
     <Menu>
       <MenuHandler>
@@ -25,23 +29,54 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
         </div>
       </MenuHandler>
       <MenuList>
-        <MenuItem>
-          <a href="/user/profile">Tài khoản của tôi</a>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/user/profile");
+          }}
+        >
+          Tài khoản của tôi
         </MenuItem>
-        <MenuItem>
-          <a href="/user/store/follow">Cửa hàng theo dõi</a>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/user/store/follow");
+          }}
+        >
+          Cửa hàng theo dõi
         </MenuItem>
-        <MenuItem>
-          <a href="/user/product/favorite">Sản phẩm yêu thích</a>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/user/product/favorite");
+          }}
+        >
+          Sản phẩm yêu thích
         </MenuItem>
-        <MenuItem>
-          <a href="/user/invoice">Đơn mua</a>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/user/invoice");
+          }}
+        >
+          Đơn mua
         </MenuItem>
-        <MenuItem>
-          <a href="/shipper/fill-form">Trở thành shipper</a>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            router.push("/shipper/fill-form");
+          }}
+        >
+          Trở thành shipper
         </MenuItem>
         <hr className="my-3" />
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            document.getElementById("loading-page")?.classList.remove("hidden");
+            localStorage.removeItem("user");
+            router.push("/login");
+          }}
+        >
           <span className="text-red-500">Đăng xuất</span>
         </MenuItem>
       </MenuList>

@@ -2,7 +2,6 @@
 import React from "react";
 import FrameFormInit from "@/components/FrameFormInit";
 import { SIGNUP } from "@/constants/Signup";
-import CheckValidInput from "@/utils/CheckValidInput";
 import { APIVerifyOTP, APISendOTP } from "@/services/UserOTP";
 import FrameInit from "@/components/FrameInit";
 import { FaLongArrowAltLeft, FaRedo } from "react-icons/fa";
@@ -12,8 +11,10 @@ import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Input } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
 
 function SignUp() {
+  const router = useRouter();
   React.useEffect(() => {
     document.getElementById("loading-page")?.classList.add("hidden");
   }, []);
@@ -132,7 +133,8 @@ function SignUp() {
     }
     Toast("success", "Đăng ký thành công", 2000);
     setTimeout(() => {
-      window.location.href = "/login";
+      document.getElementById("loading-page")?.classList.remove("hidden");
+      router.push("/login");
     }, 2000);
   };
   return (
@@ -211,7 +213,10 @@ function SignUp() {
                           titleButton: "Đăng ký",
                           navigateTitle: "Đã có tài khoản?",
                         })
-                      : (window.location.href = "/login");
+                      : (document
+                          .getElementById("loading-page")
+                          ?.classList.remove("hidden"),
+                        router.push("/login"));
                   }}
                 >
                   <div className="mr-2">

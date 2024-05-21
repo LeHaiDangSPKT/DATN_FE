@@ -78,7 +78,7 @@ function Header() {
   const [open, setOpen] = React.useState(false);
   const [countUnreadUser, setCountUnreadUser] = React.useState(0);
   const [countUnreadSeller, setCountUnreadSeller] = React.useState(0);
-  const [currentRole, setCurrentRole] = React.useState({
+  const [roleChat, setRoleChat] = React.useState({
     receiverRole: "",
     senderRole: "",
   });
@@ -183,6 +183,7 @@ function Header() {
         });
 
         socket.on("sendNotification", (data) => {
+          console.log("countNewNotifications ON");
           setCountNewNoti((prev) => prev + 1);
           setDataNoti((prev) => [data, ...prev]);
         });
@@ -284,6 +285,10 @@ function Header() {
             };
           });
         });
+
+        socketChat.on("sendMessage", (data) => {
+          console.log("sendMessage ON", data);
+        });
       }
     }
   }, []);
@@ -297,10 +302,11 @@ function Header() {
 
   const OpenStore = async () => {
     const store = await APIGetMyStore();
+    document.getElementById("loading-page")?.classList.remove("hidden");
     if (store?.status == 200 || store?.status == 201) {
-      window.location.href = "/shop/seller/" + store?.data.metadata.data._id;
+      router.push("/shop/seller/" + store?.data.metadata.data._id);
     } else {
-      window.location.href = "/shop/create";
+      router.push("/shop/create");
     }
   };
   const ReadNoti = async (id: string, link: string, isRead: boolean) => {
@@ -309,16 +315,24 @@ function Header() {
         notificationIds: [id],
       });
     }
-    link && router.push(link);
+    link &&
+      (document.getElementById("loading-page")?.classList.remove("hidden"),
+      router.push(link));
     setIsMenuOpen(false);
   };
   const SendMessage = (text: string) => {
+    console.log("SendMessage", {
+      text: text.trim(),
+      receiverId: chatDetail.receiverId,
+      senderRole: roleChat.senderRole,
+      receiverRole: roleChat.receiverRole,
+    });
     if (text.trim()) {
       socketChat.emit("sendMessage", {
         text: text.trim(),
         receiverId: chatDetail.receiverId,
-        senderRole: currentRole.senderRole,
-        receiverRole: currentRole.receiverRole,
+        senderRole: roleChat.senderRole,
+        receiverRole: roleChat.receiverRole,
       });
     }
   };
@@ -335,7 +349,10 @@ function Header() {
                 src="/logo.png"
                 alt="Loading..."
                 onClick={() => {
-                  window.location.href = "/";
+                  document
+                    .getElementById("loading-page")
+                    ?.classList.remove("hidden");
+                  router.push("/");
                 }}
               />
 
@@ -355,7 +372,10 @@ function Header() {
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key == "Enter") {
-                      window.location.href = "/product/search?search=" + search;
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+                      router.push("/product/search?search=" + search);
                     }
                   }}
                 />
@@ -412,7 +432,6 @@ function Header() {
                             dataNotiCheck={dataNotiCheck}
                             dataNoti={dataNoti}
                             fetchData={() => {
-                              console.log("getNotifications");
                               socket.emit("getNotifications", {
                                 page: pageNoti + 1,
                                 limit: 10,
@@ -438,19 +457,24 @@ function Header() {
                             });
                             setPageChat(pageChat + 1);
                           }}
-                          OpenConversation={(receiverId, idConversation) => {
+                          OpenConversation={(
+                            receiverId,
+                            idConversation,
+                            senderRole,
+                            receiverRole
+                          ) => {
                             setOpenChat(true);
-                            setCurrentRole({
-                              senderRole: ROLE_CHAT.USER,
-                              receiverRole: ROLE_CHAT.SELLER,
+                            setRoleChat({
+                              receiverRole: receiverRole,
+                              senderRole: senderRole,
                             });
                             if (chatDetail.conversationId != idConversation) {
                               socketChat.emit("getConversation", {
                                 page: 1,
                                 limit: 10,
                                 receiverId: receiverId,
-                                senderRole: ROLE_CHAT.USER,
-                                receiverRole: ROLE_CHAT.SELLER,
+                                senderRole: senderRole,
+                                receiverRole: receiverRole,
                               });
                             }
                           }}
@@ -472,19 +496,24 @@ function Header() {
                             });
                             setPageChat(pageChat + 1);
                           }}
-                          OpenConversation={(receiverId, idConversation) => {
+                          OpenConversation={(
+                            receiverId,
+                            idConversation,
+                            senderRole,
+                            receiverRole
+                          ) => {
                             setOpenChat(true);
-                            setCurrentRole({
-                              senderRole: ROLE_CHAT.SELLER,
-                              receiverRole: ROLE_CHAT.USER,
+                            setRoleChat({
+                              receiverRole: receiverRole,
+                              senderRole: senderRole,
                             });
                             if (chatDetail.conversationId != idConversation) {
                               socketChat.emit("getConversation", {
                                 page: 1,
                                 limit: 10,
                                 receiverId: receiverId,
-                                senderRole: ROLE_CHAT.SELLER,
-                                receiverRole: ROLE_CHAT.USER,
+                                senderRole: senderRole,
+                                receiverRole: receiverRole,
                               });
                             }
                           }}

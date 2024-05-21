@@ -1,17 +1,8 @@
-import Modal from "@/components/Modal";
 import SortTable from "@/components/SortTable";
-import { APIGetListBill, APIUpdateBill } from "@/services/Bill";
+import { APIGetListBill } from "@/services/Bill";
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
-import Toast from "@/utils/Toast";
 import React from "react";
-
-interface TypeObject {
-  [key: string]: {
-    mes: string;
-    func: () => void;
-  };
-}
 
 interface ArrBill {
   id: string;

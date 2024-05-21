@@ -1,20 +1,13 @@
 "use client";
 import SortTable from "@/components/SortTable";
-import {
-  APIGetAllUser,
-  APIGetListUser,
-  APIGetListUserWarning,
-} from "@/services/User";
+import { APIGetListUserWarning } from "@/services/User";
 import ConvertDate from "@/utils/ConvertDate";
 import { exportExcel } from "@/utils/ExportExcel";
-import FormatMoney from "@/utils/FormatMoney";
-import Toast from "@/utils/Toast";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   Dialog,
   DialogBody,
   DialogFooter,
@@ -24,7 +17,6 @@ import {
 import React from "react";
 import { APIGetReportUser } from "@/services/Report";
 import Image from "next/image";
-import { APIExport } from "@/services/ExportExcel";
 
 interface ListUser {
   total: number;

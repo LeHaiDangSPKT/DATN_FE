@@ -22,11 +22,7 @@ import {
 } from "@material-tailwind/react";
 import React from "react";
 import CardPolicy from "./CardPolicy";
-import {
-  APIAddPolicy,
-  APIGetAllPolicy,
-  APIUpdatePolicy,
-} from "@/services/Policy";
+import { APIAddPolicy, APIGetAllPolicy } from "@/services/Policy";
 import {
   BuildingStorefrontIcon,
   PlusIcon,
