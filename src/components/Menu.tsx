@@ -74,7 +74,7 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
           onClick={() => {
             document.getElementById("loading-page")?.classList.remove("hidden");
             localStorage.removeItem("user");
-            router.push("/login");
+            window.location.href = "/login";
           }}
         >
           <span className="text-red-500">Đăng xuất</span>

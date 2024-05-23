@@ -16,6 +16,7 @@ axiosInstance.interceptors.response.use(function (response) {
 }, function (error) {
     const { response, config } = error;
     const status = response?.status;
+    console.error("error", error)
     // Kiểm tra mã lỗi có phải là 401 hoặc 403 hay không
     if (status === 401 || status === 403) {
         localStorage.removeItem("user");

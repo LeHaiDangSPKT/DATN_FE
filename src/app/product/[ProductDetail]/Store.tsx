@@ -10,19 +10,39 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import React from "react";
 import { FaPlus, FaTelegramPlane } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
+import Chat from "@/components/chat/page";
+import { UserInterface } from "@/types/User";
+import io from "socket.io-client";
+import { ROLE_CHAT } from "@/constants/Conversation";
+import { ConversationDetailInterface } from "@/types/Conversation";
+import { useAppSelector } from "@/redux/store";
+
 interface Props {
   product: any;
   setShowLogin: (data: boolean) => void;
   setShowReport: (data: boolean) => void;
   setType: (data: string) => void;
+  currentUser: UserInterface;
 }
 
 function Store(props: Props) {
-  const { product, setShowLogin, setShowReport, setType } = props;
+  const { product, setShowLogin, setShowReport, setType, currentUser } = props;
   const params = useParams();
   const router = useRouter();
   const [productsOrderCurrent, setProductsOrderCurrent] = React.useState([]);
   const [user, setUser] = React.useState<any>(null);
+  const [openChat, setOpenChat] = React.useState(false);
+  const [haveNewMessage, setHaveNewMessage] = React.useState(true);
+  const [pageConversation, setPageConversation] = React.useState(1);
+  const [chatDetailCheck, setChatDetailCheck] =
+    React.useState<ConversationDetailInterface>({
+      conversationId: "",
+      data: [],
+      receiverAvatar: "",
+      receiverId: "",
+      receiverName: "",
+    });
   const [storeInfo, setStoreInfo] = React.useState({
     id: "",
     avatar: "",
@@ -31,7 +51,22 @@ function Store(props: Props) {
     totalFeedback: 0,
     totalFollow: 0,
     name: "",
+    userId: "",
   });
+  const [roleChat, setRoleChat] = React.useState({
+    receiverRole: "",
+    senderRole: "",
+  });
+
+  const [chatDetail, setChatDetail] =
+    React.useState<ConversationDetailInterface>({
+      conversationId: "",
+      data: [],
+      receiverAvatar: "",
+      receiverId: "",
+      receiverName: "",
+    });
+
   React.useEffect(() => {
     // Promise all
     const user = localStorage.getItem("user")
@@ -52,6 +87,7 @@ function Store(props: Props) {
             averageStar: res[0].metadata.data.averageStar,
             totalFeedback: res[0].metadata.data.totalFeedback,
             totalFollow: res[0].metadata.data.totalFollow,
+            userId: res[1].metadata.data.store.userId,
           });
         }));
     };
@@ -68,6 +104,79 @@ function Store(props: Props) {
     };
     fetchData();
   }, [product.storeId, params.ProductDetail]);
+
+  const socketRedux = useAppSelector(
+    (state) => state.chatReducer.socketChat
+  ) as any;
+  React.useEffect(() => {
+    console.log("chatDetailCheck", chatDetailCheck);
+    let chatCopy = JSON.parse(JSON.stringify(chatDetail));
+    if (JSON.stringify(chatDetailCheck) === "{}") {
+      chatCopy = {
+        conversationId: "",
+        data: [],
+        receiverAvatar: storeInfo.avatar,
+        receiverId: storeInfo.userId,
+        receiverName: storeInfo.name,
+      };
+    }
+    if (
+      chatCopy.conversationId != "" &&
+      chatDetail.conversationId == chatCopy.conversationId
+    ) {
+      setChatDetail((prev) => {
+        return {
+          ...chatCopy,
+          data: [...chatCopy.data, ...prev.data],
+        };
+      });
+    } else {
+      setChatDetail(chatCopy);
+    }
+  }, [chatDetailCheck]);
+  React.useEffect(() => {
+    socketRedux.on("getConversationOne", (data: any) => {
+      console.log("getConversationOne ON Cửa hàng", data);
+      if (!data.isMine) {
+        setChatDetail((prev) => {
+          return {
+            ...prev,
+            data: [...prev.data, data],
+          };
+        });
+      }
+    });
+    socketRedux.on("getConversation", (data: any) => {
+      setChatDetailCheck(data);
+    });
+  }, []);
+
+  const SendMessage = (text: string) => {
+    if (text.trim()) {
+      socketRedux.emit("sendMessage", {
+        text: text.trim(),
+        receiverId: storeInfo.userId,
+        senderRole: roleChat.senderRole,
+        receiverRole: roleChat.receiverRole,
+      });
+      setChatDetail((prev) => {
+        return {
+          ...prev,
+          data: [
+            ...prev.data,
+            {
+              id: "",
+              text: text.trim(),
+              isRead: true,
+              isMine: true,
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        };
+      });
+      setHaveNewMessage(true);
+    }
+  };
   const FollowStore = async (status: boolean) => {
     setStoreInfo({
       ...storeInfo,
@@ -78,6 +187,7 @@ function Store(props: Props) {
     });
     await APIFollowStore(product.storeId);
   };
+
   return (
     <div className="mb-3 bg-white rounded-md p-4 w-full col-span-4 flex flex-col border-solid ">
       <p className="text-lg font-bold mb-2">Thông tin người bán:</p>
@@ -146,6 +256,36 @@ function Store(props: Props) {
         <div className="flex flex-col">
           <button
             type="button"
+            onClick={(e) => {
+              if (!user) {
+                e.preventDefault();
+                Toast(
+                  "error",
+                  "Bạn cần đăng nhập để báo cáo cửa hàng này",
+                  2000
+                );
+                setShowLogin(true);
+              } else {
+                document
+                  .getElementById("chat_header")
+                  ?.querySelector<HTMLButtonElement>("#close-chat")
+                  ?.click();
+                setHaveNewMessage(true);
+                setOpenChat(true);
+                setPageConversation(1);
+                setRoleChat({
+                  receiverRole: ROLE_CHAT.SELLER,
+                  senderRole: ROLE_CHAT.USER,
+                });
+                socketRedux.emit("getConversation", {
+                  page: 1,
+                  limit: 10,
+                  receiverId: storeInfo.userId,
+                  receiverRole: ROLE_CHAT.SELLER,
+                  senderRole: ROLE_CHAT.USER,
+                });
+              }
+            }}
             className="flex justify-center text-white mb-2 items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
             <FaTelegramPlane className="mr-3" />
@@ -181,6 +321,32 @@ function Store(props: Props) {
           <CardProduct key={index} data={item} />
         ))}
       </div>
+      {openChat && (
+        <div id="chat_store">
+          <Chat
+            socketChat={socketRedux}
+            roleChat={roleChat}
+            storeAvatar={storeInfo.avatar}
+            data={chatDetail}
+            userCurrent={currentUser}
+            SendMessage={(message) => SendMessage(message)}
+            setOpenChat={(data) => setOpenChat(data)}
+            fetchData={() => {
+              setHaveNewMessage(false);
+              socketRedux.emit("getConversation", {
+                page: pageConversation + 1,
+                limit: 10,
+                receiverId: chatDetail.receiverId,
+                senderRole: roleChat.senderRole,
+                receiverRole: roleChat.receiverRole,
+              });
+              setPageConversation(pageConversation + 1);
+            }}
+            dataCheck={chatDetailCheck}
+            haveNewMessage={haveNewMessage}
+          />
+        </div>
+      )}
     </div>
   );
 }

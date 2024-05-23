@@ -12,12 +12,16 @@ export default function GetHeaders() {
   const now = Math.floor(Date.now() / 1000);
 
   if (exp - now < 0) {
+    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    debugger;
+
     document.getElementById("loading-page")?.classList.remove("hidden");
     localStorage.removeItem("user");
     redirect("/login");
-    return null;
   } else if (exp - now < 86400) {
     //1 ngày
+    console.log("----------------------------------------------------");
+    debugger;
     const refreshToken = user?.refreshToken;
     const headers = {
       Authorization: `Bearer ${refreshToken}`,
