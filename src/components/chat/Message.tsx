@@ -1,13 +1,15 @@
-import { Avatar } from "@material-tailwind/react";
+import DifferenceTime from "@/utils/DifferenceTime";
+import { Avatar, Tooltip } from "@material-tailwind/react";
 import React from "react";
 interface Props {
   avatar: string;
   text: string;
   isMine: boolean;
+  time: string;
 }
 
 function Message(props: Props) {
-  const { avatar, text, isMine } = props;
+  const { avatar, text, isMine, time } = props;
   return (
     <div
       className={`p-3 rounded-lg ${
@@ -20,13 +22,18 @@ function Message(props: Props) {
         }`}
       >
         <Avatar src={avatar} className="rounded-full" />
-        <div
-          className={`relative  text-sm ${
-            isMine ? "bg-indigo-100 mr-3" : "bg-white ml-3"
-          } py-2 px-4 shadow rounded-xl`}
+        <Tooltip
+          placement={isMine ? "left" : "right"}
+          content={DifferenceTime(new Date(time))}
         >
-          <div>{text}</div>
-        </div>
+          <div
+            className={`relative text-sm ${
+              isMine ? "bg-indigo-100 mr-3" : "bg-white ml-3"
+            } py-2 px-4 shadow rounded-xl`}
+          >
+            <div>{text}</div>
+          </div>
+        </Tooltip>
       </div>
     </div>
   );

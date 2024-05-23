@@ -72,7 +72,7 @@ function Form(props: FormProps) {
     const listener = (event: { code: string; preventDefault: () => void }) => {
       if (event.code === "Enter" || event.code === "NumpadEnter") {
         event.preventDefault();
-        Login();
+        loginForm.handleSubmit();
       }
     };
     document.addEventListener("keydown", listener);

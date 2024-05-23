@@ -10,6 +10,7 @@ import { APIGetAllCart } from "@/services/Cart";
 import { Cart } from "@/types/Cart";
 import { APIGetMyStore } from "@/services/Store";
 import { setCartPopUp } from "@/redux/features/cart/cartpopup-slice";
+import { saveSocketChat } from "@/redux/features/chat/chat-slice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import io from "socket.io-client";
@@ -34,7 +35,6 @@ import Popup from "./chat/Popup";
 import { ROLE_CHAT } from "@/constants/Conversation";
 
 function Header() {
-  const [openChat, setOpenChat] = React.useState(false);
   const arrPathName = [
     "/login",
     "/sign-up",
@@ -44,6 +44,7 @@ function Header() {
     "/error",
     // "/shipper/fill-form",
   ];
+  const [openChat, setOpenChat] = React.useState(false);
   const pathname = usePathname();
   const [user, setUser] = React.useState<UserInterface>();
   const [storeAvatar, setStoreAvater] = React.useState("");
@@ -67,6 +68,7 @@ function Header() {
   >([]);
   const [pageNoti, setPageNoti] = React.useState(1);
   const [pageChat, setPageChat] = React.useState(1);
+  const [pageConversation, setPageConversation] = React.useState(1);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const handleMenuOpen = () => setIsMenuOpen(!isMenuOpen);
   const [isShowCart, setIsShowCart] = React.useState(true);
@@ -110,6 +112,15 @@ function Header() {
       receiverId: "",
       receiverName: "",
     });
+  const [chatDetailCheck, setChatDetailCheck] =
+    React.useState<ConversationDetailInterface>({
+      conversationId: "",
+      data: [],
+      receiverAvatar: "",
+      receiverId: "",
+      receiverName: "",
+    });
+  const [haveNewMessage, setHaveNewMessage] = React.useState(true);
 
   const router = useRouter();
   React.useEffect(() => {
@@ -156,18 +167,19 @@ function Header() {
           }
         };
         fetchAllCart();
-        const socket = io("https://dtex-be.onrender.com/notification", {
+        const socket = io("https://datn-socket.onrender.com/notification", {
           auth: {
             authorization: "Bearer " + user?.accessToken,
           },
         });
-        const socketChat = io("https://dtex-be.onrender.com/conversation", {
+        const socketChat = io("https://datn-socket.onrender.com/conversation", {
           auth: {
             authorization: "Bearer " + user?.accessToken,
           },
         });
         setSocket(socket);
         setSocketChat(socketChat);
+        dispatch(saveSocketChat(socketChat));
         socket.emit("getNotifications", {
           page: 1,
           limit: 10,
@@ -242,50 +254,75 @@ function Header() {
 
         socketChat.on("getConversation", (data) => {
           console.log("getConversation ON", data);
-          if (chatDetail.conversationId == data.conversationId) {
-            setChatDetail((prev) => {
-              return {
-                ...data,
-                data: [...data.data, ...prev.data],
-              };
-            });
-          } else {
-            setChatDetail(data);
-          }
+          setChatDetailCheck(data);
+          // if (chatDetail.conversationId == data.conversationId) {
+          //   setChatDetail((prev) => {
+          //     return {
+          //       ...data,
+          //       data: [...data.data, ...prev.data],
+          //     };
+          //   });
+          // } else {
+          //   setChatDetail(data);
+          // }
         });
 
         socketChat.on("getPreviewConversationsOne", (data) => {
-          console.log("getPreviewConversationsOne ON", data);
+          console.log(
+            "getPreviewConversationsOne ON",
+            data,
+            listPreviewUser.length
+          );
           if (data.role == ROLE_CHAT.USER) {
-            setListPreviewUser((prev) => {
-              return prev.map((item) => {
-                if (item.conversationId == data.data.conversationId) {
-                  return data.data;
-                } else {
-                  return item;
-                }
+            if (
+              listPreviewUser.some(
+                (item) => item.conversationId == data.data.conversationId
+              )
+            ) {
+              setListPreviewUser((prev) => {
+                return prev.map((item) => {
+                  if (item.conversationId == data.data.conversationId) {
+                    return data.data;
+                  } else {
+                    return item;
+                  }
+                });
               });
-            });
+            } else {
+              setListPreviewUser((prev) => [...prev, data.data]);
+            }
           } else {
-            setListPreviewSeller((prev) => {
-              return prev.map((item) => {
-                if (item.conversationId == data.data.conversationId) {
-                  return data.data;
-                } else {
-                  return item;
-                }
+            if (
+              listPreviewSeller.some(
+                (item) => item.conversationId == data.data.conversationId
+              )
+            ) {
+              setListPreviewSeller((prev) => {
+                return prev.map((item) => {
+                  if (item.conversationId == data.data.conversationId) {
+                    return data.data;
+                  } else {
+                    return item;
+                  }
+                });
               });
-            });
+            } else {
+              setListPreviewSeller((prev) => [...prev, data.data]);
+            }
           }
         });
         socketChat.on("getConversationOne", (data) => {
+          console.log("getConversationOne ON chatDetail", chatDetail);
           console.log("getConversationOne ON", data);
-          setChatDetail((prev) => {
-            return {
-              ...prev,
-              data: [...prev.data, data],
-            };
-          });
+          if (!data.isMine) {
+            setChatDetail((prev) => {
+              const newData = Array.isArray(prev.data) ? prev.data : [];
+              return {
+                ...prev,
+                data: [...newData, data],
+              };
+            });
+          }
         });
       }
 
@@ -308,6 +345,20 @@ function Header() {
     }
   }, []);
 
+  React.useEffect(() => {
+    if (chatDetail.conversationId == chatDetailCheck.conversationId) {
+      setChatDetail((prev) => {
+        return {
+          ...chatDetailCheck,
+          data: [...chatDetailCheck.data, ...prev.data],
+        };
+      });
+    } else {
+      setChatDetail(chatDetailCheck);
+    }
+  }, [chatDetailCheck]);
+
+  console.log("chatDetail", chatDetail);
   const OpenStore = async () => {
     const store = await APIGetMyStore();
     document.getElementById("loading-page")?.classList.remove("hidden");
@@ -351,6 +402,7 @@ function Header() {
           ],
         };
       });
+      setHaveNewMessage(true);
     }
   };
   if (!arrPathName.some((path) => pathname.includes(path))) {
@@ -480,19 +532,18 @@ function Header() {
                             senderRole,
                             receiverRole
                           ) => {
+                            setHaveNewMessage(true);
+                            setPageConversation(1);
+                            document
+                              .getElementById("chat_store")
+                              ?.querySelector<HTMLButtonElement>("#close-chat")
+                              ?.click();
                             setOpenChat(true);
                             setRoleChat({
                               receiverRole: receiverRole,
                               senderRole: senderRole,
                             });
                             if (chatDetail.conversationId != idConversation) {
-                              console.log(
-                                "PRE getConversation",
-                                receiverId,
-                                idConversation,
-                                senderRole,
-                                receiverRole
-                              );
                               socketChat.emit("getConversation", {
                                 page: 1,
                                 limit: 10,
@@ -526,6 +577,12 @@ function Header() {
                             senderRole,
                             receiverRole
                           ) => {
+                            setHaveNewMessage(true);
+                            setPageConversation(1);
+                            document
+                              .getElementById("chat_store")
+                              ?.querySelector<HTMLButtonElement>("#close-chat")
+                              ?.click();
                             setOpenChat(true);
                             setRoleChat({
                               receiverRole: receiverRole,
@@ -545,32 +602,29 @@ function Header() {
                       )}
                     </div>
                     {openChat && (
-                      <div className="fixed bottom-[-30px] right-0 w-1/3 cursor-default">
-                        <div className="flex flex-col flex-auto p-6">
-                          <div className="rounded-2xl bg-gray-100 p-4">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <span className="text-lg font-bold">
-                                  {chatDetail.receiverName}
-                                </span>
-                              </div>
-                              <div
-                                className="cursor-pointer"
-                                onClick={(e) => setOpenChat(false)}
-                              >
-                                <IoClose className="w-6 h-6" />
-                              </div>
-                            </div>
-                            <Chat
-                              socketChat={socketChat}
-                              roleChat={roleChat}
-                              storeAvatar={storeAvatar}
-                              data={chatDetail}
-                              userCurrent={user}
-                              SendMessage={(message) => SendMessage(message)}
-                            />
-                          </div>
-                        </div>
+                      <div id="chat_header">
+                        <Chat
+                          socketChat={socketChat}
+                          roleChat={roleChat}
+                          storeAvatar={storeAvatar}
+                          data={chatDetail}
+                          userCurrent={user}
+                          SendMessage={(message) => SendMessage(message)}
+                          setOpenChat={(data) => setOpenChat(data)}
+                          fetchData={() => {
+                            setHaveNewMessage(false);
+                            socketChat.emit("getConversation", {
+                              page: pageConversation + 1,
+                              limit: 10,
+                              receiverId: chatDetail.receiverId,
+                              senderRole: roleChat.senderRole,
+                              receiverRole: roleChat.receiverRole,
+                            });
+                            setPageConversation(pageConversation + 1);
+                          }}
+                          dataCheck={chatDetailCheck}
+                          haveNewMessage={haveNewMessage}
+                        />
                       </div>
                     )}
                   </div>

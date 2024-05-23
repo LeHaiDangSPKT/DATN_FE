@@ -1,7 +1,8 @@
 "use client";
 import Input from "@/components/Input";
 import { CREATESTORE } from "@/constants/CreateStore";
-import { APICreate, APIGetMyStore } from "@/services/Store";
+import { APIGetAllPolicy } from "@/services/Policy";
+import { APICreate } from "@/services/Store";
 import { APIUploadImage } from "@/services/UploadImage";
 import { APIGetUserById } from "@/services/User";
 import CheckValidInput from "@/utils/CheckValidInput";
@@ -15,13 +16,18 @@ function CreateStore() {
   const router = useRouter();
   const [acceptPolicy, setAcceptPolicy] = React.useState(false);
   const [store, setStore] = React.useState<any>({});
+  const [policies, setPolicies] = React.useState<
+    {
+      content: string;
+      name: string;
+    }[]
+  >([]);
   React.useEffect(() => {
     const userLS = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user")!)
       : null;
     const fetchData = async () => {
       const user = await APIGetUserById(userLS?.providerData[0]._id);
-      console.log(`user`, user);
       setStore({
         address: "Địa chỉ mặc định",
         name: "",
@@ -33,26 +39,18 @@ function CreateStore() {
     };
     fetchData();
   }, []);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const res = await APIGetAllPolicy("STORE");
+      setPolicies(res);
+    };
+    fetchData();
+  }, []);
   const handleDescriptionChange = (value: string) => {
     setStore({ ...store, description: value });
   };
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const store = await APIGetMyStore();
-      if (store?.status == 200 || store?.status == 201) {
-        Toast("error", "Bạn đã có cửa hàng", 2000);
-        setTimeout(() => {
-          document.getElementById("loading-page")?.classList.remove("hidden");
-          router.push("/shop/seller/" + store?.data.metadata.data._id);
-        }, 2000);
-      }
-    };
-    fetchData();
-  }, []);
-
   const CheckValid = () => {
-    console.log(`store`, store);
     const validateField = (fieldName: string, errorMessage: string) => {
       const field = store[fieldName];
       if (!field) {
@@ -284,48 +282,17 @@ function CreateStore() {
               nghiệm buôn bán trực tuyến thuận lợi và an toàn.
               <br />
               <br />
-              <span className="font-bold">1. Dễ dàng và Nhanh Chóng:</span>
-              <br />
-              Chúng tôi đặt trọng tâm vào quy trình đăng ký cửa hàng để đảm bảo
-              tính dễ dàng và nhanh chóng. Người bán chỉ cần điền một số thông
-              tin cơ bản và một loạt các bước đơn giản để bắt đầu kinh doanh
-              trực tuyến trên DTExchange.
-              <br />
-              <br />
-              <span className="font-bold">2. Chăm Sóc Khách Hàng:</span>
-              <br />
-              Để tạo môi trường mua bán an toàn và tin cậy, chúng tôi cung cấp
-              hỗ trợ khách hàng đầy đủ. Chính sách này bao gồm cơ hội gửi câu
-              hỏi, yêu cầu hỗ trợ kỹ thuật, và các kênh liên lạc chính thức để
-              giúp người bán giải quyết mọi vấn đề một cách hiệu quả.
-              <br />
-              <br />
-              <span className="font-bold">3. An Toàn Giao Dịch: </span>
-              <br />
-              Chúng tôi áp dụng các biện pháp bảo mật mạnh mẽ để đảm bảo an toàn
-              cho cả người mua và người bán trong quá trình giao dịch. Hệ thống
-              thanh toán được mã hóa để ngăn chặn rủi ro gian lận và bảo vệ
-              thông tin cá nhân của người dùng.
-              <br />
-              <br />
-              <span className="font-bold">
-                4. Quảng Bá và Tiếp Cận Khách Hàng:
-              </span>
-              <br />
-              Chúng tôi hỗ trợ người bán tối đa hóa tiềm năng kinh doanh của họ
-              thông qua các chiến lược quảng bá mục tiêu. Các chương trình quảng
-              cáo, ưu đãi và khuyến mãi sẽ giúp cửa hàng của bạn thu hút đối
-              tượng khách hàng mong muốn.
-              <br />
-              <br />
-              <span className="font-bold">4. Chính Sách Hợp Tác Dài Hạn:</span>
-              <br />
-              Để xây dựng mối quan hệ đối tác bền vững, chúng tôi thúc đẩy chính
-              sách hợp tác dài hạn với những người bán tích cực và chất lượng.
-              Những đối tác này có thể được đánh giá cao và nhận được ưu đãi đặc
-              biệt từ DTExchange.
-              <br />
-              <br />
+              {policies.map((item, index) => (
+                <div key={index}>
+                  <span className="font-bold">
+                    {index + 1}. {item.name}
+                  </span>
+                  <br />
+                  {item.content}
+                  <br />
+                  <br />
+                </div>
+              ))}
               Chính sách Tạo Cửa Hàng trên DTExchange không chỉ là một bước quan
               trọng để đảm bảo sự đa dạng và chất lượng của thị trường, mà còn
               là cam kết của chúng tôi đối với sự thành công và phát triển của

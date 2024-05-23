@@ -371,6 +371,7 @@ function ProductDetail() {
           </div>
           <Promotion storeId={product.storeId} />
           <Store
+            currentUser={user || ({} as any)}
             product={product}
             setType={(data: string) => setType(data)}
             setShowLogin={(data: boolean) => setShowLogin(data)}
