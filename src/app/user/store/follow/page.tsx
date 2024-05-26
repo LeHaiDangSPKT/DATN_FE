@@ -53,6 +53,7 @@ function StoreFollow() {
   ];
 
   React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
     const getListStore = async () => {
       const res = await APIGetListStoreFollow(page, 20, search);
       setListStore(res?.data.metadata);
@@ -76,7 +77,7 @@ function StoreFollow() {
         className="mb-5 "
       >
         <div className="">
-          <div className="absolute top-[150px] flex items-center ps-3 pointer-events-none">
+          <div className="absolute top-[160px] flex items-center ps-3 pointer-events-none">
             <svg
               className="w-4 h-4 text-gray-500 dark:text-gray-400"
               aria-hidden="true"
@@ -97,11 +98,11 @@ function StoreFollow() {
             type="search"
             id="default-search"
             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 outline-none "
-            placeholder="Nhập thông tin tìm kiếm theo tên sản phẩm, mô tả, thể loại..."
+            placeholder="Nhập thông tin tìm kiếm theo tên, địa chỉ, số điện thoại, mô tả của cửa hàng..."
           ></input>
           <button
             type="submit"
-            className="text-white absolute top-[140px] right-[18px] py-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white absolute top-[150px] right-[18px] py-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Tìm kiếm
           </button>

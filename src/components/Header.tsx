@@ -177,153 +177,155 @@ function Header() {
             authorization: "Bearer " + user?.accessToken,
           },
         });
-        setSocket(socket);
-        setSocketChat(socketChat);
-        dispatch(saveSocketChat(socketChat));
-        socket.emit("getNotifications", {
-          page: 1,
-          limit: 10,
-        });
-        socket.on("getNotifications", (data) => {
-          const dataNotiFetch = data.data as NotificationInterface[];
-          setDataNotiCheck(dataNotiFetch);
-          setDataNoti((prev) => [...prev, ...dataNotiFetch]);
-        });
+        if (socket && socketChat) {
+          setSocket(socket);
+          setSocketChat(socketChat);
+          dispatch(saveSocketChat(socketChat));
+          socket.emit("getNotifications", {
+            page: 1,
+            limit: 10,
+          });
+          socket.on("getNotifications", (data) => {
+            const dataNotiFetch = data.data as NotificationInterface[];
+            setDataNotiCheck(dataNotiFetch);
+            setDataNoti((prev) => [...prev, ...dataNotiFetch]);
+          });
 
-        socket.emit("countNewNotifications");
-        socket.on("countNewNotifications", (data) => {
-          setCountNewNoti(data);
-        });
+          socket.emit("countNewNotifications");
+          socket.on("countNewNotifications", (data) => {
+            setCountNewNoti(data);
+          });
 
-        socket.on("sendNotification", (data) => {
-          console.log("countNewNotifications ON");
-          setCountNewNoti((prev) => prev + 1);
-          setDataNoti((prev) => [data, ...prev]);
-        });
+          socket.on("sendNotification", (data) => {
+            console.log("countNewNotifications ON");
+            setCountNewNoti((prev) => prev + 1);
+            setDataNoti((prev) => [data, ...prev]);
+          });
 
-        socket.on("readNotification", (data) => {
-          setDataNoti((prev) =>
-            prev.map((item) => {
-              if (item.id == data[0].id) {
-                return { ...item, isRead: true };
+          socket.on("readNotification", (data) => {
+            setDataNoti((prev) =>
+              prev.map((item) => {
+                if (item.id == data[0].id) {
+                  return { ...item, isRead: true };
+                } else {
+                  return item;
+                }
+              })
+            );
+            setCountNewNoti((prev) => prev - 1);
+          });
+
+          // Chat
+
+          socketChat.emit("getPreviewConversations", {
+            page: 1,
+            limit: 10,
+            senderRole: ROLE_CHAT.USER,
+          });
+          socketChat.emit("getPreviewConversations", {
+            page: 1,
+            limit: 10,
+            senderRole: ROLE_CHAT.SELLER,
+          });
+          socketChat.on("getPreviewConversations", (data) => {
+            console.log("getPreviewConversations ON", data);
+            if (data.role == ROLE_CHAT.USER) {
+              setDataChatCheckUser(data.data);
+              setListPreviewUser((prev) => [...prev, ...data.data]);
+            } else {
+              setDataChatCheckSeller(data.data);
+              setListPreviewSeller((prev) => [...prev, ...data.data]);
+            }
+          });
+
+          socketChat.emit("countUnread", {
+            senderRole: ROLE_CHAT.USER,
+          });
+          socketChat.emit("countUnread", {
+            senderRole: ROLE_CHAT.SELLER,
+          });
+          socketChat.on("countUnread", (data) => {
+            console.log("countUnread ON", data);
+            if (data.role == ROLE_CHAT.USER) {
+              setCountUnreadUser(data.count);
+            } else {
+              setCountUnreadSeller(data.count);
+            }
+          });
+
+          socketChat.on("getConversation", (data) => {
+            console.log("getConversation ON", data);
+            setChatDetailCheck(data);
+            // if (chatDetail.conversationId == data.conversationId) {
+            //   setChatDetail((prev) => {
+            //     return {
+            //       ...data,
+            //       data: [...data.data, ...prev.data],
+            //     };
+            //   });
+            // } else {
+            //   setChatDetail(data);
+            // }
+          });
+
+          socketChat.on("getPreviewConversationsOne", (data) => {
+            console.log(
+              "getPreviewConversationsOne ON",
+              data,
+              listPreviewUser.length
+            );
+            if (data.role == ROLE_CHAT.USER) {
+              if (
+                listPreviewUser.some(
+                  (item) => item.conversationId == data.data.conversationId
+                )
+              ) {
+                setListPreviewUser((prev) => {
+                  return prev.map((item) => {
+                    if (item.conversationId == data.data.conversationId) {
+                      return data.data;
+                    } else {
+                      return item;
+                    }
+                  });
+                });
               } else {
-                return item;
+                setListPreviewUser((prev) => [...prev, data.data]);
               }
-            })
-          );
-          setCountNewNoti((prev) => prev - 1);
-        });
-
-        // Chat
-
-        socketChat.emit("getPreviewConversations", {
-          page: 1,
-          limit: 10,
-          senderRole: ROLE_CHAT.USER,
-        });
-        socketChat.emit("getPreviewConversations", {
-          page: 1,
-          limit: 10,
-          senderRole: ROLE_CHAT.SELLER,
-        });
-        socketChat.on("getPreviewConversations", (data) => {
-          console.log("getPreviewConversations ON", data);
-          if (data.role == ROLE_CHAT.USER) {
-            setDataChatCheckUser(data.data);
-            setListPreviewUser((prev) => [...prev, ...data.data]);
-          } else {
-            setDataChatCheckSeller(data.data);
-            setListPreviewSeller((prev) => [...prev, ...data.data]);
-          }
-        });
-
-        socketChat.emit("countUnread", {
-          senderRole: ROLE_CHAT.USER,
-        });
-        socketChat.emit("countUnread", {
-          senderRole: ROLE_CHAT.SELLER,
-        });
-        socketChat.on("countUnread", (data) => {
-          console.log("countUnread ON", data);
-          if (data.role == ROLE_CHAT.USER) {
-            setCountUnreadUser(data.count);
-          } else {
-            setCountUnreadSeller(data.count);
-          }
-        });
-
-        socketChat.on("getConversation", (data) => {
-          console.log("getConversation ON", data);
-          setChatDetailCheck(data);
-          // if (chatDetail.conversationId == data.conversationId) {
-          //   setChatDetail((prev) => {
-          //     return {
-          //       ...data,
-          //       data: [...data.data, ...prev.data],
-          //     };
-          //   });
-          // } else {
-          //   setChatDetail(data);
-          // }
-        });
-
-        socketChat.on("getPreviewConversationsOne", (data) => {
-          console.log(
-            "getPreviewConversationsOne ON",
-            data,
-            listPreviewUser.length
-          );
-          if (data.role == ROLE_CHAT.USER) {
-            if (
-              listPreviewUser.some(
-                (item) => item.conversationId == data.data.conversationId
-              )
-            ) {
-              setListPreviewUser((prev) => {
-                return prev.map((item) => {
-                  if (item.conversationId == data.data.conversationId) {
-                    return data.data;
-                  } else {
-                    return item;
-                  }
-                });
-              });
             } else {
-              setListPreviewUser((prev) => [...prev, data.data]);
-            }
-          } else {
-            if (
-              listPreviewSeller.some(
-                (item) => item.conversationId == data.data.conversationId
-              )
-            ) {
-              setListPreviewSeller((prev) => {
-                return prev.map((item) => {
-                  if (item.conversationId == data.data.conversationId) {
-                    return data.data;
-                  } else {
-                    return item;
-                  }
+              if (
+                listPreviewSeller.some(
+                  (item) => item.conversationId == data.data.conversationId
+                )
+              ) {
+                setListPreviewSeller((prev) => {
+                  return prev.map((item) => {
+                    if (item.conversationId == data.data.conversationId) {
+                      return data.data;
+                    } else {
+                      return item;
+                    }
+                  });
                 });
-              });
-            } else {
-              setListPreviewSeller((prev) => [...prev, data.data]);
+              } else {
+                setListPreviewSeller((prev) => [...prev, data.data]);
+              }
             }
-          }
-        });
-        socketChat.on("getConversationOne", (data) => {
-          console.log("getConversationOne ON chatDetail", chatDetail);
-          console.log("getConversationOne ON", data);
-          if (!data.isMine) {
-            setChatDetail((prev) => {
-              const newData = Array.isArray(prev.data) ? prev.data : [];
-              return {
-                ...prev,
-                data: [...newData, data],
-              };
-            });
-          }
-        });
+          });
+          socketChat.on("getConversationOne", (data) => {
+            console.log("getConversationOne ON chatDetail", chatDetail);
+            console.log("getConversationOne ON", data);
+            if (!data.isMine) {
+              setChatDetail((prev) => {
+                const newData = Array.isArray(prev.data) ? prev.data : [];
+                return {
+                  ...prev,
+                  data: [...newData, data],
+                };
+              });
+            }
+          });
+        }
       }
 
       if (user?.role.includes(ROLE_CHAT.SELLER)) {

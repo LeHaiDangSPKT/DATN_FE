@@ -1,27 +1,24 @@
 import axios from "axios";
-import { redirect } from "next/navigation";
 export default function GetHeaders() {
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user") ?? "")
     : {};
 
   const JWT = user?.accessToken;
+  if (!JWT) {
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  }
 
   const jwtPayload = JSON.parse(window.atob(JWT.split(".")[1]));
   const exp = jwtPayload.exp;
   const now = Math.floor(Date.now() / 1000);
 
   if (exp - now < 0) {
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-    debugger;
-
     document.getElementById("loading-page")?.classList.remove("hidden");
     localStorage.removeItem("user");
-    redirect("/login");
+    window.location.href = "/login";
   } else if (exp - now < 86400) {
-    //1 ngày
-    console.log("----------------------------------------------------");
-    debugger;
     const refreshToken = user?.refreshToken;
     const headers = {
       Authorization: `Bearer ${refreshToken}`,
@@ -40,7 +37,7 @@ export default function GetHeaders() {
       } else {
         localStorage.removeItem("user");
         document.getElementById("loading-page")?.classList.remove("hidden");
-        redirect("/login");
+        window.location.href = "/login";
       }
     };
     RefreshToken();
