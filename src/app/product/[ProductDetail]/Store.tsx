@@ -135,20 +135,22 @@ function Store(props: Props) {
     }
   }, [chatDetailCheck]);
   React.useEffect(() => {
-    socketRedux.on("getConversationOne", (data: any) => {
-      console.log("getConversationOne ON Cửa hàng", data);
-      if (!data.isMine) {
-        setChatDetail((prev) => {
-          return {
-            ...prev,
-            data: [...prev.data, data],
-          };
-        });
-      }
-    });
-    socketRedux.on("getConversation", (data: any) => {
-      setChatDetailCheck(data);
-    });
+    if (socketRedux) {
+      socketRedux.on("getConversationOne", (data: any) => {
+        console.log("getConversationOne ON Cửa hàng", data);
+        if (!data.isMine) {
+          setChatDetail((prev) => {
+            return {
+              ...prev,
+              data: [...prev.data, data],
+            };
+          });
+        }
+      });
+      socketRedux.on("getConversation", (data: any) => {
+        setChatDetailCheck(data);
+      });
+    }
   }, []);
 
   const SendMessage = (text: string) => {
