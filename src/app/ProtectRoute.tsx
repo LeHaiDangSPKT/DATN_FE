@@ -30,12 +30,16 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
         return;
       }
     } else if (userRoles.some((role: string) => role.includes("MANAGER"))) {
-      if (!pathname.startsWith("/manager")) {
-        redirectUser("/manager/product/all");
+      if (
+        !pathname.startsWith("/admin") ||
+        pathname.startsWith("/admin/dashboard") ||
+        pathname.startsWith("/admin/policy")
+      ) {
+        redirectUser("/admin/user/all");
         return;
       }
     } else if (userRoles.some((role: string) => role.includes("SELLER"))) {
-      if (pathname.startsWith("/admin") || pathname.startsWith("/manager")) {
+      if (pathname.startsWith("/admin")) {
         redirectUser("/");
         return;
       }
@@ -48,7 +52,6 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
       if (
         pathname.startsWith("/shop/seller") ||
         pathname.startsWith("/admin") ||
-        pathname.startsWith("/manager") ||
         pathname.startsWith("/shiper")
       ) {
         redirectUser("/");

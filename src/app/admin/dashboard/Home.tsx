@@ -370,7 +370,7 @@ function Home() {
       <div className="bg-white rounded-md p-4 mb-5">
         {/* For sell */}
         <div className="text-center text-[#007aff] text-[24px] font-bold mb-3">
-          Top các của hàng có nhiều sản phẩm trên hệ thống
+          Top các cửa hàng có nhiều sản phẩm trên hệ thống
         </div>
         <SortTable title={arrTitleStore} noPaging={true}>
           {storeHasMostProduct.map((item, index) => (
