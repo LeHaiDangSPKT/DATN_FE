@@ -34,7 +34,7 @@ function Form(props: FormProps) {
       if (res?.data.metadata.data.role.includes("ADMIN")) {
         window.location.href = "/admin/dashboard";
       } else if (res?.data.metadata.data.role.includes("MANAGER")) {
-        window.location.href = "/manager/product";
+        window.location.href = "/admin/user/all";
       } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
         window.location.href = "/shipper";
       } else {

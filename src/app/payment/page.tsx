@@ -297,66 +297,66 @@ function Payment() {
 
   const CraeteBill = async () => {
     console.log("data", data);
-    const listProducts = [] as any[];
-    data?.forEach((item) => {
-      const obj = {
-        storeId: item.storeId,
-        products: [] as any[],
-        notes: item.notes || "",
-        deliveryFee: deliveryMethod.find((item) => item.checked)?.price,
-        totalPrice: item.totalPrice,
-      };
-      item.products.forEach((product: any) => {
-        obj.products.push({
-          name: product.name,
-          oldPrice: product.oldPrice,
-          newPrice: product.newPrice,
-          id: product.id,
-          avatar: product.avatar,
-          quantity: product.quantity,
-          type: product.newPrice === 0 ? "GIVE" : "SELL",
-        });
-      });
-      // Tìm xem nếu cửa hàng đã tồn tại thì push vào listProducts
-      const index = listProducts.findIndex(
-        (item) => item.storeId === obj.storeId
-      );
-      if (index !== -1) {
-        listProducts[index].listProducts.push(...obj.products);
-        listProducts[index].totalPrice += obj.totalPrice;
-      } else {
-        listProducts.push(obj);
-      }
-    });
-    const obj = {
-      data: listProducts,
-      deliveryMethod: deliveryMethod.find((item) => item.checked)?.value,
-      paymentMethod: paymentMethod.find((item) => item.checked)?.value,
-      receiverInfo: {
-        fullName: receiverInfo.receiverName,
-        phoneNumber: receiverInfo.receiverPhone,
-        address: receiverInfo.address,
-      },
-      giveInfo: isGift
-        ? {
-            senderName: giveInfo.senderName,
-            wish: giveInfo.wish,
-          }
-        : {},
-      coins: coin,
-      promotionId: voucher.id,
-      totalPayment: totalPrice.afterDisscount,
-    };
-    console.log(obj);
-    const res = await APICreateBill(obj);
-    if (res?.status == 200 || res?.status == 201) {
-      if (res?.data.metadata.data.urlPayment) {
-        router.push(res.data.metadata.data.urlPayment);
-        localStorage.removeItem("listProductIdChecked");
-      }
-    } else {
-      Toast("error", "Đặt hàng thất bại", 2000);
-    }
+    // const listProducts = [] as any[];
+    // data?.forEach((item) => {
+    //   const obj = {
+    //     storeId: item.storeId,
+    //     products: [] as any[],
+    //     notes: item.notes || "",
+    //     deliveryFee: deliveryMethod.find((item) => item.checked)?.price,
+    //     totalPrice: item.totalPrice,
+    //   };
+    //   item.products.forEach((product: any) => {
+    //     obj.products.push({
+    //       name: product.name,
+    //       oldPrice: product.oldPrice,
+    //       newPrice: product.newPrice,
+    //       id: product.id,
+    //       avatar: product.avatar,
+    //       quantity: product.quantity,
+    //       type: product.newPrice === 0 ? "GIVE" : "SELL",
+    //     });
+    //   });
+    //   // Tìm xem nếu cửa hàng đã tồn tại thì push vào listProducts
+    //   const index = listProducts.findIndex(
+    //     (item) => item.storeId === obj.storeId
+    //   );
+    //   if (index !== -1) {
+    //     listProducts[index].listProducts.push(...obj.products);
+    //     listProducts[index].totalPrice += obj.totalPrice;
+    //   } else {
+    //     listProducts.push(obj);
+    //   }
+    // });
+    // const obj = {
+    //   data: listProducts,
+    //   deliveryMethod: deliveryMethod.find((item) => item.checked)?.value,
+    //   paymentMethod: paymentMethod.find((item) => item.checked)?.value,
+    //   receiverInfo: {
+    //     fullName: receiverInfo.receiverName,
+    //     phoneNumber: receiverInfo.receiverPhone,
+    //     address: receiverInfo.address,
+    //   },
+    //   giveInfo: isGift
+    //     ? {
+    //         senderName: giveInfo.senderName,
+    //         wish: giveInfo.wish,
+    //       }
+    //     : {},
+    //   coins: coin,
+    //   promotionId: voucher.id,
+    //   totalPayment: totalPrice.afterDisscount,
+    // };
+    // console.log(obj);
+    // const res = await APICreateBill(obj);
+    // if (res?.status == 200 || res?.status == 201) {
+    //   if (res?.data.metadata.data.urlPayment) {
+    //     router.push(res.data.metadata.data.urlPayment);
+    //     localStorage.removeItem("listProductIdChecked");
+    //   }
+    // } else {
+    //   Toast("error", "Đặt hàng thất bại", 2000);
+    // }
   };
 
   const AddVoucher = (selectedVoucher: any) => {
@@ -869,17 +869,17 @@ function Payment() {
                 min={0}
                 value={coin}
                 onChange={(e) => {
-                  if (+e.target.value > +user.wallet) {
+                  const coinChange = +e.target.value || 0;
+                  console.log("eee", coinChange);
+                  debugger;
+                  if (coinChange > +user.wallet) {
                     Toast("warning", "Không được vượt quá xu hiện có", 2000);
-                    if (+e.target.value > totalPrice.general - voucher.amount) {
+                    if (coinChange > totalPrice.general - voucher.amount) {
                       setCoin(totalPrice.general - voucher.amount);
                     } else {
                       setCoin(+user.wallet);
                     }
-                  } else if (
-                    +e.target.value >
-                    totalPrice.general - voucher.amount
-                  ) {
+                  } else if (coinChange > totalPrice.general - voucher.amount) {
                     Toast(
                       "warning",
                       "Không được vượt quá số tiền sản phẩm đã kết hợp các mã giảm giá",
@@ -887,27 +887,13 @@ function Payment() {
                     );
                     setCoin(totalPrice.general - voucher.amount);
                   } else {
-                    setCoin(+e.target.value);
-                    if (
-                      totalPrice.general - +e.target.value - voucher.base <=
-                      0
-                    ) {
-                      setTotalPrice({
-                        ...totalPrice,
-                        afterDisscount:
-                          deliveryMethod.find((item) => item.checked)?.price! *
-                          data.length,
-                      });
+                    setCoin(coinChange);
+                    if (totalPrice.general - coinChange - voucher.base <= 0) {
                       setVoucher({
                         ...voucher,
-                        amount: totalPrice.general - +e.target.value,
+                        amount: totalPrice.general - coinChange,
                       });
                     } else {
-                      setTotalPrice({
-                        ...totalPrice,
-                        afterDisscount:
-                          totalPrice.general - +e.target.value - voucher.base,
-                      });
                       setVoucher({
                         ...voucher,
                         amount: voucher.base,

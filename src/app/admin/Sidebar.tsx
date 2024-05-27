@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
-import { HiChevronDown, HiChevronRight, HiUserCircle } from "react-icons/hi2";
-import { GrUserWorker } from "react-icons/gr";
+import {
+  HiChevronDown,
+  HiChevronRight,
+  HiUserCircle,
+  HiUserGroup,
+} from "react-icons/hi2";
 import { IoIosSettings } from "react-icons/io";
 import { GiShoppingBag } from "react-icons/gi";
 import {
@@ -51,9 +55,9 @@ function Sidebar(props: ChildrenProps) {
 
   return (
     <Card className="min-h-[calc(100vh-2rem)] h-[calc(100vh-2rem)] w-[19%] p-4 shadow-xl shadow-blue-gray-900/5 fixed overflow-y-auto hidden-scrollbar my-2 ">
-      <div className="mb-2 p-4">
+      <div className="mb-2 p-4 flex">
+        <Avatar src={user?.avatar} alt="avatar" className="mr-4" />
         <Typography variant="h5" color="blue-gray">
-          <Avatar src={user?.avatar} alt="avatar" className="mr-4" />
           Hi, {user?.fullName}
         </Typography>
       </div>
@@ -218,7 +222,7 @@ function Sidebar(props: ChildrenProps) {
               className="border-b-0 p-3"
             >
               <ListItemPrefix>
-                <GrUserWorker className="h-5 w-5" />
+                <HiUserGroup className="h-5 w-5 " />
               </ListItemPrefix>
               <Typography color="blue-gray" className="mr-auto font-normal">
                 Quản lý shipper
