@@ -44,12 +44,10 @@ export const APIManagerPromotion = async (
 ) => {
   const headers = GetHeaders();
   if (headers) {
-    document.getElementById("loading-page")?.classList.remove("hidden");
     const res = await axiosInstance.get(
       `${process.env.NEXT_PUBLIC_API_URL}/promotions/manager?storeId=${storeId}&isActive=${isActive}`,
       { headers }
     );
-    document.getElementById("loading-page")?.classList.add("hidden");
     return res.data.metadata;
   }
 };

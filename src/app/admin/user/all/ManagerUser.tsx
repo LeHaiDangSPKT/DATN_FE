@@ -6,6 +6,7 @@ import { exportExcel } from "@/utils/ExportExcel";
 import formatToDDMMYYYY from "@/utils/formatToDDMMYYYY";
 import React from "react";
 import Image from "next/image";
+import { Typography } from "@material-tailwind/react";
 
 interface ListUser {
   total: number;
@@ -143,7 +144,10 @@ function ManagerUser() {
             className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
             key={index}
           >
-            <td className="px-6 py-4 text-center">
+            <td className="px-6 py-4 text-center flex justify-center items-center">
+              <Typography color="gray">
+                {(page - 1) * 20 + index + 1} .
+              </Typography>
               <Image
                 src={item.avatar}
                 width={50}

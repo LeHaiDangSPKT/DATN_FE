@@ -19,7 +19,7 @@ import {
   ListItemPrefix,
   Typography,
 } from "@material-tailwind/react";
-import { FaInbox, FaStore } from "react-icons/fa";
+import { FaBoxes, FaInbox, FaStore } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { PowerIcon } from "@heroicons/react/24/solid";
 interface ChildrenProps {
@@ -50,12 +50,14 @@ function Sidebar(props: ChildrenProps) {
       setOpen(2);
     } else if (code.startsWith("shipper")) {
       setOpen(3);
+    } else if (code.startsWith("product")) {
+      setOpen(4);
     }
   }, [code]);
 
   return (
     <Card className="min-h-[calc(100vh-2rem)] h-[calc(100vh-2rem)] w-[19%] p-4 shadow-xl shadow-blue-gray-900/5 fixed overflow-y-auto hidden-scrollbar my-2 ">
-      <div className="mb-2 p-4 flex">
+      <div className="mb-2 p-4 flex items-center">
         <Avatar src={user?.avatar} alt="avatar" className="mr-4" />
         <Typography variant="h5" color="blue-gray">
           Hi, {user?.fullName}
@@ -63,16 +65,16 @@ function Sidebar(props: ChildrenProps) {
       </div>
       <List>
         {role?.some((item) => item == "ADMIN") && (
-          <a href="/admin/dashboard" className="text-initial">
-            <ListItem selected={code == "dashboard"}>
-              <ListItemPrefix>
-                <IoIosSettings className="h-6 w-6" />
-              </ListItemPrefix>
-              Thống kê
-            </ListItem>
-          </a>
+          <ListItem
+            selected={code == "dashboard"}
+            onClick={() => router.push("/admin/dashboard")}
+          >
+            <ListItemPrefix>
+              <IoIosSettings className="h-6 w-6" />
+            </ListItemPrefix>
+            Thống kê
+          </ListItem>
         )}
-
         <Accordion
           open={open === 1}
           icon={
@@ -99,48 +101,42 @@ function Sidebar(props: ChildrenProps) {
           </ListItem>
           <AccordionBody className="py-1">
             <List className="p-0">
-              <a href="/admin/user/all" className="text-initial">
-                <ListItem
-                  className={code == "user_all" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Tất cả người dùng của hệ thống
-                </ListItem>
-              </a>
-              <a href="/admin/user/has-store" className="text-initial">
-                <ListItem
-                  className={code == "user_has_store" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách người dùng có cửa hàng
-                </ListItem>
-              </a>
-              <a href="/admin/user/has-warning" className="text-initial">
-                <ListItem
-                  className={
-                    code == "user_has_warning" ? "bg-blue-gray-50" : ""
-                  }
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách người dùng đang bị cảnh cáo
-                </ListItem>
-              </a>
-              <a href="/admin/user/has-ban" className="text-initial">
-                <ListItem
-                  className={code == "user_has_ban" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách người dùng bị vô hiệu hoá
-                </ListItem>
-              </a>
+              <ListItem
+                onClick={() => router.push("/admin/user/all")}
+                className={code == "user_all" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Tất cả người dùng của hệ thống
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/user/has-store")}
+                className={code == "user_has_store" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách người dùng có cửa hàng
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/user/has-warning")}
+                className={code == "user_has_warning" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách người dùng đang bị cảnh cáo
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/user/has-ban")}
+                className={code == "user_has_ban" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách người dùng bị vô hiệu hoá
+              </ListItem>
             </List>
           </AccordionBody>
         </Accordion>
@@ -170,38 +166,93 @@ function Sidebar(props: ChildrenProps) {
           </ListItem>
           <AccordionBody className="py-1">
             <List className="p-0">
-              <a href="/admin/store/all" className="text-initial">
-                <ListItem
-                  className={code == "store_all" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Tất cả cửa hàng của hệ thống
-                </ListItem>
-              </a>
-              <a href="/admin/store/has-warning" className="text-initial">
-                <ListItem
-                  className={code == "store_warning" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách cửa hàng đang bị báo cáo
-                </ListItem>
-              </a>
-              <a href="/admin/store/report-approval" className="text-initial">
-                <ListItem
-                  className={
-                    code == "store_report_approval" ? "bg-blue-gray-50" : ""
-                  }
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách báo cáo đã phê duyệt
-                </ListItem>
-              </a>
+              <ListItem
+                onClick={() => router.push("/admin/store/all")}
+                className={code == "store_all" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Tất cả cửa hàng của hệ thống
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/store/has-warning")}
+                className={code == "store_warning" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách cửa hàng đang bị báo cáo
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/store/report-approval")}
+                className={
+                  code == "store_report_approval" ? "bg-blue-gray-50" : ""
+                }
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách báo cáo đã phê duyệt
+              </ListItem>
+            </List>
+          </AccordionBody>
+        </Accordion>
+        <Accordion
+          open={open === 4}
+          icon={
+            <HiChevronDown
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${
+                open === 2 ? "rotate-180" : ""
+              }`}
+            />
+          }
+        >
+          <ListItem className="p-0" selected={open === 4}>
+            <AccordionHeader
+              onClick={() => handleOpen(4)}
+              className="border-b-0 p-3"
+            >
+              <ListItemPrefix>
+                <FaBoxes className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography color="blue-gray" className="mr-auto font-normal">
+                Quản lý sản phẩm
+              </Typography>
+            </AccordionHeader>
+          </ListItem>
+          <AccordionBody className="py-1">
+            <List className="p-0">
+              <ListItem
+                onClick={() => router.push("/admin/product/all")}
+                className={code == "product_all" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Tất cả sản phẩm của hệ thống
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/product/has-warning")}
+                className={code == "product_warning" ? "bg-blue-gray-50" : ""}
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách sản phẩm đang bị báo cáo
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/product/report-approval")}
+                className={
+                  code == "product_report_approval" ? "bg-blue-gray-50" : ""
+                }
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách báo cáo đã phê duyệt
+              </ListItem>
             </List>
           </AccordionBody>
         </Accordion>
@@ -231,53 +282,49 @@ function Sidebar(props: ChildrenProps) {
           </ListItem>
           <AccordionBody className="py-1">
             <List className="p-0">
-              <a href="/admin/shipper" className="text-initial">
-                <ListItem
-                  className={code == "shipper" ? "bg-blue-gray-50" : ""}
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách shipper
-                </ListItem>
-              </a>
-              <a
-                href="/admin/shipper/not-yet-approval"
-                className="text-initial"
+              <ListItem
+                onClick={() => router.push("/admin/shipper")}
+                className={code == "shipper" ? "bg-blue-gray-50" : ""}
               >
-                <ListItem
-                  className={
-                    code == "shipper-not-yet-approval" ? "bg-blue-gray-50" : ""
-                  }
-                >
-                  <ListItemPrefix>
-                    <HiChevronRight strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Danh sách đơn đăng ký trở thành shipper
-                </ListItem>
-              </a>
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách shipper
+              </ListItem>
+              <ListItem
+                onClick={() => router.push("/admin/shipper/not-yet-approval")}
+                className={
+                  code == "shipper-not-yet-approval" ? "bg-blue-gray-50" : ""
+                }
+              >
+                <ListItemPrefix>
+                  <HiChevronRight strokeWidth={3} className="h-3 w-5" />
+                </ListItemPrefix>
+                Danh sách đơn đăng ký trở thành shipper
+              </ListItem>
             </List>
           </AccordionBody>
         </Accordion>
         {role?.some((item) => item == "ADMIN") && (
-          <a href="/admin/policy" className="text-initial">
-            <ListItem selected={code == "policy"}>
-              <ListItemPrefix>
-                <FaInbox className="h-5 w-5" />
-              </ListItemPrefix>
-              Chính sách
-            </ListItem>
-          </a>
-        )}
-        <a href="/admin/promotion" className="text-initial">
-          <ListItem selected={code == "promotion"}>
+          <ListItem
+            onClick={() => router.push("/admin/policy")}
+            selected={code == "policy"}
+          >
             <ListItemPrefix>
-              <GiShoppingBag className="h-5 w-5" />
+              <FaInbox className="h-5 w-5" />
             </ListItemPrefix>
-            Khuyến mãi
+            Chính sách
           </ListItem>
-        </a>
-
+        )}
+        <ListItem
+          onClick={() => router.push("/admin/promotion")}
+          selected={code == "promotion"}
+        >
+          <ListItemPrefix>
+            <GiShoppingBag className="h-5 w-5" />
+          </ListItemPrefix>
+          Khuyến mãi
+        </ListItem>
         <ListItem
           className="text-red-500 hover:text-red-500"
           onClick={(e) => {
