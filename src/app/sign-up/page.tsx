@@ -90,7 +90,7 @@ function SignUp() {
   const SendOTP = async () => {
     const res = await APISendOTP(signUpForm.values.email);
     if (res?.status !== 200 && res.status !== 201) {
-      Toast("error", res.message, 5000);
+      Toast("error", res.data.message, 5000);
     } else {
       Toast(
         "success",
@@ -108,8 +108,9 @@ function SignUp() {
 
   const ReSendOTP = async () => {
     const res = await APISendOTP(signUpForm.values.email);
+    console.log(res);
     if (res?.status !== 200 && res.status !== 201) {
-      Toast("error", res.message, 5000);
+      Toast("error", res.data.message, 5000);
     } else {
       Toast(
         "success",
@@ -122,13 +123,13 @@ function SignUp() {
   const ConfirmOTP = async () => {
     const res = await APIVerifyOTP(signUpForm.values.email, otpForm.values.otp);
     if (res?.status !== 200 && res.status !== 201) {
-      Toast("error", res.message, 5000);
+      Toast("error", res.data.message, 5000);
       return;
     }
 
     const result = await APISignUp(signUpForm.values);
     if (result.status !== 200 && result.status !== 201) {
-      Toast("error", result.message, 5000);
+      Toast("error", result.data.message, 5000);
       return;
     }
     Toast("success", "Đăng ký thành công", 2000);

@@ -14,7 +14,7 @@ export const APISignUp = async ({ name, email, password }: SignUpForm) => {
       password,
     }
   );
-  return res.data;
+  return res;
 };
 
 export const APILogin = async (email: string, password: string) => {

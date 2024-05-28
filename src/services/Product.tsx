@@ -143,7 +143,7 @@ export const APIGetProductAdmin = async (id: any) => {
       `${process.env.NEXT_PUBLIC_API_URL}/product/admin/${id}`,
       { headers }
     );
-    return res.data;
+    return res.data.metadata.data;
   }
 };
 

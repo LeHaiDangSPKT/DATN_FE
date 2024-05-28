@@ -66,7 +66,7 @@ function Report(props: Props) {
       name: "user",
     },
     {
-      title: type == "product" ? "Sản phẩm bị báo cáo" : "Cửa hàng bị báo cáo",
+      title: type == "PRODUCT" ? "Sản phẩm bị báo cáo" : "Cửa hàng bị báo cáo",
       sort: false,
       name: "product",
     },
@@ -116,8 +116,14 @@ function Report(props: Props) {
   };
 
   const ExportExcel = async () => {
-    if (status) exportExcel("reports/excel");
-    else exportExcel("stores/excel/being-reported");
+    if (type == "PRODUCT") {
+      // if (status) exportExcel("reports/excel");
+      // else exportExcel("stores/excel/being-reported");
+      console.log("Đang làm");
+    } else {
+      if (status) exportExcel("reports/excel");
+      else exportExcel("stores/excel/being-reported");
+    }
   };
   return (
     <>

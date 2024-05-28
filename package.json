@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "cross-env ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest"
@@ -13,10 +14,12 @@
     "@heroicons/react": "^2.1.1",
     "@internationalized/date": "^3.5.2",
     "@material-tailwind/react": "^2.1.9",
+    "@next/bundle-analyzer": "^14.2.3",
     "@nextui-org/react": "^2.3.6",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.0",
     "chart.js": "^4.4.0",
+    "cross-env": "^7.0.3",
     "formik": "^2.4.5",
     "framer-motion": "^11.1.7",
     "moment-timezone": "^0.5.43",

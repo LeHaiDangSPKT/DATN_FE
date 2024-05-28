@@ -75,7 +75,7 @@ function ForgetPassword() {
         forgetForm.values.otp
       );
       if (res?.status != 200 && res.status != 201) {
-        Toast("error", res.message, 5000);
+        Toast("error", res.data.message, 5000);
         return;
       }
       Toast("success", "Chuẩn rồi, nhập mật khẩu mới nhé", 2000);
