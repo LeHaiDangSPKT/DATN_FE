@@ -9,7 +9,7 @@ export const APISendOTP = async (email: string) => {
     }
   );
   document.getElementById("loading-page")?.classList.add("hidden");
-  return res.data;
+  return res;
 };
 
 export const APIVerifyOTP = async (email: string, otp: string) => {
@@ -22,7 +22,7 @@ export const APIVerifyOTP = async (email: string, otp: string) => {
     }
   );
   document.getElementById("loading-page")?.classList.add("hidden");
-  return res.data;
+  return res;
 };
 
 export const APISendOTPForget = async (email: string) => {
