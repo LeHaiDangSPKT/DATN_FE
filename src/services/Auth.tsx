@@ -38,7 +38,7 @@ export const APIForgetPassword = async (email: string, password: string) => {
       password,
     }
   );
-  return res.data;
+  return res;
 };
 
 // api/auth/login-social => post

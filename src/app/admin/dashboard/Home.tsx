@@ -193,22 +193,21 @@ function Home() {
   }, [yearFilter]);
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      await APIGetStoreMostProduct(10).then((res) =>
-        setStoreHasMostProduct(res?.metadata.data)
-      );
-    };
-    fetchData();
-  }, []);
+    const fetchStoreAndUserData = async () => {
+      try {
+        const [storeData, userData] = await Promise.all([
+          APIGetStoreMostProduct(10),
+          APIGetUserMostBill(10),
+        ]);
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      await APIGetUserMostBill(10).then((res) => {
-        console.log(res);
-        setUserHasMostBill(res?.metadata.data);
-      });
+        setStoreHasMostProduct(storeData?.metadata.data);
+        setUserHasMostBill(userData?.metadata.data);
+      } catch (error) {
+        console.error("Error fetching store and user data", error);
+      }
     };
-    fetchData();
+
+    fetchStoreAndUserData();
   }, []);
 
   const [dataTotal, setDataTotal] = React.useState<any>({

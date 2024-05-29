@@ -24,7 +24,6 @@ function CartPage() {
   const totalMoney = useAppSelector(
     (state) => state.cartPopupReducer.totalMoney
   );
-  console.log(dataCarts, "dataCarts");
   return (
     <div className="min-h-screen px-[10%]">
       {totalCart > 0 ? (

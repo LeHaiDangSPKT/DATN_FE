@@ -87,7 +87,7 @@ function ForgetPassword() {
         forgetForm.values.password
       );
       if (result.status != 200 && result.status != 201) {
-        Toast("error", result.message, 5000);
+        Toast("error", result.data.message, 5000);
         return;
       }
       Toast("success", "Cập nhật thành công", 2000);
@@ -127,7 +127,7 @@ function ForgetPassword() {
         )
       );
     }
-  }, [checkState, forgetForm.values]);
+  }, [checkState]);
   React.useEffect(() => {
     const listener = (event: { code: string; preventDefault: () => void }) => {
       if (event.code === "Enter" || event.code === "NumpadEnter") {
