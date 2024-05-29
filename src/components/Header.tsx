@@ -33,6 +33,7 @@ import CartPopup from "./CartPopup";
 import FormatMoney from "@/utils/FormatMoney";
 import Popup from "./chat/Popup";
 import { ROLE_CHAT } from "@/constants/Conversation";
+import { setParamSearch } from "@/redux/features/search/search-slice";
 
 function Header() {
   const arrPathName = [
@@ -360,7 +361,6 @@ function Header() {
     }
   }, [chatDetailCheck]);
 
-  console.log("chatDetail", chatDetail);
   const OpenStore = async () => {
     const store = await APIGetMyStore();
     document.getElementById("loading-page")?.classList.remove("hidden");
@@ -428,7 +428,13 @@ function Header() {
               />
 
               <div className="flex items-center rounded-3xl w-[200px] sm:w-[400px] h-[40px] bg-[#E1E9F7] px-2">
-                <div className="p-2">
+                <div
+                  className="p-2"
+                  onClick={() => {
+                    dispatch(setParamSearch(search));
+                    router.push("/product/search?search=" + search);
+                  }}
+                >
                   <FaSistrix
                     className="hover:cursor-pointer"
                     width={24}
@@ -443,9 +449,7 @@ function Header() {
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key == "Enter") {
-                      document
-                        .getElementById("loading-page")
-                        ?.classList.remove("hidden");
+                      dispatch(setParamSearch(search));
                       router.push("/product/search?search=" + search);
                     }
                   }}

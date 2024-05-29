@@ -11,8 +11,9 @@ import React from "react";
 function Search() {
   const [lstProduct, setLstProduct] = React.useState<any[]>([]); // Update the type of lstProduct to any[]
   const [page, setPage] = React.useState<any>(1);
-  const [search, setSearch] = React.useState<any>("");
   const [totalPage, setTotalPage] = React.useState<any>(1);
+  const search = useAppSelector((state) => state.searchReducer.search);
+
   React.useEffect(() => {
     const fetchData = async (searchParam: any) => {
       await APIGetListProductForUser(page || 1, 20, searchParam).then(
@@ -22,11 +23,8 @@ function Search() {
         }
       );
     };
-    const search = window.location.search;
-    const params = new URLSearchParams(search);
-    setSearch(params.get("search"));
-    fetchData(params.get("search"));
-  }, [page]);
+    fetchData(search);
+  }, [page, search]);
   return (
     <FrameMainContent>
       <div className="flex mt-2 justify-between">
