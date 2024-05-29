@@ -300,7 +300,7 @@ function Info() {
     <div className="min-h-screen px-[150px] my-4">
       <div className=" bg-white rounded-md py-2 px-4 mb-5">
         <div className="flex justify-center items-center my-5">
-          {invoice.map((item, index) => (
+          {invoice?.map((item, index) => (
             <div
               className="flex flex-col relative group cursor-pointer"
               key={index}

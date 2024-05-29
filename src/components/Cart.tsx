@@ -38,6 +38,7 @@ function Cart(props: CartProps) {
     quantityInStock,
     isChecked,
   } = props.data;
+  console.log("props.data", props.data);
   const dispatch = useDispatch<AppDispatch>();
   const [isShow, setIsShow] = React.useState(false);
   const [currentQuantity, setCurrentQuantity] = React.useState(quantity + "");

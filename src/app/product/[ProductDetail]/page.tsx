@@ -68,7 +68,7 @@ function ProductDetail() {
   React.useEffect(() => {
     const fetchData = async () => {
       await APIGetEvaluation(params.ProductDetail).then((res) => {
-        // console.log("APIGetEvaluation", res);
+        console.log("APIGetEvaluation", res);
         setEvaluation({
           total: res.metadata.data.total,
           isReaction: res.metadata.data.isReaction,
@@ -90,7 +90,6 @@ function ProductDetail() {
 
   const carts = useAppSelector((state) => state.cartPopupReducer.items);
   const AddToCart = async (buyNow?: boolean) => {
-    console.log(product);
     let isProductInCart = false;
     carts?.store?.map((data) => {
       if (data.id == product.storeId) {
@@ -112,7 +111,8 @@ function ProductDetail() {
             id: product._id,
             name: product.name,
             avatar: product.avatar[0],
-            price: product.newPrice,
+            oldPrice: product.oldPrice,
+            newPrice: product.newPrice,
             quantity: 1,
             quantityInStock: product.quantity,
             isChecked: false,
@@ -138,18 +138,15 @@ function ProductDetail() {
   };
 
   const Heart = async () => {
-    await APIGetEvaluationUser(params.ProductDetail, {
+    setEvaluation({
+      ...evaluation,
+      isReaction: !evaluation.isReaction,
+      total: evaluation.isReaction
+        ? evaluation.total - 1
+        : evaluation.total + 1,
+    });
+    const res = await APIGetEvaluationUser(params.ProductDetail, {
       name: "Love",
-    }).then((res) => {
-      if (res) {
-        setEvaluation({
-          ...evaluation,
-          isReaction: !evaluation.isReaction,
-          total: evaluation.isReaction
-            ? evaluation.total - 1
-            : evaluation.total + 1,
-        });
-      }
     });
   };
 
@@ -525,7 +522,7 @@ function ProductDetail() {
         isShow={showReport}
         setIsShow={(e) => setShowReport(false)}
         confirm={() => Report()}
-        title={`Báo cáo ${type == "product" ? "sản phẩm" : "cửa hàng"}`}
+        title={`Báo cáo ${type == "PRODUCT" ? "sản phẩm" : "cửa hàng"}`}
       >
         <div> Nội dung báo cáo:</div>
         <textarea

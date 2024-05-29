@@ -296,67 +296,66 @@ function Payment() {
   };
 
   const CraeteBill = async () => {
-    console.log("data", data);
-    // const listProducts = [] as any[];
-    // data?.forEach((item) => {
-    //   const obj = {
-    //     storeId: item.storeId,
-    //     products: [] as any[],
-    //     notes: item.notes || "",
-    //     deliveryFee: deliveryMethod.find((item) => item.checked)?.price,
-    //     totalPrice: item.totalPrice,
-    //   };
-    //   item.products.forEach((product: any) => {
-    //     obj.products.push({
-    //       name: product.name,
-    //       oldPrice: product.oldPrice,
-    //       newPrice: product.newPrice,
-    //       id: product.id,
-    //       avatar: product.avatar,
-    //       quantity: product.quantity,
-    //       type: product.newPrice === 0 ? "GIVE" : "SELL",
-    //     });
-    //   });
-    //   // Tìm xem nếu cửa hàng đã tồn tại thì push vào listProducts
-    //   const index = listProducts.findIndex(
-    //     (item) => item.storeId === obj.storeId
-    //   );
-    //   if (index !== -1) {
-    //     listProducts[index].listProducts.push(...obj.products);
-    //     listProducts[index].totalPrice += obj.totalPrice;
-    //   } else {
-    //     listProducts.push(obj);
-    //   }
-    // });
-    // const obj = {
-    //   data: listProducts,
-    //   deliveryMethod: deliveryMethod.find((item) => item.checked)?.value,
-    //   paymentMethod: paymentMethod.find((item) => item.checked)?.value,
-    //   receiverInfo: {
-    //     fullName: receiverInfo.receiverName,
-    //     phoneNumber: receiverInfo.receiverPhone,
-    //     address: receiverInfo.address,
-    //   },
-    //   giveInfo: isGift
-    //     ? {
-    //         senderName: giveInfo.senderName,
-    //         wish: giveInfo.wish,
-    //       }
-    //     : {},
-    //   coins: coin,
-    //   promotionId: voucher.id,
-    //   totalPayment: totalPrice.afterDisscount,
-    // };
-    // console.log(obj);
-    // const res = await APICreateBill(obj);
-    // if (res?.status == 200 || res?.status == 201) {
-    //   if (res?.data.metadata.data.urlPayment) {
-    //     router.push(res.data.metadata.data.urlPayment);
-    //     localStorage.removeItem("listProductIdChecked");
-    //   }
-    // } else {
-    //   Toast("error", "Đặt hàng thất bại", 2000);
-    // }
+    const listProducts = [] as any[];
+    data?.forEach((item) => {
+      const obj = {
+        storeId: item.storeId,
+        products: [] as any[],
+        notes: item.notes || "",
+        deliveryFee: deliveryMethod.find((item) => item.checked)?.price,
+        totalPrice: item.totalPrice,
+      };
+      item.products.forEach((product: any) => {
+        obj.products.push({
+          name: product.name,
+          oldPrice: product.oldPrice,
+          newPrice: product.newPrice,
+          id: product.id,
+          avatar: product.avatar,
+          quantity: product.quantity,
+          type: product.newPrice === 0 ? "GIVE" : "SELL",
+        });
+      });
+      // Tìm xem nếu cửa hàng đã tồn tại thì push vào listProducts
+      const index = listProducts.findIndex(
+        (item) => item.storeId === obj.storeId
+      );
+      if (index !== -1) {
+        listProducts[index].listProducts.push(...obj.products);
+        listProducts[index].totalPrice += obj.totalPrice;
+      } else {
+        listProducts.push(obj);
+      }
+    });
+    const obj = {
+      data: listProducts,
+      deliveryMethod: deliveryMethod.find((item) => item.checked)?.value,
+      paymentMethod: paymentMethod.find((item) => item.checked)?.value,
+      receiverInfo: {
+        fullName: receiverInfo.receiverName,
+        phoneNumber: receiverInfo.receiverPhone,
+        address: receiverInfo.address,
+      },
+      giveInfo: isGift
+        ? {
+            senderName: giveInfo.senderName,
+            wish: giveInfo.wish,
+          }
+        : {},
+      coins: coin,
+      promotionId: voucher.id,
+      totalPayment: totalPrice.afterDisscount,
+    };
+    console.log(obj);
+    const res = await APICreateBill(obj);
+    if (res?.status == 200 || res?.status == 201) {
+      if (res?.data.metadata.data.urlPayment) {
+        router.push(res.data.metadata.data.urlPayment);
+        localStorage.removeItem("listProductIdChecked");
+      }
+    } else {
+      Toast("error", "Đặt hàng thất bại", 2000);
+    }
   };
 
   const AddVoucher = (selectedVoucher: any) => {
