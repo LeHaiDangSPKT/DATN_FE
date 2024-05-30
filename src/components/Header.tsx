@@ -188,7 +188,10 @@ function Header() {
           });
           socket.on("getNotifications", (data) => {
             const dataNotiFetch = data.data as NotificationInterface[];
+<<<<<<< HEAD
             console.log("getNotifications ON", dataNotiFetch);
+=======
+>>>>>>> origin/dev
             setDataNotiCheck(dataNotiFetch);
             setDataNoti((prev) => [...prev, ...dataNotiFetch]);
           });
