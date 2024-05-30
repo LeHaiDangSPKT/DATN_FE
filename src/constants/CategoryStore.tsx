@@ -7,12 +7,8 @@
 // Đơn huỷ
 // Quản lý kho
 
-<<<<<<< HEAD
 import Cancel from "@/app/shop/seller/[MyStore]/Cancel";
 import Back from "@/app/shop/seller/[MyStore]/Back";
-=======
-import Cancel from "@/app/shop/seller/[MyStore]/Back";
->>>>>>> origin/dev
 import Create from "@/app/shop/seller/[MyStore]/Create";
 import Home from "@/app/shop/seller/[MyStore]/Home";
 import Info from "@/app/shop/seller/[MyStore]/Info";
@@ -61,14 +57,11 @@ export const CATEGORYSTORE = [
   {
     title: "Đơn trả",
     value: "back",
-<<<<<<< HEAD
     element: Back,
   },
   {
     title: "Đơn huỷ",
     value: "cancel",
-=======
->>>>>>> origin/dev
     element: Cancel,
   },
   {
