@@ -46,22 +46,23 @@ function Feedback(props: Props) {
     fetchData();
   }, [page, params.ProductDetail, setTotalFeedback]);
   const SendFeedback = async () => {
-    await APICreateFeedback(params.ProductDetail + "", feedback).then(
-      (res: any) => {
-        if (res?.status == 200 || res?.status == 201) {
-          setFeedbacks(
-            feedbacks.concat({
-              ...res.metadata.data,
-              name: user?.fullName,
-              avatar: user?.avatar,
-            })
-          );
-          setTotalFeedback(total + 1);
-          setFeedback({ star: 5, content: "" });
-          HandleClick(5);
-        }
-      }
-    );
+    const res = await APICreateFeedback(params.ProductDetail + "", feedback);
+
+    if (res?.status == 200 || res?.status == 201) {
+      Toast("success", res.data.message, 3000);
+      setFeedbacks(
+        feedbacks.concat({
+          ...res.data.metadata.data,
+          name: user?.fullName,
+          avatar: user?.avatar,
+        })
+      );
+      setTotalFeedback(total + 1);
+      setFeedback({ star: 5, content: "" });
+      HandleClick(5);
+    } else {
+      Toast("error", res?.data.message, 3000);
+    }
   };
   const HandleClick = (star: number) => {
     setFeedback({ ...feedback, star: star });
@@ -106,6 +107,8 @@ function Feedback(props: Props) {
                 src={item.avatar}
                 className="w-10 h-10 me-4 rounded-full"
                 alt=""
+                width={40}
+                height={40}
               />
               <div className="font-medium dark:text-white">
                 <p>
@@ -228,6 +231,8 @@ function Feedback(props: Props) {
               src={user?.avatar}
               className="w-10 h-10 me-4 rounded-full"
               alt=""
+              width={40}
+              height={40}
             />
             <div className="font-medium dark:text-white w-full">
               <p>

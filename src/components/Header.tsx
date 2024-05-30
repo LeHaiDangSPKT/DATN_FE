@@ -706,6 +706,8 @@ function Header() {
                     variant="circular"
                     alt="tania andrew"
                     src={dataDrawer.storeAvatar}
+                    width={40}
+                    height={40}
                   />
                   <div className="flex flex-col gap-1">
                     <Typography
@@ -761,6 +763,8 @@ function Header() {
                     variant="circular"
                     alt="tania andrew"
                     src={item.avatar}
+                    width={40}
+                    height={40}
                   />
                   <div className="flex flex-col gap-1">
                     <Typography

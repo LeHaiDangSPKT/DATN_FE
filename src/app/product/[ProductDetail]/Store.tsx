@@ -263,7 +263,7 @@ function Store(props: Props) {
                 e.preventDefault();
                 Toast(
                   "error",
-                  "Bạn cần đăng nhập để báo cáo cửa hàng này",
+                  "Bạn cần đăng nhập để nhắn tin với cửa hàng này",
                   2000
                 );
                 setShowLogin(true);
