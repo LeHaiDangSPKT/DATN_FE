@@ -11,6 +11,9 @@ function Page() {
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
 
+  React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+  }, []);
   const validatePassword = (password: string, fieldName: string) => {
     if (password === "") {
       Toast("error", `${fieldName} không được để trống`, 3000);
@@ -47,8 +50,7 @@ function Page() {
       Toast("success", res?.data.message, 3000);
       setTimeout(() => {
         document.getElementById("loading-page")?.classList.remove("hidden");
-        localStorage.removeItem("user");
-        router.push("/login");
+        router.push("/shipper");
       }, 2000);
     } else {
       Toast("error", res?.data.message, 3000);

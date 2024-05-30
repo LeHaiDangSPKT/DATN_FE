@@ -115,6 +115,8 @@ function Page() {
     },
   ];
   React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
+
     const fetchData = async () => {
       const res = await APIGetProfileShipper();
       setProfile(res);
@@ -321,8 +323,7 @@ function Page() {
         </Drawer>
         <div
           onClick={(e) => {
-            document.getElementById("loading-page")?.classList.remove("hidden");
-            router.push("/shipper");
+            setStatusBill("CONFIRMED");
           }}
         >
           <Image src="/logo.png" alt="logo" width={100} height={100} />
@@ -493,7 +494,6 @@ function Page() {
             <div
               className="w-[50px] h-[50px] border border-[#d9d9d9] rounded-full flex justify-center items-center cursor-pointer mx-auto"
               onClick={(e) => {
-                console.log("click", section.state);
                 if (!section.state) return;
                 const input = document.getElementById("upload-avatar");
                 if (input) {
