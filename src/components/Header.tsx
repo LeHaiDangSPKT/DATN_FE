@@ -639,7 +639,7 @@ function Header() {
 
               {user ? (
                 <div className="flex items-center group py-10">
-                  <MenuHeaderInfoUser user={user} />
+                  <MenuHeaderInfoUser user={user} role={role} />
                 </div>
               ) : (
                 <div className="block sm:flex items-center text-center">

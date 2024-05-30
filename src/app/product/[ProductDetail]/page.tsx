@@ -365,7 +365,7 @@ function ProductDetail() {
               </div>
             </div>
           </div>
-          <Promotion storeId={product.storeId} />
+          {user && <Promotion storeId={product.storeId} />}
           <Store
             currentUser={user || ({} as any)}
             product={product}
