@@ -53,11 +53,7 @@ function Notification(props: NotificationProps) {
                   color="gray"
                   className="font-semibold"
                 >
-<<<<<<< HEAD
                   {item.type == "UPDATE_INFO" || item.type == "BILL"
-=======
-                  {item.type == "UPDATE_INFO" || "BILL"
->>>>>>> origin/dev
                     ? item.content
                     : item.subjectName + " " + item.content}
                 </Typography>

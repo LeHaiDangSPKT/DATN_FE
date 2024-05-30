@@ -11,13 +11,10 @@ import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import React from "react";
-<<<<<<< HEAD
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setCategoryStore } from "@/redux/features/categoryStore/categoryStore-slice";
 import { CATEGORYSTORE } from "@/constants/CategoryStore";
-=======
->>>>>>> origin/dev
 
 interface TypeObject {
   [key: string]: {
@@ -39,11 +36,8 @@ interface ArrBill {
 // Includes New and Preparing
 function Init(props: { state: string }) {
   const { state } = props;
-<<<<<<< HEAD
   const dispatch = useDispatch<AppDispatch>();
 
-=======
->>>>>>> origin/dev
   const arrTitle = [
     {
       title: "STT",
@@ -143,12 +137,9 @@ function Init(props: { state: string }) {
       Toast("success", res.data.message, 2000);
       setChanged(!changed);
       setContent("");
-<<<<<<< HEAD
       setTimeout(() => {
         dispatch(setCategoryStore(CATEGORYSTORE[CATEGORYSTORE.length - 3]));
       }, 2000);
-=======
->>>>>>> origin/dev
     } else {
       Toast("error", "Chuyển thất bại", 2000);
     }

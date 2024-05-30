@@ -289,11 +289,7 @@ function Warehouse() {
                       setIsShow(true);
                     }}
                   >
-<<<<<<< HEAD
                     Chỉnh sửa
-=======
-                    Edit
->>>>>>> origin/dev
                   </div>
                 </>
               ) : (
