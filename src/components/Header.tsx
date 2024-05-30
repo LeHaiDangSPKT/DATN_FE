@@ -188,6 +188,10 @@ function Header() {
           });
           socket.on("getNotifications", (data) => {
             const dataNotiFetch = data.data as NotificationInterface[];
+<<<<<<< HEAD
+            console.log("getNotifications ON", dataNotiFetch);
+=======
+>>>>>>> origin/dev
             setDataNotiCheck(dataNotiFetch);
             setDataNoti((prev) => [...prev, ...dataNotiFetch]);
           });
@@ -639,7 +643,7 @@ function Header() {
 
               {user ? (
                 <div className="flex items-center group py-10">
-                  <MenuHeaderInfoUser user={user} />
+                  <MenuHeaderInfoUser user={user} role={role} />
                 </div>
               ) : (
                 <div className="block sm:flex items-center text-center">
@@ -706,6 +710,8 @@ function Header() {
                     variant="circular"
                     alt="tania andrew"
                     src={dataDrawer.storeAvatar}
+                    width={40}
+                    height={40}
                   />
                   <div className="flex flex-col gap-1">
                     <Typography
@@ -761,6 +767,8 @@ function Header() {
                     variant="circular"
                     alt="tania andrew"
                     src={item.avatar}
+                    width={40}
+                    height={40}
                   />
                   <div className="flex flex-col gap-1">
                     <Typography

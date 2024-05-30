@@ -54,6 +54,10 @@ interface TableInvoice {
   data: any;
   deliveryFee: number;
   isRefundSuccess: boolean;
+<<<<<<< HEAD
+  isSuccess: boolean;
+=======
+>>>>>>> origin/dev
 }
 
 function Info() {
@@ -254,6 +258,10 @@ function Info() {
         arrBill.star = lstProduct.star;
         arrBill.content = lstProduct.content;
         arrBill.isRefundSuccess = lstProduct.isRefundSuccess;
+<<<<<<< HEAD
+        arrBill.isSuccess = lstProduct.isSuccess;
+=======
+>>>>>>> origin/dev
         arrBill.data = lstProduct.products;
         lstProduct.products?.map((product: any) => {
           arrBill.productName.push(product.name + " x " + product.quantity);
@@ -419,7 +427,12 @@ function Info() {
                         }
                       }}
                     >
+<<<<<<< HEAD
+                      {!item.isUserConfirmed && "Xác nhận đơn hàng"}
+                      {item.isUserConfirmed && !item.isSuccess && "Hoàn đơn"}
+=======
                       {item.isUserConfirmed ? "Hoàn đơn" : "Xác nhận đơn hàng"}
+>>>>>>> origin/dev
                     </div>
                   </td>
                   {item.isUserConfirmed && (

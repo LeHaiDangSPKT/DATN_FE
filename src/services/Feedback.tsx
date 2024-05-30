@@ -39,7 +39,7 @@ export const APICreateFeedback = async (productId: string, body: any) => {
       },
       { headers }
     );
-    return res.data;
+    return res;
   }
 };
 

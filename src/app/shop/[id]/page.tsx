@@ -34,13 +34,12 @@ function DetailStore() {
   );
   const [storeProps, setStoreProps] = React.useState<Store>({} as Store);
   const [productsOrderCurrent, setProductsOrderCurrent] = React.useState([]);
-
+  const [user, setUser] = React.useState<any>();
   const params = useParams();
 
   React.useEffect(() => {
     const fetchData = async () => {
       const res = await APIGetStoreById(params.id as string);
-      console.log("ssss", res);
       setStoreProps(res?.metadata.data.store);
       setDetailStore({
         averageStar: res.metadata.data.averageStar,
@@ -60,12 +59,19 @@ function DetailStore() {
     };
     fetchData();
   }, [params.id]);
+
+  React.useEffect(() => {
+    const user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user") ?? "")
+      : null;
+    user && setUser(user?.providerData[0]);
+  }, []);
   return (
     <div className="min-h-screen px-[150px] my-4">
       {storeProps._id && (
         <Info detailStore={detailStore} storeProps={storeProps} />
       )}
-      <Promotion storeId={storeProps._id} />
+      {user && <Promotion storeId={storeProps._id} />}
 
       <div className="flex flex-col w-full bg-white rounded-md py-2 px-4 mb-5">
         <p className="text-lg font-bold my-4">

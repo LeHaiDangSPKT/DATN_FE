@@ -30,7 +30,7 @@ function FrameCart(props: FrameCartProps) {
             )
           }
         ></input>
-        <Link href={`/shop/user/${storeId}`} className="flex items-center mr-8">
+        <Link href={`/shop/${storeId}`} className="flex items-center mr-8">
           <img
             className="rounded-full w-[54px] h-[54px] mr-4"
             src={storeAvatar}

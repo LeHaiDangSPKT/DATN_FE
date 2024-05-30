@@ -91,9 +91,9 @@ function ProductDetail() {
   const carts = useAppSelector((state) => state.cartPopupReducer.items);
   const AddToCart = async (buyNow?: boolean) => {
     let isProductInCart = false;
-    carts?.store?.map((data) => {
+    carts?.store?.map((data: any) => {
       if (data.id == product.storeId) {
-        data?.product?.map((item) => {
+        data?.product?.map((item: any) => {
           if (item.id == product._id) {
             isProductInCart = true;
           }
@@ -186,7 +186,6 @@ function ProductDetail() {
                   />
                 </div>
                 <div className="mb-2 flex justify-between">
-                  {/* Create a loop 4 times */}
                   {[1, 2, 3, 4].map((item, index) => {
                     return (
                       <div
@@ -201,7 +200,7 @@ function ProductDetail() {
                         key={index}
                       >
                         <Image
-                          src={product.avatar[index]}
+                          src={product.avatar[index] || ""}
                           className="w-full h-full min-w-[100px] object-cover rounded-md"
                           alt=""
                           width={100}
@@ -366,7 +365,7 @@ function ProductDetail() {
               </div>
             </div>
           </div>
-          <Promotion storeId={product.storeId} />
+          {user && <Promotion storeId={product.storeId} />}
           <Store
             currentUser={user || ({} as any)}
             product={product}

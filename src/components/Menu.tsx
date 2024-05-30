@@ -10,10 +10,11 @@ import {
 
 interface MenuHeaderInfoUserProps {
   user: UserInterface;
+  role: string;
 }
 
 export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
-  const { user } = props;
+  const { user, role } = props;
   const router = useRouter();
 
   return (
@@ -61,14 +62,18 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
         >
           Đơn mua
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            document.getElementById("loading-page")?.classList.remove("hidden");
-            router.push("/shipper/fill-form");
-          }}
-        >
-          Trở thành shipper
-        </MenuItem>
+        {!role.includes("SELLER") && (
+          <MenuItem
+            onClick={() => {
+              document
+                .getElementById("loading-page")
+                ?.classList.remove("hidden");
+              router.push("/shipper/fill-form");
+            }}
+          >
+            Trở thành shipper
+          </MenuItem>
+        )}
         <hr className="my-3" />
         <MenuItem
           onClick={() => {

@@ -45,7 +45,7 @@ function CartPage() {
           </div>
 
           {dataCarts.store?.length > 0 &&
-            dataCarts.store.map((data, i) => (
+            dataCarts.store.map((data: any, i) => (
               <FrameCart
                 storeId={data.id}
                 storeName={data.name}
@@ -53,7 +53,7 @@ function CartPage() {
                 isChecked={dataCarts.store[i]?.isChecked}
                 key={i}
               >
-                {data.product.map((item, index) => (
+                {data.product.map((item: any, index: number) => (
                   <Cart key={index} data={item} />
                 ))}
               </FrameCart>
