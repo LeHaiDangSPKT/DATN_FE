@@ -330,7 +330,7 @@ function Sidebar(props: ChildrenProps) {
           onClick={(e) => {
             localStorage.removeItem("user");
             document.getElementById("loading-page")?.classList.remove("hidden");
-            router.push("/login");
+            window.location.href = "/login";
           }}
         >
           <ListItemPrefix>

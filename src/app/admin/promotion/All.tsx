@@ -79,7 +79,7 @@ function All() {
       name: "code",
     },
     {
-      title: "Số lượng còn lại",
+      title: "Số lượng",
       sort: false,
       name: "quantity",
     },
@@ -215,6 +215,7 @@ function All() {
           }
           return prevPromotion;
         });
+        Toast("success", "Công bố khuyến mãi thành công", 2000);
       } else {
         setListPromotionNotUse((prevPromotion) => {
           if (prevPromotion) {
@@ -237,10 +238,10 @@ function All() {
           }
           return prevPromotion;
         });
+        Toast("success", "Ngừng mở khuyến mãi thành công", 2000);
       }
-      Toast("success", "Công bố khuyến mãi thành công", 2000);
     } else {
-      Toast("error", "Công bố khuyến mãi thất bại", 2000);
+      Toast("error", "Thao tác thất bại", 2000);
     }
   };
 
@@ -357,7 +358,8 @@ function All() {
               onClick={(e) => {
                 // Sroll top
                 window.scrollTo(0, 0);
-                handleOpenAdd(true, "add");
+
+                handleOpenAdd(!openAdd, "add");
               }}
             >
               <PlusIcon className="h-5 w-5 transition-transform group-hover:rotate-45" />
@@ -762,8 +764,8 @@ function All() {
           {isViewDetail
             ? "Chi tiết khuyến mãi"
             : isPublic
-            ? "Công bố"
-            : "Ngừng mở" + "khuyến mãi"}
+            ? "Công bố khuyến mãi"
+            : "Ngừng mở khuyến mãi"}
         </DialogHeader>
         <DialogBody
           className={`${isViewDetail && "h-[32rem] overflow-y-scroll"}`}

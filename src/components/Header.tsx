@@ -168,16 +168,19 @@ function Header() {
           }
         };
         fetchAllCart();
-        const socket = io("https://datn-socket.onrender.com/notification", {
+        const socket = io("https://dtex-socket.adaptable.app/notification", {
           auth: {
             authorization: "Bearer " + user?.accessToken,
           },
         });
-        const socketChat = io("https://datn-socket.onrender.com/conversation", {
-          auth: {
-            authorization: "Bearer " + user?.accessToken,
-          },
-        });
+        const socketChat = io(
+          "https://dtex-socket.adaptable.app/conversation",
+          {
+            auth: {
+              authorization: "Bearer " + user?.accessToken,
+            },
+          }
+        );
         if (socket && socketChat) {
           setSocket(socket);
           setSocketChat(socketChat);
