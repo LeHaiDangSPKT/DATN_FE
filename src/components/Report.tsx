@@ -117,9 +117,8 @@ function Report(props: Props) {
 
   const ExportExcel = async () => {
     if (type == "PRODUCT") {
-      // if (status) exportExcel("reports/excel");
-      // else exportExcel("stores/excel/being-reported");
-      console.log("Đang làm");
+      if (status) exportExcel("products/excel/approved");
+      else exportExcel("products/excel/being-reported");
     } else {
       if (status) exportExcel("reports/excel");
       else exportExcel("stores/excel/being-reported");

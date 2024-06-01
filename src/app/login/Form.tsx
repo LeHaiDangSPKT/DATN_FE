@@ -10,7 +10,7 @@ import Link from "next/link";
 import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
-
+import { signIn, signOut, useSession } from "next-auth/react";
 interface FormProps {
   fastLogin?: boolean;
 }
@@ -26,9 +26,6 @@ function Form(props: FormProps) {
       return;
     }
     localStorage.setItem("user", JSON.stringify(res?.data.metadata.data));
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${res.data.metadata.data.accessToken}`;
     Toast("success", "Đăng nhập thành công", 2000);
     setTimeout(() => {
       if (res?.data.metadata.data.role.includes("ADMIN")) {
@@ -82,8 +79,13 @@ function Form(props: FormProps) {
   }, [loginForm]);
 
   const HandleGoogle = async () => {
-    const res = await APIGoogleLogin();
-    console.log(res);
+    fastLogin
+      ? await signIn("google", {
+          callbackUrl: window.location.href,
+        })
+      : await signIn("google", {
+          callbackUrl: "/",
+        });
   };
 
   return (
@@ -127,7 +129,9 @@ function Form(props: FormProps) {
           <div
             className="py-2 bg-red-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
             // onClick={(e) => handleSignIn(googleSignIn)}
-            onClick={(e) => HandleGoogle()}
+            onClick={(e) => {
+              HandleGoogle();
+            }}
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FcGoogle fontSize={30} className="r1-2 mr-2" />

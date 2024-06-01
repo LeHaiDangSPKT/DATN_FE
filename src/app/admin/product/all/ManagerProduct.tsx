@@ -131,7 +131,7 @@ function ManagerProduct() {
   };
 
   const ExportExcel = async () => {
-    exportExcel("product/excel");
+    exportExcel("products/excel");
   };
 
   // const Sort = async (data: string) => {

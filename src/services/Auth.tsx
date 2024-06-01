@@ -55,9 +55,12 @@ export const APILoginSocial = async (body: any) => {
 };
 
 // /api/auth/google
-export const APIGoogleLogin = async () => {
-  const res = await axiosInstance.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/google`
+export const APIGoogleLogin = async (idToken: string) => {
+  const res = await axiosInstance.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/login/google`,
+    {
+      idToken,
+    }
   );
   return res;
 };
