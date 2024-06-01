@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Sidebar from "../../Sidebar";
-import ManagerUser from "./ManagerUser";
+import ManagerUser from "../ManagerUser";
 
 function page() {
   return (
@@ -10,7 +10,7 @@ function page() {
         <Sidebar code="user_has_warning" />
       </div>
       <div className=" col-span-8 my-2 ">
-        <ManagerUser />
+        <ManagerUser type="warning" />
       </div>
     </div>
   );

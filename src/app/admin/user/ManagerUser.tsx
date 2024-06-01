@@ -1,6 +1,6 @@
 "use client";
 import SortTable from "@/components/SortTable";
-import { APIGetListUserBanned } from "@/services/User";
+import { APIGetListUserBanned, APIGetListUserWarning } from "@/services/User";
 import ConvertDate from "@/utils/ConvertDate";
 import { exportExcel } from "@/utils/ExportExcel";
 import Toast from "@/utils/Toast";
@@ -52,7 +52,7 @@ interface ListReport {
   type: string;
   _id: string;
 }
-function ManagerUser() {
+function ManagerUser({ type }: { type: string }) {
   const arrTitleUser = [
     {
       title: "",
@@ -93,14 +93,24 @@ function ManagerUser() {
   const [listReport, setListReport] = React.useState<ListReport[]>();
   React.useEffect(() => {
     const fetchData = async () => {
-      await APIGetListUserBanned(page || 1, 20, search).then((res) =>
-        setListUser(res)
-      );
+      if (type === "ban") {
+        await APIGetListUserBanned(page || 1, 20, search).then((res) =>
+          setListUser(res)
+        );
+      } else {
+        await APIGetListUserWarning(page || 1, 20, search).then((res) =>
+          setListUser(res)
+        );
+      }
     };
     fetchData();
   }, [page, search]);
   const ExportExcel = async () => {
-    exportExcel("user/excel/deactivated");
+    if (type === "ban") {
+      exportExcel("user/excel/deactivated");
+    } else {
+      exportExcel("user/excel/users-being-warned");
+    }
   };
 
   const HandleOpenPopUp = async (id: string) => {
@@ -264,14 +274,6 @@ function ManagerUser() {
         <DialogFooter>
           <Button
             variant="text"
-            color="green"
-            onClick={(e) => HandleUnbanned()}
-            className="mr-1"
-          >
-            <span>Xoá báo cáo và mở khoá</span>
-          </Button>
-          <Button
-            variant="text"
             color="red"
             onClick={(e) => {
               setOpen(false);
@@ -280,6 +282,17 @@ function ManagerUser() {
             className="mr-1"
           >
             <span>Đóng</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={(e) => HandleUnbanned()}
+            className="mr-1"
+          >
+            <span>
+              {" "}
+              {type == "ban" ? "Xoá báo cáo và mở khoá" : "Xoá báo cáo"}
+            </span>
           </Button>
         </DialogFooter>
       </Dialog>

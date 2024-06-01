@@ -447,7 +447,7 @@ function Page() {
                     document
                       .getElementById("loading-page")
                       ?.classList.remove("hidden");
-                    router.push("/login");
+                    window.location.href = "/login";
                   }}
                 >
                   Đăng xuất

@@ -20,7 +20,7 @@ interface ListUser {
     address: string;
     avatar: string;
     createdAt: string;
-    email: string;
+    emailShipper: string;
     gender: string;
     id: string;
     name: string;
@@ -185,7 +185,7 @@ function Shipper(props: { state: boolean }) {
             </td>
             <td className="px-6 py-4 text-center">{item.gender}</td>
             <td className="px-6 py-4 text-center">{item.name}</td>
-            <td className="px-6 py-4 text-center">{item.email}</td>
+            <td className="px-6 py-4 text-center">{item.emailShipper}</td>
             <td className="px-6 py-4 text-center">{item.phone}</td>
             <td className="px-6 py-4 text-center">{item.address}</td>
 
