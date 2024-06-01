@@ -1,5 +1,6 @@
 import { UserInterface } from "@/types/User";
 import { usePathname, useRouter } from "next/navigation";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import {
   Menu,
@@ -16,7 +17,12 @@ interface MenuHeaderInfoUserProps {
 export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
   const { user, role } = props;
   const router = useRouter();
-
+  const Singout = async () => {
+    localStorage.removeItem("user");
+    await signOut({
+      callbackUrl: "/login",
+    });
+  };
   return (
     <Menu>
       <MenuHandler>
@@ -77,9 +83,7 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
         <hr className="my-3" />
         <MenuItem
           onClick={() => {
-            document.getElementById("loading-page")?.classList.remove("hidden");
-            localStorage.removeItem("user");
-            window.location.href = "/login";
+            Singout();
           }}
         >
           <span className="text-red-500">Đăng xuất</span>

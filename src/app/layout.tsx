@@ -13,6 +13,7 @@ import "react-quill/dist/quill.snow.css";
 import ProtectRoute from "./ProtectRoute";
 import { Providers } from "./providers";
 import FullPageLoader from "./FullPageLoader";
+import Authprovider from "./Authprovider";
 
 const lora = Roboto({
   weight: ["400", "500", "700"],
@@ -36,9 +37,11 @@ export default async function RootLayout({
         <ReduxProvider>
           <Providers>
             <ProtectRoute>
-              <Header />
-              {children}
-              <Footer />
+              <Authprovider>
+                <Header />
+                {children}
+                <Footer />
+              </Authprovider>
             </ProtectRoute>
           </Providers>
         </ReduxProvider>

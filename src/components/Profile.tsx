@@ -38,7 +38,7 @@ function Profile(props: ProfileProps) {
   });
   React.useEffect(() => {
     const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "").providerData[0]
+      ? JSON.parse(localStorage.getItem("user") ?? "")?.providerData[0]
       : null;
     const fetchData = async () => {
       const data = await APIGetUserById(idProps || user._id);

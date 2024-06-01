@@ -70,7 +70,7 @@ function Store(props: Props) {
   React.useEffect(() => {
     // Promise all
     const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "").providerData[0]
+      ? JSON.parse(localStorage.getItem("user") ?? "")?.providerData[0]
       : null;
     setUser(user);
     const fectData = async () => {

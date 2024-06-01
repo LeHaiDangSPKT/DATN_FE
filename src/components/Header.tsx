@@ -17,7 +17,6 @@ import io from "socket.io-client";
 import { usePathname, useRouter } from "next/navigation";
 import { MenuHeaderInfoUser } from "./Menu";
 import Chat from "./chat/page";
-import { IoClose } from "react-icons/io5";
 import {
   Avatar,
   Badge,
@@ -34,7 +33,7 @@ import FormatMoney from "@/utils/FormatMoney";
 import Popup from "./chat/Popup";
 import { ROLE_CHAT } from "@/constants/Conversation";
 import { setParamSearch } from "@/redux/features/search/search-slice";
-
+import { useSession } from "next-auth/react";
 function Header() {
   const arrPathName = [
     "/login",
@@ -124,10 +123,22 @@ function Header() {
   const [haveNewMessage, setHaveNewMessage] = React.useState(true);
 
   const router = useRouter();
+  const { data: session, status } = useSession();
   React.useEffect(() => {
-    const user = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user") ?? "")
-      : null;
+    var user =
+      localStorage.getItem("user") &&
+      JSON.parse(localStorage.getItem("user") || "");
+    console.log("status", status, session?.user?.name);
+    if (
+      !localStorage.getItem("user") &&
+      status === "authenticated" &&
+      session?.user?.name
+    ) {
+      const userData = session.user.name;
+      localStorage.setItem("user", userData);
+      user = JSON.parse(userData);
+    }
+
     user && setUser(user?.providerData[0]);
     user && setRole(user?.role);
     if (user?.providerData[0]) {
@@ -343,7 +354,7 @@ function Header() {
         fetchInforStore();
       }
     }
-  }, []);
+  }, [session]);
   React.useEffect(() => {
     if (pathname == "/cart") {
       setIsShowCart(false);
