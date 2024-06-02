@@ -150,15 +150,15 @@ function Payment() {
       localStorage.getItem("listProductIdChecked") || "[]"
     );
 
-    listProductIdChecked.forEach((item: any) => {
-      store?.store?.forEach((store: any) => {
+    listProductIdChecked.map((item: any) => {
+      store?.store?.map((store: any) => {
         var obj = {
           storeId: store.id,
           storeName: store.name,
           products: [] as any[],
           totalPrice: 0,
         };
-        store.product?.forEach((product: any) => {
+        store.product?.map((product: any) => {
           if (product.id === item.id) {
             obj.products.push({
               ...product,
@@ -206,7 +206,7 @@ function Payment() {
   }, []);
 
   const ConfirmChangeAddress = async () => {
-    user.address.forEach((item: any) => {
+    user.address.map((item: any) => {
       if (item.default) {
         item.default = false;
       }
@@ -239,7 +239,7 @@ function Payment() {
     }
     if (isUpdate_Add.add) {
       // Tìm địa chỉ mặc định và set default = false
-      user.address.forEach((item: any) => {
+      user.address.map((item: any) => {
         if (item.default) {
           item.default = false;
         }
@@ -297,7 +297,7 @@ function Payment() {
 
   const CraeteBill = async () => {
     const listProducts = [] as any[];
-    data?.forEach((item) => {
+    data?.map((item) => {
       const obj = {
         storeId: item.storeId,
         products: [] as any[],
@@ -305,7 +305,7 @@ function Payment() {
         deliveryFee: deliveryMethod.find((item) => item.checked)?.price,
         totalPrice: item.totalPrice,
       };
-      item.products.forEach((product: any) => {
+      item.products.map((product: any) => {
         obj.products.push({
           name: product.name,
           oldPrice: product.oldPrice,
@@ -471,7 +471,7 @@ function Payment() {
                 className="w-5 h-5 mr-2 border-2 border-slate-400 rounded-full"
                 onChange={(e) => {
                   let newData = [...deliveryMethod];
-                  newData.forEach((item) => {
+                  newData.map((item) => {
                     item.checked = false;
                   });
                   newData[index].checked = true;
@@ -501,7 +501,7 @@ function Payment() {
                 className="w-5 h-5 mr-2 border-2 border-slate-400 rounded-full"
                 onChange={(e) => {
                   let newData = [...paymentMethod];
-                  newData.forEach((item) => {
+                  newData.map((item) => {
                     item.checked = false;
                   });
                   newData[index].checked = true;
@@ -713,7 +713,7 @@ function Payment() {
                 setIsGift(e.target.checked);
                 let newData = [...paymentMethod];
                 if (e.target.checked) {
-                  newData.forEach((item) => {
+                  newData.map((item) => {
                     item.checked = false;
                   });
                   newData[1].checked = true;

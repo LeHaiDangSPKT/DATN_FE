@@ -56,7 +56,6 @@ export default function Home() {
                   className="rounded-xl w-[-webkit-fill-available]"
                 />
               </Slick>
-              {/* <div className="custom-dots-container flex justify-between items-center"></div> */}
             </div>
             <Image
               src={Test}
@@ -72,9 +71,7 @@ export default function Home() {
         </div>
         <div className="sm:hidden block w-full mt-2">
           <div className="bg-white p-2 rounded-xl">
-            {/* <div className="flex overflow-auto"> */}
             <Category />
-            {/* </div> */}
           </div>
         </div>
         <div className="flex mt-2 justify-between">
