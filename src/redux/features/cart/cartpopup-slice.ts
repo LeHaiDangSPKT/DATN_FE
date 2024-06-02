@@ -9,8 +9,8 @@ const calculateTotal = (cart: Cart) => {
         id: string,
         quantity: number,
     }[] = [];
-    cart.store.forEach((item) => {
-        item.product.forEach((product) => {
+    cart.store.map((item) => {
+        item.product.map((product) => {
             if (product.isChecked) {
                 totalChecked += 1;
                 totalMoney += product.quantity * product.newPrice;
@@ -68,9 +68,9 @@ export const cartPopupSlice = createSlice({
             const isChecked = action.payload;
             state.items.isCheckAll = isChecked;
             if (action.type !== 'CLICK_ALL') {
-                state.items.store.forEach((item) => {
+                state.items.store.map((item) => {
                     item.isChecked = isChecked;
-                    item.product.forEach((product) => {
+                    item.product.map((product) => {
                         product.isChecked = isChecked;
                     });
                 });
@@ -87,7 +87,7 @@ export const cartPopupSlice = createSlice({
             if (index !== -1) {
                 state.items.store[index].isChecked = isChecked;
                 if (action.type !== 'CLICK_STORE') {
-                    state.items.store[index].product.forEach((product) => {
+                    state.items.store[index].product.map((product) => {
                         product.isChecked = isChecked;
                     });
                 }
@@ -105,8 +105,8 @@ export const cartPopupSlice = createSlice({
 
         clickItem: (state, action: PayloadAction<{ productId: string, isChecked: boolean }>) => {
             const { productId, isChecked } = action.payload;
-            state.items.store.forEach((item) => {
-                item.product.forEach((product) => {
+            state.items.store.map((item) => {
+                item.product.map((product) => {
                     if (product.id === productId) {
                         product.isChecked = isChecked;
                     }
@@ -126,8 +126,8 @@ export const cartPopupSlice = createSlice({
         changeQuantity: (state, action: PayloadAction<{ productId: string, iSincrease: boolean }>) => {
             const { productId, iSincrease } = action.payload;
             var price = 0
-            state.items.store.forEach((item) => {
-                item.product.forEach((product) => {
+            state.items.store.map((item) => {
+                item.product.map((product) => {
                     if (product.id === productId) {
                         product.quantity += iSincrease ? 1 : -1;
                         if (product.isChecked) {
@@ -143,8 +143,8 @@ export const cartPopupSlice = createSlice({
         changeQuantityType: (state, action: PayloadAction<{ productId: string, quantity: number }>) => {
             const { productId, quantity } = action.payload;
             var moneyState = state.totalMoney
-            state.items.store.forEach((item) => {
-                item.product.forEach((product) => {
+            state.items.store.map((item) => {
+                item.product.map((product) => {
                     if (product.id === productId) {
                         if (product.isChecked) {
                             // Cập nhật vào listProductIdChecked
@@ -164,8 +164,8 @@ export const cartPopupSlice = createSlice({
 
         deleteProduct: (state, action: PayloadAction<{ productId: string }>) => {
             const { productId } = action.payload;
-            state.items.store.forEach((item) => {
-                item.product.forEach((product) => {
+            state.items.store.map((item) => {
+                item.product.map((product) => {
                     if (product.id === productId) {
                         if (product.isChecked) {
                             cartPopupSlice.caseReducers.clickItem(state, { type: 'CLICK_ITEM', payload: { productId: product.id, isChecked: false } });

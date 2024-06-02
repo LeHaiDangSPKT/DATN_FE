@@ -25,7 +25,6 @@ function CardProduct(props: any) {
     router.push("/product/" + data._id);
   };
 
-  const [showLogin, setShowLogin] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const dispatch = useDispatch<AppDispatch>();
   React.useEffect(() => {
@@ -37,9 +36,9 @@ function CardProduct(props: any) {
   const carts = useAppSelector((state) => state.cartPopupReducer.items);
   const AddToCart = async (product?: any) => {
     let isProductInCart = false;
-    carts?.store?.map((data) => {
+    carts?.store?.map((data: any) => {
       if (data.id == product.storeId) {
-        data?.product?.map((item) => {
+        data?.product?.map((item: any) => {
           if (item.id == product._id) {
             isProductInCart = true;
           }
@@ -84,10 +83,12 @@ function CardProduct(props: any) {
         className="h-60"
         onClick={(e) => DetailProduct()}
       >
-        <img
+        <Image
           src={data.avatar[0]}
           alt=""
-          className="h-full w-full object-cover"
+          // className="h-full w-full object-cover"
+          layout="fill"
+          objectFit="cover"
         />
       </CardHeader>
       <CardBody>

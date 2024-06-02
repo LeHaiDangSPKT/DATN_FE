@@ -7,7 +7,6 @@ import { APIGetProduct } from "@/services/Product";
 import { UserInterface } from "@/types/User";
 import ConvertToShortFormat from "@/utils/ConvertToShortFormat";
 import Toast from "@/utils/Toast";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { FaHeart, FaShareAlt, FaShopify, FaShoppingCart } from "react-icons/fa";
@@ -25,6 +24,7 @@ import Feedback from "./Feedback";
 import Modal from "@/components/Modal";
 import Form from "@/app/login/Form";
 import Image from "next/image";
+import noProductImage from "../../../../public/noProductImage.png";
 
 import { APIReportUser } from "@/services/Report";
 import Promotion from "@/components/Promotion";
@@ -176,13 +176,13 @@ function ProductDetail() {
           <div className="mb-3 w-full">
             <div className="grid grid-flow-col grid-cols-10 gap-2">
               <div className="bg-white rounded-md p-4 col-span-4 flex flex-col">
-                <div className="rounded-md mb-2 border-solid border-[#D2E0FB] border-2">
+                <div className="rounded-md mb-2 border-solid border-[#D2E0FB] border-2 ">
                   <Image
                     src={product?.avatar[currentImage]}
-                    className="w-full h-full object-cover rounded-md"
+                    className=" w-full h-full rounded-md object-cover"
                     alt=""
-                    width={100}
-                    height={100}
+                    width={1000}
+                    height={1000}
                   />
                 </div>
                 <div className="mb-2 flex justify-between">
@@ -200,11 +200,11 @@ function ProductDetail() {
                         key={index}
                       >
                         <Image
-                          src={product.avatar[index] || ""}
+                          src={product.avatar[index] || noProductImage}
                           className="w-full h-full min-w-[100px] object-cover rounded-md"
-                          alt=""
                           width={100}
                           height={100}
+                          alt=""
                         />
                       </div>
                     );
