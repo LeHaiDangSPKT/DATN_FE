@@ -126,10 +126,19 @@ function ManagerUser({ type }: { type: string }) {
     if (currentReport) {
       await APIDeleteReport(currentReport);
       setOpen(false);
-      setListUser({
-        ...listUser,
-        data: listUser.data?.filter((item) => item._id !== currentUser),
-      } as ListUser);
+      if (type == "ban") {
+        setListUser({
+          ...listUser,
+          data: listUser.data?.filter((item) => item._id !== currentUser),
+        } as ListUser);
+      } else {
+        if (listReport?.length == 1) {
+          setListUser({
+            ...listUser,
+            data: listUser.data?.filter((item) => item._id !== currentUser),
+          } as ListUser);
+        }
+      }
       Toast("success", "Mở khoá tài khoản thành công", 2000);
       setCurrentUser("");
     } else {
@@ -290,7 +299,6 @@ function ManagerUser({ type }: { type: string }) {
             className="mr-1"
           >
             <span>
-              {" "}
               {type == "ban" ? "Xoá báo cáo và mở khoá" : "Xoá báo cáo"}
             </span>
           </Button>

@@ -9,10 +9,10 @@ export const authOptions: AuthOptions = {
             clientId: process.env.NEXT_PUBLIC_GOOGLE_UID!,
             clientSecret: process.env.NEXT_PUBLIC_GOOGLE_SECRET!,
         }),
-        // FacebookProvider({
-        //     clientId: process.env.FACEBOOK_CLIENT_ID,
-        //     clientSecret: process.env.FACEBOOK_CLIENT_SECRET
-        //   })
+        FacebookProvider({
+            clientId: process.env.NEXT_PUBLIC_FACEBOOK_APPID!,
+            clientSecret: process.env.NEXT_PUBLIC_FACEBOOK_SECRET!
+        })
     ],
     callbacks: {
         async signIn({ user, account, profile }) {

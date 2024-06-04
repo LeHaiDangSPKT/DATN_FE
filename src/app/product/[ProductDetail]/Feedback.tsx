@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
+import { Textarea } from "@material-tailwind/react";
 interface Props {
   isPurchase: boolean;
   setTotalFeedback: (arg: number) => void;
@@ -47,19 +48,24 @@ function Feedback(props: Props) {
   }, [page, params.ProductDetail, setTotalFeedback]);
   const SendFeedback = async () => {
     const res = await APICreateFeedback(params.ProductDetail + "", feedback);
-
     if (res?.status == 200 || res?.status == 201) {
       Toast("success", res.data.message, 3000);
-      setFeedbacks(
-        feedbacks.concat({
+      setFeedbacks([
+        {
           ...res.data.metadata.data,
           name: user?.fullName,
           avatar: user?.avatar,
-        })
-      );
+        } as never,
+        ...feedbacks,
+      ]);
       setTotalFeedback(total + 1);
-      setFeedback({ star: 5, content: "" });
+      setFeedback({
+        ...feedback,
+        content: "",
+      });
       HandleClick(5);
+      const cmt = document.getElementById("cmt") as HTMLTextAreaElement;
+      cmt.value = "";
     } else {
       Toast("error", res?.data.message, 3000);
     }
@@ -235,17 +241,15 @@ function Feedback(props: Props) {
               height={40}
             />
             <div className="font-medium dark:text-white w-full">
-              <p>
-                <textarea
-                  rows={4}
-                  value={feedback.content}
-                  onChange={(e) =>
-                    setFeedback({ ...feedback, content: e.target.value })
-                  }
-                  placeholder="Viết bình luận..."
-                  className="w-full px-4 py-2 text-sm text-gray-900 bg-gray-100 border border-transparent rounded-lg outline-none"
-                />
-              </p>
+              <Textarea
+                id="cmt"
+                rows={4}
+                label="Viết bình luận"
+                color="blue-gray"
+                onChange={(e) =>
+                  setFeedback({ ...feedback, content: e.target.value })
+                }
+              />
             </div>
             {/* Button send */}
             <button

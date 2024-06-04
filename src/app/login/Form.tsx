@@ -128,7 +128,6 @@ function Form(props: FormProps) {
         <div className="flex justify-between items-center mb-2">
           <div
             className="py-2 bg-red-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
-            // onClick={(e) => handleSignIn(googleSignIn)}
             onClick={(e) => {
               HandleGoogle();
             }}
@@ -138,10 +137,7 @@ function Form(props: FormProps) {
               <span className="hidden sm:block">Log in with Google</span>
             </div>
           </div>
-          <div
-            className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
-            // onClick={(e) => handleSignIn(facebookSignIn)}
-          >
+          <div className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg">
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FaFacebook fontSize={30} className="r1-2 mr-2" />
               <span className="hidden sm:block">Log in with Facebook</span>
