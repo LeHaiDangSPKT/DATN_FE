@@ -1,42 +1,60 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
-name: DTEX FE CI
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: DTEX FE CI/CD
+
 on:
   push:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 jobs:
-  # Build job
   build:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Create .env file
-        run: |
-          touch .env
-          echo "${{ secrets.ENV_FILE }}" > .env
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Install dependencies
-        run: |
-          npm ci
-          npm run build
+    - name: Checkout code from repo to ubuntu
+      uses: actions/checkout@v3
 
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Login Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Set up env file
+      run: |
+        touch .env
+        echo "${{ secrets.ENV_FILE }}" > .env
+    
+    - name: Build Docker
+      run: docker build -t "${{ secrets.DOCKER_HUB_USERNAME }}"/dtex-fe .
+  
+    - name: Push Docker
+      run: docker push "${{ secrets.DOCKER_HUB_USERNAME }}"/dtex-fe:latest
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: cd to workspace
+      run: cd ~/workspace/actions-runner-fe/_work/DATN_FE/DATN_FE
+
+    - name: Pull Docker
+      run: docker pull "${{ secrets.DOCKER_HUB_USERNAME }}"/dtex-fe:latest
+
+    # - name: Down and Up Docker
+    #   run: |
+    #     docker-compose down
+    #     docker-compose up -d
+
+    # - name: Clean Docker
+    #   run: docker system prune -fa
+        
