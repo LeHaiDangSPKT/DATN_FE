@@ -14,6 +14,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setCategoryStore } from "@/redux/features/categoryStore/categoryStore-slice";
 import { CATEGORYSTORE } from "@/constants/CategoryStore";
+import { Typography } from "@material-tailwind/react";
+import DialogPolicy from "@/components/DialogPolicy";
 function Create() {
   const [product, setProduct] = React.useState({
     name: "",
@@ -90,6 +92,7 @@ function Create() {
   const handleDescriptionChange = (value: string) => {
     setProduct({ ...product, description: value });
   };
+  const [openDialogPolicy, setOpenDialogPolicy] = React.useState(false);
   return (
     <div className="bg-white rounded-md p-4 mb-5">
       <div className="flex justify-between items-center">
@@ -188,6 +191,23 @@ function Create() {
           Tạo sản phẩm
         </button>
       </div>
+      <Typography color="gray" className="text-center mt-2 italic text-sm">
+        Bằng cách tạo sản phẩm, bạn đã đồng ý với{" "}
+        <span
+          className="cursor-pointer font-bold"
+          onClick={() => setOpenDialogPolicy(true)}
+        >
+          {" "}
+          chính sách{" "}
+        </span>{" "}
+        của chúng tôi
+      </Typography>
+
+      <DialogPolicy
+        type="STORE"
+        openDialogPolicy={openDialogPolicy}
+        setOpenDialogPolicy={() => setOpenDialogPolicy(false)}
+      />
     </div>
   );
 }

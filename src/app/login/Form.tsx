@@ -2,7 +2,7 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import FrameFormInit from "@/components/FrameFormInit";
-import { Input } from "@material-tailwind/react";
+import { Input, Typography } from "@material-tailwind/react";
 import { FaFacebook, FaLongArrowAltLeft } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { LOGIN } from "@/constants/Login";
@@ -11,11 +11,13 @@ import Toast from "@/utils/Toast";
 import { APIGoogleLogin, APILogin } from "@/services/Auth";
 import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
+import DialogPolicy from "@/components/DialogPolicy";
 interface FormProps {
   fastLogin?: boolean;
 }
 function Form(props: FormProps) {
   const { fastLogin } = props;
+  const [openDialogPolicy, setOpenDialogPolicy] = React.useState(false);
   const Login = async () => {
     const res = await APILogin(
       loginForm.values.email,
@@ -152,6 +154,24 @@ function Form(props: FormProps) {
             Trở về trang chủ
           </div>
         </Link>
+
+        <Typography color="gray" className="text-center mt-2 italic text-sm">
+          Bằng cách đăng nhập, bạn đã đồng ý với{" "}
+          <span
+            className="cursor-pointer font-bold"
+            onClick={() => setOpenDialogPolicy(true)}
+          >
+            {" "}
+            chính sách{" "}
+          </span>{" "}
+          của chúng tôi
+        </Typography>
+
+        <DialogPolicy
+          type="USER"
+          openDialogPolicy={openDialogPolicy}
+          setOpenDialogPolicy={() => setOpenDialogPolicy(false)}
+        />
       </div>
     </FrameFormInit>
   );

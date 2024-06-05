@@ -3,14 +3,10 @@ import axiosInstance from "@/utils/axiosInterceptor";
 
 // /api/policies?type=USER
 export const APIGetAllPolicy = async (type: string) => {
-  const headers = GetHeaders();
-  if (headers) {
-    const res = await axiosInstance.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/policies?type=${type}`,
-      { headers }
-    );
-    return res.data.metadata.data;
-  }
+  const res = await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/policies?type=${type}`
+  );
+  return res.data.metadata.data;
 };
 
 // api/policies/65ddf631c4500250d92b147e

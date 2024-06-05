@@ -305,6 +305,15 @@ function Sidebar(props: ChildrenProps) {
             </List>
           </AccordionBody>
         </Accordion>
+        <ListItem
+          onClick={() => router.push("/admin/promotion")}
+          selected={code == "promotion"}
+        >
+          <ListItemPrefix>
+            <GiShoppingBag className="h-5 w-5" />
+          </ListItemPrefix>
+          Khuyến mãi
+        </ListItem>
         {role?.some((item) => item == "ADMIN") && (
           <ListItem
             onClick={() => router.push("/admin/policy")}
@@ -316,15 +325,7 @@ function Sidebar(props: ChildrenProps) {
             Chính sách
           </ListItem>
         )}
-        <ListItem
-          onClick={() => router.push("/admin/promotion")}
-          selected={code == "promotion"}
-        >
-          <ListItemPrefix>
-            <GiShoppingBag className="h-5 w-5" />
-          </ListItemPrefix>
-          Khuyến mãi
-        </ListItem>
+
         <ListItem
           className="text-red-500 hover:text-red-500"
           onClick={(e) => {

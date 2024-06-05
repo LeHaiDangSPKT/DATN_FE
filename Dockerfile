@@ -16,7 +16,7 @@ COPY public ./public
 COPY src ./src
 COPY .env ./
 COPY next.config.js ./
-COPY next-env.d.ts ./
+# COPY next-env.d.ts ./
 COPY postcss.config.js ./
 COPY tailwind.config.ts ./
 COPY tsconfig*.json ./
