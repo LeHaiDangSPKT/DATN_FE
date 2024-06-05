@@ -13,7 +13,7 @@ function MyStore() {
   }, []);
   return (
     <div className="min-h-screen px-[150px] my-4 grid grid-cols-10 gap-4">
-      <div className="flex flex-col bg-white rounded-md p-2 mb-5 col-span-2">
+      <div className="flex flex-col min-h-screen justify-around bg-white rounded-md p-2 col-span-2">
         {CATEGORYSTORE.map(
           (item: { value: string; title: string; icon: any }, index) => (
             <div
@@ -22,7 +22,7 @@ function MyStore() {
                 dataCarts.value === item.value
                   ? "bg-blue-300 font-bold text-white"
                   : "bg-blue-100"
-              } cursor-pointer hover:bg-blue-300 transition-all rounded-sm py-3 px-2 mb-2`}
+              } cursor-pointer hover:bg-blue-300 transition-all rounded-sm py-3 px-2`}
               onClick={(e) => dispatch(setCategoryStore(item))}
             >
               <div className="flex items-center">

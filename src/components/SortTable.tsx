@@ -94,7 +94,7 @@ function SortTable(props: SortTableProps) {
         </>
       ) : (
         <div className="flex items-center justify-center">
-          <Image priority src={EmptyData} alt="Follow us on Twitter" />
+          <Image priority src={EmptyData} alt="" />
         </div>
       )}
     </>
