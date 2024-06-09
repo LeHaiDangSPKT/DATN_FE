@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import UploadFile from "./UploadFile";
-import Input from "@/components/Input";
 import { CREATEPRODUCT } from "@/constants/CreateProduct";
 import CheckValidInput from "@/utils/CheckValidInput";
 const ReactQuill =
@@ -14,8 +13,9 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setCategoryStore } from "@/redux/features/categoryStore/categoryStore-slice";
 import { CATEGORYSTORE } from "@/constants/CategoryStore";
-import { Typography } from "@material-tailwind/react";
+import { Input, Select, Typography, Option } from "@material-tailwind/react";
 import DialogPolicy from "@/components/DialogPolicy";
+import { CheckValidImage } from "@/services/Picpurify";
 function Create() {
   const [product, setProduct] = React.useState({
     name: "",
@@ -31,13 +31,12 @@ function Create() {
   const dispatch = useDispatch<AppDispatch>();
   // Get category from localStorage
   const category = localStorage.getItem("category")
-    ? JSON.parse(localStorage.getItem("category")!)
-    : null;
+    ? JSON.parse(localStorage.getItem("category")!).filter(
+        (item: any) => item.name !== "Cho tặng miễn phí"
+      )
+    : [];
   const CreateProduct = async (product: any) => {
     document.getElementById("loading-page")?.classList.remove("hidden");
-    document
-      .getElementById("formCreate-productName")
-      ?.classList.remove("border-red-500");
     const objCopied = JSON.parse(JSON.stringify(product));
     delete objCopied.keywords;
     if (+objCopied.newPrice > +objCopied.oldPrice) {
@@ -54,15 +53,25 @@ function Create() {
       console.log("product.avatar", product.avatar);
       for (let i = 0; i < product.avatar.length; i++) {
         let formData = new FormData();
-        formData.append("file", product.avatar[i]);
-        const res = await APIUploadImage(formData);
-        if (res?.status == 200 || res?.status == 201) {
-          listImg.push(res?.data.url);
-        } else {
-          document.getElementById("loading-page")?.classList.add("hidden");
-          Toast("error", "Ảnh có kích thước quá lớn", 2000);
-          return;
-        }
+
+        formData.append("file_image", product.avatar[i]);
+        formData.append("API_KEY", process.env.NEXT_PUBLIC_KEY_PICPURIFY!);
+        formData.append(
+          "task",
+          "porn_moderation,weapon_moderation,gore_moderation"
+        );
+        const res = await CheckValidImage(formData);
+        console.log("res", res);
+        return;
+        // formData.append("file", product.avatar[i]);
+        // const res = await APIUploadImage(formData);
+        // if (res?.status == 200 || res?.status == 201) {
+        //   listImg.push(res?.data.url);
+        // } else {
+        //   document.getElementById("loading-page")?.classList.add("hidden");
+        //   Toast("error", "Ảnh có kích thước quá lớn", 2000);
+        //   return;
+        // }
       }
       product.avatar = listImg;
       // Change price to number
@@ -93,6 +102,7 @@ function Create() {
     setProduct({ ...product, description: value });
   };
   const [openDialogPolicy, setOpenDialogPolicy] = React.useState(false);
+
   return (
     <div className="bg-white rounded-md p-4 mb-5">
       <div className="flex justify-between items-center">
@@ -112,44 +122,20 @@ function Create() {
       <div>
         {CREATEPRODUCT.map((item, index) => {
           return (
-            <Input label={item.label} required={true} key={index}>
-              <input
-                key={index}
-                id={`formCreate-${item.name}`}
-                type="text"
-                className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
-                placeholder={item.placeholder}
-                name={item.name}
+            <div className="mt-4" key={index}>
+              <Input
+                label={item.label}
+                crossOrigin={undefined}
                 value={product[item.name as keyof typeof product]}
                 onChange={(e) => {
                   setProduct({ ...product, [item.name]: e.target.value });
                 }}
-                onBlur={(e) => {
-                  const result = CheckValidInput({
-                    [`${item.identify}`]: e.target.value,
-                  });
-                  if (result !== "") {
-                    document
-                      .getElementById(`formCreate-${item.name}`)
-                      ?.classList.add("border-red-500");
-                  } else {
-                    document
-                      .getElementById(`formCreate-${item.name}`)
-                      ?.classList.remove("border-red-500");
-                  }
-                  document.getElementById(`errMes-${item.name}`)!.innerHTML =
-                    result;
-                }}
               />
-              <span
-                id={`errMes-${item.name}`}
-                className="text-red-500 text-sm"
-              ></span>
-            </Input>
+            </div>
           );
         })}
       </div>
-      <Input label={"Danh mục"} required={true}>
+      {/* <Input label={"Danh mục"} required={true}>
         <select
           name=""
           id=""
@@ -170,7 +156,23 @@ function Create() {
               }
             })}
         </select>
-      </Input>
+      </Input> */}
+
+      <div className="mt-4">
+        <Select
+          label="Chọn danh mục"
+          onChange={(val) => setProduct({ ...product, categoryId: val! })}
+        >
+          {category &&
+            category.map((item: any, index: number) => {
+              return (
+                <Option value={item._id} key={index}>
+                  {item.name}
+                </Option>
+              );
+            })}
+        </Select>
+      </div>
 
       <div className="mt-4">
         <div className="font-bold text-lg">Mô tả sản phẩm của bạn</div>
