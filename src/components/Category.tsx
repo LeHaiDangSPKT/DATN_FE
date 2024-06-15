@@ -9,7 +9,9 @@ function Category() {
       const lst = await APIGetAllCategory().then((res) => res);
       setCategory(lst.metadata.data);
     };
-    fetchData();
+    !localStorage.getItem("category")
+      ? fetchData()
+      : setCategory(JSON.parse(localStorage.getItem("category") || ""));
   }, []);
   const router = useRouter();
 
@@ -19,7 +21,7 @@ function Category() {
         return (
           <div
             key={item._id}
-            className="grid grid-cols-4 p-2 items-center hover:bg-slate-100 hover:rounded-md hover:cursor-pointer"
+            className="grid grid-cols-4 p-2 items-center hover:bg-blue-gray-50 hover:rounded-md hover:cursor-pointer"
             onClick={(e) => {
               document
                 .getElementById("loading-page")

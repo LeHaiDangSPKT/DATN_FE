@@ -22,7 +22,7 @@ export const APIGetFeedbackUser = async (
   const res = await axiosInstance.get(
     `${
       process.env.NEXT_PUBLIC_API_URL
-    }/feedback?page=${page}&limit=${10}&productId=${productId}&userId=${userId}`
+    }/feedback?page=${page}&limit=${20}&productId=${productId}&userId=${userId}`
   );
   return res.data;
 };

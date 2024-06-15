@@ -6,6 +6,7 @@ import ListProductRandomHomePage from "@/components/ListProductRandomHomePage";
 import Paging from "@/components/Paging";
 import { useAppSelector } from "@/redux/store";
 import { APIGetListProductForUser } from "@/services/Product";
+import { Pagination } from "@nextui-org/react";
 import React from "react";
 
 function Search() {
@@ -19,7 +20,12 @@ function Search() {
       await APIGetListProductForUser(page || 1, 20, searchParam).then(
         (res: any) => {
           setLstProduct(res?.metadata.data);
-          setTotalPage(res?.metadata.total);
+          const totalItem = res?.metadata.total;
+          setTotalPage(
+            (totalItem / 20) % 1 == 0
+              ? totalItem / 20
+              : Math.ceil(totalItem / 20)
+          );
         }
       );
     };
@@ -53,12 +59,16 @@ function Search() {
                   return <CardProduct key={index} data={item} />;
                 })}
             </div>
-            <Paging
-              totalPage={totalPage}
-              currentPage={page}
-              setPage={setPage}
-              perPage={20}
-            />
+            <div className="flex justify-center mt-4">
+              {totalPage > 1 && (
+                <Pagination
+                  onChange={setPage}
+                  total={totalPage}
+                  initialPage={1}
+                  size={"md"}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

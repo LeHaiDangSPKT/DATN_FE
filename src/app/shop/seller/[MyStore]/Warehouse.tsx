@@ -1,5 +1,3 @@
-import Input from "@/components/Input";
-import Modal from "@/components/Modal";
 import SortTable from "@/components/SortTable";
 import { UPDATEPRODUCT } from "@/constants/UpdateProduct";
 import {
@@ -8,10 +6,24 @@ import {
   APIUpdateProduct,
 } from "@/services/Product";
 import CheckValidInput from "@/utils/CheckValidInput";
+import { APIUploadImage } from "@/services/UploadImage";
 import FormatMoney from "@/utils/FormatMoney";
 import RemoveVietnameseTones from "@/utils/RemoveVietnameseTones";
 import Toast from "@/utils/Toast";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Input,
+  Select,
+  Option,
+  Alert,
+} from "@material-tailwind/react";
 import React from "react";
+import UploadFile from "./UploadFile";
+import { useAppSelector } from "@/redux/store";
 const ReactQuill =
   typeof window === "object" ? require("react-quill") : () => false;
 interface ProductProps {
@@ -42,6 +54,13 @@ interface WarehouseProps {
 }
 
 function Warehouse() {
+  const [alert, setAlert] = React.useState({
+    open: false,
+    message: "",
+  });
+  const lengthIndex = useAppSelector(
+    (state) => state.uploadFilesReducer.arr.length
+  );
   const arrTitle = [
     {
       title: "STT",
@@ -92,8 +111,6 @@ function Warehouse() {
   const [sortType, setSortType] = React.useState<string>("");
   const [sortValue, setSortValue] = React.useState<string>("name");
   const [page, setPage] = React.useState<number>(1);
-  const [isShow, setIsShow] = React.useState<boolean>(false);
-  const [isShowDelete, setIsShowDelete] = React.useState<boolean>(false);
   const [currentProduct, setCurrentProduct] = React.useState<any>({
     _id: "",
     name: "",
@@ -104,9 +121,11 @@ function Warehouse() {
     quantity: 0,
     list_keyword: "",
     keywords: [] as string[],
+    avatar: [] as string[],
   });
-  const [deleted, setDeleted] = React.useState<boolean>(false);
+  const [creating, setCreating] = React.useState(false);
   const [data, setData] = React.useState<WarehouseProps>({} as WarehouseProps);
+  const [listImgTemp, setListImgTemp] = React.useState<any[]>([]);
   React.useEffect(() => {
     const fetchData = async () => {
       const data = await APIGetListProduct(
@@ -116,11 +135,10 @@ function Warehouse() {
         sortType,
         sortValue
       ).then((res) => res);
-      console.log(data);
       setData(data.metadata);
     };
     fetchData();
-  }, [page, deleted, sortType, sortValue]);
+  }, [page, sortType, sortValue]);
   const category = localStorage.getItem("category")
     ? JSON.parse(localStorage.getItem("category")!)
     : null;
@@ -158,67 +176,111 @@ function Warehouse() {
     setSortValue(field);
   };
   const ConfirmUpdateProduct = async () => {
-    if (+currentProduct.newPrice > +currentProduct.oldPrice) {
-      Toast("error", "Giá mới không được lớn hơn giá cũ", 2000);
+    const objCopied = JSON.parse(JSON.stringify(currentProduct));
+    delete objCopied.keywords;
+    if (+objCopied.newPrice > +objCopied.oldPrice) {
+      setAlert({
+        open: true,
+        message: "Giá sau khi giảm phải nhỏ hơn giá trước giảm",
+      });
+      setTimeout(() => {
+        setAlert({
+          open: false,
+          message: "",
+        });
+      }, 2000);
       return;
     }
-
     if (
-      document.querySelectorAll(".border-red-500").length != 0 ||
-      currentProduct.description.replace(/<(.|\n)*?>/g, "").trim().length == 0
+      CheckValidInput(objCopied) == "" &&
+      objCopied.description.replace(/<(.|\n)*?>/g, "").trim().length !== 0
     ) {
-      Toast("error", "Vui lòng nhập đầy đủ thông tin", 2000);
-      return;
-    }
-    const index = data.products.findIndex(
-      (item) => item._id == currentProduct._id
-    );
-    const newData = data.products;
-    newData[index] = {
-      ...newData[index],
-      name: currentProduct.name,
-      newPrice: currentProduct.newPrice,
-      oldPrice: currentProduct.oldPrice,
-      quantity: currentProduct.quantity,
-      keywords: currentProduct.keywords,
-      description: currentProduct.description,
-      categoryId: currentProduct.categoryId,
-    };
-    setData({ ...data, products: newData });
+      const index = data.products.findIndex(
+        (item) => item._id == currentProduct._id
+      );
 
-    currentProduct.keywords = currentProduct.list_keyword.split(",");
-    currentProduct.newPrice = +currentProduct.newPrice;
-    currentProduct.oldPrice = +currentProduct.oldPrice;
-    currentProduct.quantity = +currentProduct.quantity;
-    // Call api APIUpdateProduct to update product
+      var listImg: any = [];
+      setCreating(true);
+      for (let i = 0; i < listImgTemp.length; i++) {
+        if (typeof listImgTemp[i] != "string") {
+          let formData = new FormData();
+          formData.append("file", listImgTemp[i]);
+          const res = await APIUploadImage(formData);
+          if (res?.status == 200 || res?.status == 201) {
+            listImg.push(res?.data.url);
+          } else {
+            Toast("error", res.data.message, 2000);
+            setCreating(false);
+            return;
+          }
+        } else {
+          listImg.push(listImgTemp[i]);
+        }
+      }
+      currentProduct.avatar = listImg;
+      const newData = data.products;
+      newData[index] = {
+        ...newData[index],
+        name: currentProduct.name,
+        newPrice: currentProduct.newPrice,
+        oldPrice: currentProduct.oldPrice,
+        quantity: currentProduct.quantity,
+        keywords: currentProduct.keywords,
+        description: currentProduct.description,
+        categoryId: currentProduct.categoryId,
+        avatar: listImg,
+      };
+      setData({ ...data, products: newData });
+      currentProduct.keywords = currentProduct.list_keyword.split(",");
+      currentProduct.newPrice = +currentProduct.newPrice;
+      currentProduct.oldPrice = +currentProduct.oldPrice;
+      currentProduct.quantity = +currentProduct.quantity;
+      // Call api APIUpdateProduct to update product
 
-    await APIUpdateProduct(currentProduct._id, currentProduct).then((res) => {
+      const res = await APIUpdateProduct(currentProduct._id, currentProduct);
+      setCreating(false);
+      handleOpenEdit();
       if (res?.status == 200 || res?.status == 201) {
         Toast("success", "Cập nhật sản phẩm thành công", 2000);
-        setIsShow(false);
       } else {
         Toast("error", "Cập nhật sản phẩm thất bại", 2000);
       }
-    });
+    } else {
+      setAlert({
+        open: true,
+        message: "Vui lòng điền đầy đủ thông tin",
+      });
+      setTimeout(() => {
+        setAlert({
+          open: false,
+          message: "",
+        });
+      }, 2000);
+      return;
+    }
 
     // Set currentProduct to data
   };
   const ConfirmDeleteProduct = async () => {
     // Call api APIDeleteProduct to delete product
-    await APIDeleteProduct(currentProduct._id).then((res) => {
-      console.log(res);
-      if (res?.status == 200 || res?.status == 201) {
-        Toast("success", "Xoá sản phẩm thành công", 2000);
-        setIsShowDelete(false);
-        setDeleted(!deleted);
-      } else {
-        Toast("error", "Xoá sản phẩm thất bại", 2000);
-      }
-    });
+    setCreating(true);
+
+    const res = await APIDeleteProduct(currentProduct._id);
+    setCreating(false);
+    handleOpenDel();
+    if (res?.status == 200 || res?.status == 201) {
+      Toast("success", "Xoá sản phẩm thành công", 2000);
+    } else {
+      Toast("error", "Xoá sản phẩm thất bại", 2000);
+    }
   };
   const handleDescriptionChange = (value: string) => {
     setCurrentProduct({ ...currentProduct, description: value });
   };
+  const [openDel, setOpenDel] = React.useState(false);
+  const handleOpenDel = () => setOpenDel(!openDel);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const handleOpenEdit = () => setOpenEdit(!openEdit);
   return (
     <>
       <SortTable
@@ -266,7 +328,7 @@ function Warehouse() {
                   <div
                     className="font-medium text-red-600 dark:text-red-500 hover:underline cursor-pointer mb-2"
                     onClick={(e) => {
-                      setIsShowDelete(true);
+                      handleOpenDel();
                       setCurrentProduct({ ...currentProduct, _id: item._id });
                     }}
                   >
@@ -285,8 +347,10 @@ function Warehouse() {
                         quantity: item.quantity,
                         list_keyword: item.keywords.join(", "),
                         keywords: item.keywords,
+                        avatar: item.avatar,
                       });
-                      setIsShow(true);
+                      setListImgTemp(item.avatar);
+                      handleOpenEdit();
                     }}
                   >
                     Chỉnh sửa
@@ -301,21 +365,38 @@ function Warehouse() {
           </tr>
         ))}
       </SortTable>
-      <Modal
-        isShow={isShow}
-        setIsShow={(data: any) => setIsShow(data)}
-        confirm={() => ConfirmUpdateProduct()}
-        title="Cập nhật thông tin sản phẩm"
-      >
-        <div className="w-full">
-          {UPDATEPRODUCT.map((item: any, index: number) => (
-            <Input label={item.label} required={true} key={index}>
-              <input
+      <Dialog open={openEdit} handler={handleOpenEdit} size={"lg"}>
+        <DialogHeader>Cập nhật thông tin sản phẩm</DialogHeader>
+        <DialogBody className="h-[28rem] overflow-y-scroll">
+          <div className="flex justify-between items-center mb-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <UploadFile
+                index={index}
                 key={index}
+                dataOrigin={currentProduct.avatar[index] || ""}
+                setProduct={(data: any) => {
+                  if (listImgTemp[index]) {
+                    setListImgTemp((prev) => {
+                      prev[index] = data;
+                      return [...prev];
+                    });
+                  } else {
+                    setListImgTemp((prev) => {
+                      prev.push(data);
+                      return [...prev];
+                    });
+                  }
+                }}
+              />
+            ))}
+          </div>
+
+          {UPDATEPRODUCT.map((item: any, index: number) => (
+            <div key={index} className="mb-4">
+              <Input
+                label={item.label}
                 id={`formUpdate-${item.name}`}
-                type="text"
-                className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
-                placeholder={item.placeholder}
+                type={item.identify == "number" ? "number" : "text"}
                 name={item.name}
                 value={currentProduct[item.name as keyof typeof currentProduct]}
                 onChange={(e) => {
@@ -324,51 +405,33 @@ function Warehouse() {
                     [item.name]: e.target.value,
                   });
                 }}
-                onBlur={(e) => {
-                  const result = CheckValidInput({
-                    [`${item.identify}`]: e.target.value,
-                  });
-                  if (result !== "") {
-                    document
-                      .getElementById(`formUpdate-${item.name}`)
-                      ?.classList.add("border-red-500");
-                  } else {
-                    document
-                      .getElementById(`formUpdate-${item.name}`)
-                      ?.classList.remove("border-red-500");
-                  }
-                  document.getElementById(`errMes-${item.name}`)!.innerHTML =
-                    result;
-                }}
+                crossOrigin={undefined}
               />
-              <span
-                id={`errMes-${item.name}`}
-                className="text-red-500 text-sm"
-              ></span>
-            </Input>
+            </div>
           ))}
-          <Input label={"Danh mục"} required={true}>
-            <select
-              name=""
-              id=""
-              className={`w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2`}
-              onChange={(e) =>
+
+          <div className="mb-4">
+            <Select
+              label="Chọn danh mục"
+              onChange={(val) =>
                 setCurrentProduct({
                   ...currentProduct,
-                  categoryId: e.target.value,
+                  categoryId: val!,
                 })
               }
               value={currentProduct.categoryId}
             >
               {category &&
-                category.map((item: any, index: number) => (
-                  <option value={item._id} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-            </select>
-          </Input>
-          <div className="mt-4">
+                category.map((item: any, index: number) => {
+                  return (
+                    <Option value={item._id} key={index}>
+                      {item.name}
+                    </Option>
+                  );
+                })}
+            </Select>
+          </div>
+          <div className="mb-4">
             <div className="font-bold text-lg">Mô tả sản phẩm của bạn </div>
             <ReactQuill
               theme="snow"
@@ -376,20 +439,57 @@ function Warehouse() {
               onChange={handleDescriptionChange}
             />
           </div>
-        </div>
-      </Modal>
-      <Modal
-        isShow={isShowDelete}
-        setIsShow={(data: any) => setIsShowDelete(data)}
-        confirm={() => ConfirmDeleteProduct()}
-        title="Xoá sản phẩm"
-      >
-        <div className="w-full">
-          <div className="font-bold text-lg">
-            Bạn có chắc chắn muốn xoá sản phẩm này?
-          </div>
-        </div>
-      </Modal>
+        </DialogBody>
+        <DialogFooter>
+          {alert.open && (
+            <Alert className="mb-4" color="red">
+              {alert.message}
+            </Alert>
+          )}
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpenEdit}
+            className="mr-1"
+          >
+            <span>Đóng</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            loading={creating || lengthIndex != 0}
+            onClick={() => {
+              ConfirmUpdateProduct();
+            }}
+          >
+            <span>Xác nhận</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+      <Dialog open={openDel} handler={handleOpenDel}>
+        <DialogHeader>Xoá sản phẩm</DialogHeader>
+        <DialogBody>Bạn có chắc chắn muốn xoá sản phẩm này?</DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpenDel}
+            className="mr-1"
+          >
+            <span>Đóng</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            loading={creating}
+            onClick={() => {
+              ConfirmDeleteProduct();
+            }}
+          >
+            <span>Xác nhận</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </>
   );
 }

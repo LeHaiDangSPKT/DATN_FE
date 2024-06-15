@@ -21,16 +21,7 @@ interface SortTableProps {
 }
 
 function SortTable(props: SortTableProps) {
-  const {
-    title,
-    children,
-    totalPage = 1,
-    sort,
-    currentPage,
-    setPage,
-    noPaging,
-    perPage = 20,
-  } = props;
+  const { title, children, totalPage = 1, sort, setPage, noPaging } = props;
   const totalPaging =
     (totalPage / 20) % 1 == 0 ? totalPage / 20 : Math.ceil(totalPage / 20);
   return (
@@ -84,10 +75,10 @@ function SortTable(props: SortTableProps) {
           {!noPaging && totalPaging > 1 && (
             <div className="flex justify-center mt-4">
               <Pagination
-                page={currentPage}
                 onChange={setPage}
                 total={totalPaging}
                 size={"md"}
+                initialPage={1}
               />
             </div>
           )}

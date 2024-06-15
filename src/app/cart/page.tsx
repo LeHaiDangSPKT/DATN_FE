@@ -3,11 +3,11 @@ import Cart from "@/components/Cart";
 import FrameCart from "@/components/FrameCart";
 import { clickAll } from "@/redux/features/cart/cartpopup-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
+import { useDispatch } from "react-redux";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useDispatch } from "react-redux";
 
 function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
