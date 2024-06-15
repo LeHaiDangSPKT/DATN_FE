@@ -4,6 +4,7 @@ import { CATEGORYSTORE } from "@/constants/CategoryStore";
 import { setCategoryStore } from "@/redux/features/categoryStore/categoryStore-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
+import { Card, List, ListItem, ListItemPrefix } from "@material-tailwind/react";
 
 function MyStore() {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,29 +13,25 @@ function MyStore() {
     document.getElementById("loading-page")?.classList.add("hidden");
   }, []);
   return (
-    <div className="min-h-screen px-[150px] my-4 grid grid-cols-10 gap-4">
-      <div className="flex flex-col min-h-screen justify-around bg-white rounded-md p-2 col-span-2">
+    <div className="min-h-screen px-[150px] my-4 flex">
+      <Card className="mr-4">
         {CATEGORYSTORE.map(
           (item: { value: string; title: string; icon: any }, index) => (
-            <div
-              key={index}
-              className={`${
-                dataCarts.value === item.value
-                  ? "bg-blue-300 font-bold text-white"
-                  : "bg-blue-100"
-              } cursor-pointer hover:bg-blue-300 transition-all rounded-sm py-3 px-2`}
-              onClick={(e) => dispatch(setCategoryStore(item))}
-            >
-              <div className="flex items-center">
-                <div className="mr-2">{item.icon}</div>
-
+            <List key={index} className="">
+              <ListItem
+                onClick={(e) => dispatch(setCategoryStore(item))}
+                className={
+                  dataCarts.value === item.value ? "bg-blue-gray-50" : ""
+                }
+              >
+                <ListItemPrefix>{item.icon}</ListItemPrefix>
                 {item.title}
-              </div>
-            </div>
+              </ListItem>
+            </List>
           )
         )}
-      </div>
-      <div className=" col-span-8 overflow-scroll scrollbar-hide max-h-screen">
+      </Card>
+      <div className=" overflow-scroll scrollbar-hide max-h-screen w-full">
         {dataCarts.value === "home" ? (
           <dataCarts.element
             setActive={(data: string) => {

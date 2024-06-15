@@ -4,6 +4,7 @@ import categoryStoreReducer from "./features/categoryStore/categoryStore-slice"
 import productReducer from "./features/product/product-slice"
 import chatReducer from "./features/chat/chat-slice"
 import searchReducer from "./features/search/search-slice"
+import uploadFilesReducer from "./features/UploadFiles/upload-file-slices"
 import { TypedUseSelectorHook, useSelector } from "react-redux"
 export const store = configureStore({
     reducer: {
@@ -11,8 +12,8 @@ export const store = configureStore({
         categoryStoreReducer,
         productReducer,
         chatReducer,
-        searchReducer
-
+        searchReducer,
+        uploadFilesReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false

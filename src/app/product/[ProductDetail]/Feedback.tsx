@@ -1,4 +1,3 @@
-import Paging from "@/components/Paging";
 import Star from "@/components/Star";
 import {
   APICreateFeedback,
@@ -13,6 +12,7 @@ import React from "react";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
 import { Textarea } from "@material-tailwind/react";
+import { Pagination } from "@nextui-org/react";
 interface Props {
   isPurchase: boolean;
   setTotalFeedback: (arg: number) => void;
@@ -39,7 +39,12 @@ function Feedback(props: Props) {
       await APIGetFeedbackUser(page || 1, params.ProductDetail, user?._id).then(
         (res) => {
           setFeedbacks(res?.metadata.data);
-          setTotal(res?.metadata.total);
+          const totalItem = res?.metadata.total;
+          setTotal(
+            (totalItem / 20) % 1 == 0
+              ? totalItem / 20
+              : Math.ceil(totalItem / 20)
+          );
           setTotalFeedback(res?.metadata.total);
         }
       );
@@ -171,13 +176,17 @@ function Feedback(props: Props) {
           <hr className="w-full my-5" />
         </div>
       ))}
-      <Paging
-        totalPage={total}
-        currentPage={page || 1}
-        setPage={setPage}
-        perPage={20}
-      />
-      {/* Viết bình luận và cho sao */}
+      <div className="flex justify-center mt-4">
+        {total > 1 && (
+          <Pagination
+            onChange={setPage}
+            total={total}
+            initialPage={1}
+            size={"md"}
+          />
+        )}
+      </div>
+
       {user && isPurchase ? (
         <>
           <div id="feedback" className="flex items-center justify-center mb-2 ">

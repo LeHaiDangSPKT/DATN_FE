@@ -3,16 +3,14 @@ import CardProduct from "@/components/CardProduct";
 import Category from "@/components/Category";
 import Filter from "@/components/Filter";
 import FrameMainContent from "@/components/FrameMainContent";
-import Paging from "@/components/Paging";
 import { APIGetListProductWithCategory } from "@/services/Category";
 import { APIGetListProductGive } from "@/services/Product";
+import { Pagination } from "@nextui-org/react";
 import { useParams } from "next/navigation";
 import React from "react";
 
 function CategoryPage() {
-  const [idCategory, setIdCategory] = React.useState<any>(null);
   const param = useParams() as any;
-  console.log(param);
   // page?: any,
   // limit?: any,
   // search?: any,
@@ -23,8 +21,6 @@ function CategoryPage() {
   // createdAtMin?: any,
   // createdAtMax?: any
   const [page, setPage] = React.useState<any>(1);
-  const [limit, setLimit] = React.useState<any>(5);
-  const [search, setSearch] = React.useState<any>("");
   const [query, setQuery] = React.useState<any>({
     priceMin: "",
     priceMax: "",
@@ -34,17 +30,21 @@ function CategoryPage() {
     createdAtMax: "",
   });
 
-  const [isFilter, setIsFilter] = React.useState<any>(false);
   const [lstProduct, setLstProduct] = React.useState<any[]>([]); // Update the type of lstProduct to any[]
   const [totalPage, setTotalPage] = React.useState<any>(1);
   const [categoryName, setCategoryName] = React.useState<any>("");
-  const [idFree, setIdFree] = React.useState("6586f9716c080545787d620c");
+  const [idFree, setIdFree] = React.useState("65d20668b91436a3f359ad43");
   React.useEffect(() => {
     if (param.id === idFree) {
       const fetchData = async () => {
         await APIGetListProductGive(page, 20).then((res: any) => {
           setLstProduct(res?.metadata.data);
-          setTotalPage(res?.metadata.total);
+          const totalItem = res?.metadata.total;
+          setTotalPage(
+            (totalItem / 20) % 1 == 0
+              ? totalItem / 20
+              : Math.ceil(totalItem / 20)
+          );
           setCategoryName("Cho tặng miễn phí");
         });
       };
@@ -63,7 +63,13 @@ function CategoryPage() {
           query.createdAtMax
         ).then((res: any) => {
           setLstProduct(res?.metadata.data.products);
-          setTotalPage(res?.metadata.data.total);
+          const totalItem = res?.metadata.data.total;
+
+          setTotalPage(
+            (totalItem / 20) % 1 == 0
+              ? totalItem / 20
+              : Math.ceil(totalItem / 20)
+          );
           setCategoryName(res?.metadata.data.categoryName);
         });
       };
@@ -72,50 +78,40 @@ function CategoryPage() {
   }, [page, query, idFree, param.id]);
   return (
     <FrameMainContent>
-      <div className="flex mt-2 justify-between">
-        <div className="flex flex-col w-2/12 mr-2 ">
-          <div className="flex flex-col">
-            {param.id !== idFree && (
-              <div className="bg-white p-2 rounded-xl mb-5">
-                <div className="flex flex-col">
-                  <div className="font-bold py-2">Bộ lọc</div>
-                  <div className="flex flex-col">
-                    <Filter setQuery={setQuery} />
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className="bg-white p-2 rounded-xl">
-              <div className="flex flex-col">
-                <div className="font-bold py-2">Danh mục</div>
-                <div className="flex flex-col">
-                  <Category />
-                </div>
-              </div>
+      <div className="flex mt-2">
+        <div className="flex flex-col mr-2 w-[20%]">
+          {param.id !== idFree && (
+            <div className="bg-white p-2 rounded-xl mb-5">
+              <div className="font-bold py-2">Bộ lọc</div>
+              <Filter setQuery={setQuery} />
             </div>
+          )}
+          <div className="bg-white p-2 rounded-xl ">
+            <div className="font-bold py-2">Danh mục</div>
+            <Category />
           </div>
         </div>
 
-        <div className="flex flex-col w-10/12">
-          <div className="flex flex-col bg-white p-4 rounded-xl mb-2">
-            <div className="flex justify-between">
-              <div>
-                Các sản phẩm liên quan đến &ldquo;
-                <i className="font-bold text-">{categoryName}</i>&ldquo;
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-y-4 mt-5">
-              {lstProduct &&
-                lstProduct.map((item: any, index: any) => {
-                  return <CardProduct key={index} data={item} />;
-                })}
-            </div>
-            <Paging
-              totalPage={totalPage}
-              currentPage={page}
-              setPage={setPage}
-              perPage={20}
-            />
+        <div className="flex flex-col bg-white p-4 rounded-xl mb-2 w-full">
+          <div>
+            Các sản phẩm liên quan đến &ldquo;
+            <i className="font-bold text-">{categoryName}</i>&ldquo;
+          </div>
+          <div className="grid grid-cols-4 gap-y-4 mt-5">
+            {lstProduct &&
+              lstProduct.map((item: any, index: any) => {
+                return <CardProduct key={index} data={item} />;
+              })}
+          </div>
+          <div className="flex justify-center mt-4">
+            {totalPage > 1 && (
+              <Pagination
+                onChange={setPage}
+                total={totalPage}
+                initialPage={1}
+                size={"md"}
+              />
+            )}
           </div>
         </div>
       </div>

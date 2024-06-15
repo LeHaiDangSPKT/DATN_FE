@@ -139,7 +139,7 @@ function All() {
   const [listPromotion, setListPromotion] = React.useState<Promotion>();
   const [promotion, setPromotion] = React.useState<PromotionDetail>({
     avatar:
-      "http://res.cloudinary.com/dl3b2j3td/image/upload/v1711198507/DATN2024/dsklyrk92hod81zcbys2.png",
+      "https://res.cloudinary.com/dl3b2j3td/image/upload/v1718101515/DATN2024/etgbi3timoxd6fm6vyq3.png",
     minSpend: 0,
     quantity: 0,
     value: 0,

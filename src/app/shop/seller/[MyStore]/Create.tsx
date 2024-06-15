@@ -10,13 +10,22 @@ import Toast from "@/utils/Toast";
 import { APICreateProduct } from "@/services/Product";
 import { APIUploadImage } from "@/services/UploadImage";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, useAppSelector } from "@/redux/store";
 import { setCategoryStore } from "@/redux/features/categoryStore/categoryStore-slice";
 import { CATEGORYSTORE } from "@/constants/CategoryStore";
-import { Input, Select, Typography, Option } from "@material-tailwind/react";
+import {
+  Input,
+  Select,
+  Typography,
+  Option,
+  Button,
+} from "@material-tailwind/react";
+
 import DialogPolicy from "@/components/DialogPolicy";
-import { CheckValidImage } from "@/services/Picpurify";
 function Create() {
+  const lengthIndex = useAppSelector(
+    (state) => state.uploadFilesReducer.arr.length
+  );
   const [product, setProduct] = React.useState({
     name: "",
     newPrice: 0,
@@ -28,19 +37,17 @@ function Create() {
     list_keyword: "",
     keywords: [] as any,
   });
+  const [creating, setCreating] = React.useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  // Get category from localStorage
   const category = localStorage.getItem("category")
     ? JSON.parse(localStorage.getItem("category")!).filter(
         (item: any) => item.name !== "Cho tặng miễn phí"
       )
     : [];
   const CreateProduct = async (product: any) => {
-    document.getElementById("loading-page")?.classList.remove("hidden");
     const objCopied = JSON.parse(JSON.stringify(product));
     delete objCopied.keywords;
     if (+objCopied.newPrice > +objCopied.oldPrice) {
-      document.getElementById("loading-page")?.classList.add("hidden");
       Toast("error", "Giá sau khi giảm phải nhỏ hơn giá trước giảm", 2000);
       return;
     }
@@ -50,28 +57,18 @@ function Create() {
     ) {
       // Upload image
       const listImg: any = [];
-      console.log("product.avatar", product.avatar);
+      setCreating(true);
       for (let i = 0; i < product.avatar.length; i++) {
         let formData = new FormData();
-
-        formData.append("file_image", product.avatar[i]);
-        formData.append("API_KEY", process.env.NEXT_PUBLIC_KEY_PICPURIFY!);
-        formData.append(
-          "task",
-          "porn_moderation,weapon_moderation,gore_moderation"
-        );
-        const res = await CheckValidImage(formData);
-        console.log("res", res);
-        return;
-        // formData.append("file", product.avatar[i]);
-        // const res = await APIUploadImage(formData);
-        // if (res?.status == 200 || res?.status == 201) {
-        //   listImg.push(res?.data.url);
-        // } else {
-        //   document.getElementById("loading-page")?.classList.add("hidden");
-        //   Toast("error", "Ảnh có kích thước quá lớn", 2000);
-        //   return;
-        // }
+        formData.append("file", product.avatar[i]);
+        const res = await APIUploadImage(formData);
+        if (res?.status == 200 || res?.status == 201) {
+          listImg.push(res?.data.url);
+        } else {
+          Toast("error", res.data.message, 2000);
+          setCreating(false);
+          return;
+        }
       }
       product.avatar = listImg;
       // Change price to number
@@ -83,6 +80,7 @@ function Create() {
       product.keywords = product.list_keyword.split(",");
       delete product.list_keyword;
       const res = await APICreateProduct(product);
+      setCreating(false);
       if (res?.status == 200 || res?.status == 201) {
         document.getElementById("loading-page")?.classList.add("hidden");
         Toast("success", "Tạo sản phẩm thành công", 2000);
@@ -102,7 +100,6 @@ function Create() {
     setProduct({ ...product, description: value });
   };
   const [openDialogPolicy, setOpenDialogPolicy] = React.useState(false);
-
   return (
     <div className="bg-white rounded-md p-4 mb-5">
       <div className="flex justify-between items-center">
@@ -111,7 +108,6 @@ function Create() {
             index={index}
             key={index}
             setProduct={(data: any) => {
-              // Push data to img Array
               const img = product.avatar;
               img.push(data);
               setProduct({ ...product, avatar: img });
@@ -126,6 +122,7 @@ function Create() {
               <Input
                 label={item.label}
                 crossOrigin={undefined}
+                type={item.identify == "number" ? "number" : "text"}
                 value={product[item.name as keyof typeof product]}
                 onChange={(e) => {
                   setProduct({ ...product, [item.name]: e.target.value });
@@ -135,29 +132,6 @@ function Create() {
           );
         })}
       </div>
-      {/* <Input label={"Danh mục"} required={true}>
-        <select
-          name=""
-          id=""
-          className={`w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2`}
-          onChange={(e) =>
-            setProduct({ ...product, categoryId: e.target.value })
-          }
-        >
-          <option value=""> Chọn danh mục</option>
-          {category &&
-            category.map((item: any, index: number) => {
-              if (item.name !== "Cho tặng miễn phí") {
-                return (
-                  <option value={item._id} key={index}>
-                    {item.name}
-                  </option>
-                );
-              }
-            })}
-        </select>
-      </Input> */}
-
       <div className="mt-4">
         <Select
           label="Chọn danh mục"
@@ -184,14 +158,15 @@ function Create() {
       </div>
       {/* Nút tạo sản phẩm */}
       <div className="flex justify-center mt-5">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white rounded-md p-2 px-4"
+        <Button
+          color="blue"
+          loading={creating || lengthIndex != 0}
           onClick={(e) => {
             CreateProduct(product);
           }}
         >
           Tạo sản phẩm
-        </button>
+        </Button>
       </div>
       <Typography color="gray" className="text-center mt-2 italic text-sm">
         Bằng cách tạo sản phẩm, bạn đã đồng ý với{" "}

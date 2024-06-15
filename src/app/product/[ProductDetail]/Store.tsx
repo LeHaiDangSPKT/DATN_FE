@@ -17,6 +17,7 @@ import io from "socket.io-client";
 import { ROLE_CHAT } from "@/constants/Conversation";
 import { ConversationDetailInterface } from "@/types/Conversation";
 import { useAppSelector } from "@/redux/store";
+import { Avatar } from "@material-tailwind/react";
 
 interface Props {
   product: any;
@@ -195,11 +196,11 @@ function Store(props: Props) {
       <p className="text-lg font-bold mb-2">Thông tin người bán:</p>
       <div className="mb-2 flex items-center justify-between border-[#D2E0FB] border-2 p-2 rounded-md">
         <div className="flex items-center">
-          <Image
+          <Avatar
             src={storeInfo.avatar!}
-            width={50}
-            height={50}
-            className="rounded-full mr-2"
+            width={200}
+            height={200}
+            className="mr-2"
             alt=""
           />
           <div className="flex flex-col">
