@@ -13,7 +13,7 @@ export const APIGetAllCategory = async (status?: string) => {
 export const APIGetListProductWithCategory = async (
   page?: any,
   limit?: any,
-  search?: any,
+  categoryId?: any,
   priceMin?: any,
   priceMax?: any,
   quantityMin?: any,
@@ -23,16 +23,16 @@ export const APIGetListProductWithCategory = async (
 ) => {
   var page = page ? page : 1;
   var limit = limit ? limit : 10;
-  var search = search ? search : "";
   var priceMin = priceMin ? priceMin : "";
   var priceMax = priceMax ? priceMax : "";
   var quantityMin = quantityMin ? quantityMin : "";
   var quantityMax = quantityMax ? quantityMax : "";
   var createdAtMin = createdAtMin ? createdAtMin : "";
   var createdAtMax = createdAtMax ? createdAtMax : "";
+  var categoryId = categoryId ? categoryId : "";
   document.getElementById("loading-page")?.classList.remove("hidden");
   const res = await axiosInstance.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/product-filter?page=${page}&limit=${limit}&search=${search}&priceMin=${priceMin}&priceMax=${priceMax}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&createdAtMin=${createdAtMin}&createdAtMax=${createdAtMax}`
+    `${process.env.NEXT_PUBLIC_API_URL}/product-filter?page=${page}&limit=${limit}&priceMin=${priceMin}&priceMax=${priceMax}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&createdAtMin=${createdAtMin}&createdAtMax=${createdAtMax}&categoryId=${categoryId}`
   );
   document.getElementById("loading-page")?.classList.add("hidden");
   return res.data;

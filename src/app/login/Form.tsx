@@ -8,9 +8,8 @@ import { FcGoogle } from "react-icons/fc";
 import { LOGIN } from "@/constants/Login";
 import Link from "next/link";
 import Toast from "@/utils/Toast";
-import { APIGoogleLogin, APILogin } from "@/services/Auth";
-import axios from "axios";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { APILogin } from "@/services/Auth";
+import { signIn } from "next-auth/react";
 import DialogPolicy from "@/components/DialogPolicy";
 interface FormProps {
   fastLogin?: boolean;
@@ -80,12 +79,12 @@ function Form(props: FormProps) {
     };
   }, [loginForm]);
 
-  const HandleGoogle = async () => {
+  const HandleSocial = async (type: string) => {
     fastLogin
-      ? await signIn("google", {
+      ? await signIn(type, {
           callbackUrl: window.location.href,
         })
-      : await signIn("google", {
+      : await signIn(type, {
           callbackUrl: "/",
         });
   };
@@ -131,7 +130,7 @@ function Form(props: FormProps) {
           <div
             className="py-2 bg-red-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
             onClick={(e) => {
-              HandleGoogle();
+              HandleSocial("google");
             }}
           >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
@@ -139,7 +138,12 @@ function Form(props: FormProps) {
               <span className="hidden sm:block">Log in with Google</span>
             </div>
           </div>
-          <div className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg">
+          <div
+            className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
+            onClick={(e) => {
+              HandleSocial("facebook");
+            }}
+          >
             <div className="flex cursor-pointer text-white items-center justify-center rounded-md">
               <FaFacebook fontSize={30} className="r1-2 mr-2" />
               <span className="hidden sm:block">Log in with Facebook</span>
