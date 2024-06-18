@@ -1,8 +1,7 @@
-import { APIGoogleLogin } from "@/services/Auth";
-import NextAuth, { AuthOptions, NextAuthOptions } from "next-auth";
+import { APIFacebookLogin, APIGoogleLogin } from "@/services/Auth";
+import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
-import { redirect } from "next/navigation";
 export const authOptions: AuthOptions = {
     providers: [
         GoogleProvider({
@@ -16,7 +15,12 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async signIn({ user, account, profile }) {
-            const res = await APIGoogleLogin(account!.id_token! as string);
+            let res = null;
+            if (account?.provider === 'google') {
+                res = await APIGoogleLogin(account!.id_token! as string);
+            } else {
+                res = await APIFacebookLogin(account!.access_token! as string);
+            }
             if (res?.status !== 200 && res.status !== 201) {
                 return false;
             }

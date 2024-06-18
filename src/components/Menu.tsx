@@ -1,6 +1,6 @@
 import { UserInterface } from "@/types/User";
-import { usePathname, useRouter } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 import {
   Menu,

@@ -41,25 +41,23 @@ export const APIForgetPassword = async (email: string, password: string) => {
   return res;
 };
 
-// api/auth/login-social => post
-export const APILoginSocial = async (body: any) => {
-  document.getElementById("loading-page")?.classList.remove("hidden");
-
-  const res = await axiosInstance.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/login-social`,
-    body
-  );
-  document.getElementById("loading-page")?.classList.add("hidden");
-
-  return res.data;
-};
-
 // /api/auth/google
 export const APIGoogleLogin = async (idToken: string) => {
   const res = await axiosInstance.post(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/login/google`,
     {
       idToken,
+    }
+  );
+  return res;
+};
+
+// /api/auth/facebook
+export const APIFacebookLogin = async (accessToken: string) => {
+  const res = await axiosInstance.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/login/facebook`,
+    {
+      accessToken,
     }
   );
   return res;
