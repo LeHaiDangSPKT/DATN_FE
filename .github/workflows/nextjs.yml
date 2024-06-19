@@ -44,17 +44,15 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps:
-    - name: cd to workspace
-      run: cd ~/workspace/actions-runner-fe/_work/DATN_FE/DATN_FE
-
     - name: Pull Docker
       run: docker pull "${{ secrets.DOCKER_HUB_USERNAME }}"/dtex-fe:latest
 
-    # - name: Down and Up Docker
-    #   run: |
-    #     docker-compose down
-    #     docker-compose up -d
+    - name: Deploy With Set Up SSL
+      run: |
+        cd ~/workspace/set_up_ssl/set_up_ssl/
+        docker compose down
+        docker compose up -d
 
-    # - name: Clean Docker
-    #   run: docker system prune -fa
+    - name: Clean Docker
+      run: docker system prune -fa
         
