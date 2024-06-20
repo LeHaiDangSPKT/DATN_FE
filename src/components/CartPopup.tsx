@@ -34,7 +34,7 @@ function CartPopup(props: CartPopupProps) {
             </IconButton>
           </MenuHandler>
         </Badge>
-        <MenuList className="max-h-96">
+        <MenuList className={`max-h-96 sm:mt-3 -mt-3`}>
           <MenuItem
             onClick={() => {
               document

@@ -32,7 +32,7 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
             src={user.avatar || user.photoURL}
             alt="Loading..."
           />
-          <span className="pl-3">{user.fullName}</span>
+          <span className="pl-3 hidden sm:block">{user.fullName}</span>
         </div>
       </MenuHandler>
       <MenuList>

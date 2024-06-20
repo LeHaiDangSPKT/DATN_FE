@@ -54,7 +54,7 @@ function Popup(props: Props) {
             )}
           </IconButton>
         </MenuHandler>
-        <MenuList className={`max-h-96`}>
+        <MenuList className={`max-h-96 sm:mt-3 -mt-3`}>
           <div className="outline-none">
             {data.map((item: ConservationInterface, index: number) => (
               <MenuItem
