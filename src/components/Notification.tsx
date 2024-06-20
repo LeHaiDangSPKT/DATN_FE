@@ -3,6 +3,9 @@ import DifferenceTime from "@/utils/DifferenceTime";
 import {
   Avatar,
   Badge,
+  IconButton,
+  Menu,
+  MenuHandler,
   MenuItem,
   MenuList,
   Spinner,
@@ -11,6 +14,7 @@ import {
 import { useInView } from "react-intersection-observer";
 import React from "react";
 import ClockIcon from "./ClockIcon";
+import { FaBell } from "react-icons/fa";
 
 interface NotificationProps {
   dataNoti: NotificationInterface[];
@@ -31,8 +35,16 @@ function Notification(props: NotificationProps) {
     }
   }, [inView]);
   return (
-    <MenuList className={`max-h-96`}>
-      <div className="outline-none">
+    <Menu>
+      <Badge withBorder content={countNewNoti} invisible={countNewNoti == 0}>
+        <MenuHandler>
+          <IconButton variant="text">
+            <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+          </IconButton>
+        </MenuHandler>
+      </Badge>
+      <MenuList className={`max-h-96 sm:mt-3 -mt-3`}>
+        {/* <div className="outline-none"> */}
         {dataNoti.map((item: NotificationInterface, index: number) => (
           <MenuItem
             key={item.id}
@@ -92,8 +104,9 @@ function Notification(props: NotificationProps) {
             <Spinner />
           </div>
         )}
-      </div>
-    </MenuList>
+        {/* </div> */}
+      </MenuList>
+    </Menu>
   );
 }
 

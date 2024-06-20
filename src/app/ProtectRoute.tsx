@@ -19,8 +19,13 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
       pathname == "/register" ||
       pathname == "/forgot-password"
     ) {
-      setLoading(false);
-      return;
+      if (!user) {
+        setLoading(false);
+        return;
+      } else {
+        redirectUser("/");
+        return;
+      }
     }
     const userRoles = user?.role || [];
 

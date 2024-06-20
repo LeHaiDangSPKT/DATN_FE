@@ -34,6 +34,7 @@ import Popup from "./chat/Popup";
 import { ROLE_CHAT } from "@/constants/Conversation";
 import { setParamSearch } from "@/redux/features/search/search-slice";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 function Header() {
   const arrPathName = [
     "/login",
@@ -353,7 +354,7 @@ function Header() {
         fetchInforStore();
       }
     }
-  }, [session]);
+  }, []);
   React.useEffect(() => {
     if (pathname == "/cart") {
       setIsShowCart(false);
@@ -427,62 +428,401 @@ function Header() {
         {(role.includes(ROLE_CHAT.USER) ||
           role.includes(ROLE_CHAT.SELLER) ||
           !role) && (
-          <header className="h-[70px]">
-            <div className="flex z-10 justify-between items-center w-full h-[70px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
-              <img
-                className="cursor-pointer w-[8%]"
-                src="/logo.png"
-                alt="Loading..."
-                onClick={() => {
-                  document
-                    .getElementById("loading-page")
-                    ?.classList.remove("hidden");
-                  router.push("/");
-                }}
-              />
-
-              <div className="flex items-center rounded-3xl w-[200px] sm:w-[400px] h-[40px] bg-[#E1E9F7] px-2">
-                <div
-                  className="p-2"
+          <>
+            <header className="h-[70px]">
+              <div className="flex z-10 justify-between items-center w-full h-[70px] bg-[#D2E0FB] px-[2%] sm:px-[10%] fixed top-0 left-0 right-0">
+                <Image
+                  className="cursor-pointer sm:w-[8%] w-[20%]"
+                  src="/logo.png"
+                  width={100}
+                  height={100}
+                  alt="Loading..."
                   onClick={() => {
-                    dispatch(setParamSearch(search));
-                    router.push("/product/search?search=" + search);
-                  }}
-                >
-                  <FaSistrix
-                    className="hover:cursor-pointer"
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  value={search}
-                  className="flex-1 h-full outline-none bg-transparent"
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key == "Enter") {
-                      dispatch(setParamSearch(search));
-                      router.push("/product/search?search=" + search);
-                    }
+                    document
+                      .getElementById("loading-page")
+                      ?.classList.remove("hidden");
+                    router.push("/");
                   }}
                 />
-              </div>
 
+                <div className="flex items-center rounded-3xl w-[50%] sm:w-[40%] h-[40px] bg-[#E1E9F7] px-2 ">
+                  <div
+                    className="p-2"
+                    onClick={() => {
+                      dispatch(setParamSearch(search));
+                      router.push("/product/search?search=" + search);
+                    }}
+                  >
+                    <FaSistrix
+                      className="hover:cursor-pointer"
+                      width={24}
+                      height={24}
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm sản phẩm..."
+                    value={search}
+                    className="flex-1 h-full outline-none bg-transparent sm:text-base text-xs"
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key == "Enter") {
+                        dispatch(setParamSearch(search));
+                        router.push("/product/search?search=" + search);
+                      }
+                    }}
+                  />
+                </div>
+
+                {user && (
+                  <>
+                    <div className="hidden items-center cursor-pointer sm:flex">
+                      <div
+                        onClick={() => OpenStore()}
+                        className="flex-col items-center flex"
+                      >
+                        <span className="text-[14px]">Kênh người bán</span>
+                        <FaStore className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
+                      </div>
+                      <div className="border-r border-gray-400 mx-10 h-6 sm:block hidden"></div>
+
+                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
+                        {isShowCart && (
+                          <CartPopup
+                            dataCarts={dataCarts}
+                            totalCart={totalCart}
+                            clickMenuItem={(store) => {
+                              setDataDrawer({
+                                storeId: store.id,
+                                storeName: store.name,
+                                storeAvatar: store.avatar,
+                                data: store.product,
+                              });
+                              openDrawer();
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
+                        {isShowCart && (
+                          <Notification
+                            readNoti={(id, link, isRead) =>
+                              ReadNoti(id, link, isRead)
+                            }
+                            countNewNoti={countNewNoti}
+                            dataNotiCheck={dataNotiCheck}
+                            dataNoti={dataNoti}
+                            fetchData={() => {
+                              socket.emit("getNotifications", {
+                                page: pageNoti + 1,
+                                limit: 10,
+                              });
+                              setPageNoti(pageNoti + 1);
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
+                        {isShowCart && (
+                          <Popup
+                            role={ROLE_CHAT.USER}
+                            countUnread={countUnreadUser}
+                            data={listPreviewUser}
+                            dataCheck={dataChatCheckUser}
+                            fetchData={() => {
+                              socketChat.emit("getPreviewConversations", {
+                                page: pageChat + 1,
+                                limit: 10,
+                                senderRole: ROLE_CHAT.USER,
+                              });
+                              setPageChat(pageChat + 1);
+                            }}
+                            OpenConversation={(
+                              receiverId,
+                              idConversation,
+                              senderRole,
+                              receiverRole
+                            ) => {
+                              setHaveNewMessage(true);
+                              setPageConversation(1);
+                              document
+                                .getElementById("chat_store")
+                                ?.querySelector<HTMLButtonElement>(
+                                  "#close-chat"
+                                )
+                                ?.click();
+                              setOpenChat(true);
+                              setRoleChat({
+                                receiverRole: receiverRole,
+                                senderRole: senderRole,
+                              });
+                              if (chatDetail.conversationId != idConversation) {
+                                socketChat.emit("getConversation", {
+                                  page: 1,
+                                  limit: 10,
+                                  receiverId: receiverId,
+                                  senderRole: senderRole,
+                                  receiverRole: receiverRole,
+                                });
+                              }
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
+                        {isShowCart && (
+                          <Popup
+                            role={ROLE_CHAT.SELLER}
+                            countUnread={countUnreadSeller}
+                            data={listPreviewSeller}
+                            dataCheck={dataChatCheckSeller}
+                            fetchData={() => {
+                              socketChat.emit("getPreviewConversations", {
+                                page: pageChat + 1,
+                                limit: 10,
+                                senderRole: ROLE_CHAT.SELLER,
+                              });
+                              setPageChat(pageChat + 1);
+                            }}
+                            OpenConversation={(
+                              receiverId,
+                              idConversation,
+                              senderRole,
+                              receiverRole
+                            ) => {
+                              setHaveNewMessage(true);
+                              setPageConversation(1);
+                              document
+                                .getElementById("chat_store")
+                                ?.querySelector<HTMLButtonElement>(
+                                  "#close-chat"
+                                )
+                                ?.click();
+                              setOpenChat(true);
+                              setRoleChat({
+                                receiverRole: receiverRole,
+                                senderRole: senderRole,
+                              });
+                              if (chatDetail.conversationId != idConversation) {
+                                socketChat.emit("getConversation", {
+                                  page: 1,
+                                  limit: 10,
+                                  receiverId: receiverId,
+                                  senderRole: senderRole,
+                                  receiverRole: receiverRole,
+                                });
+                              }
+                            }}
+                          />
+                        )}
+                      </div>
+                      {openChat && (
+                        <div id="chat_header">
+                          <Chat
+                            socketChat={socketChat}
+                            roleChat={roleChat}
+                            storeAvatar={storeAvatar}
+                            data={chatDetail}
+                            userCurrent={user}
+                            SendMessage={(message) => SendMessage(message)}
+                            setOpenChat={(data) => setOpenChat(data)}
+                            fetchData={() => {
+                              setHaveNewMessage(false);
+                              socketChat.emit("getConversation", {
+                                page: pageConversation + 1,
+                                limit: 10,
+                                receiverId: chatDetail.receiverId,
+                                senderRole: roleChat.senderRole,
+                                receiverRole: roleChat.receiverRole,
+                              });
+                              setPageConversation(pageConversation + 1);
+                            }}
+                            dataCheck={chatDetailCheck}
+                            haveNewMessage={haveNewMessage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {user ? (
+                  <div className="flex items-center group py-10">
+                    <MenuHeaderInfoUser user={user} role={role} />
+                  </div>
+                ) : (
+                  <div className="block sm:flex items-center text-center">
+                    <div
+                      className="sm:my-0 -my-2"
+                      onClick={(e) => {
+                        document
+                          .getElementById("loading-page")
+                          ?.classList.remove("hidden");
+
+                        router.push("/shipper/fill-form");
+                      }}
+                    >
+                      <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
+                        Trở thành shipper
+                      </span>
+                    </div>
+                    <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
+                    <div
+                      className="sm:my-0 -my-2"
+                      onClick={(e) => {
+                        document
+                          .getElementById("loading-page")
+                          ?.classList.remove("hidden");
+
+                        router.push("/login");
+                      }}
+                    >
+                      <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
+                        Đăng Nhập
+                      </span>
+                    </div>
+                    <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
+                    <div
+                      className="sm:my-0 -my-2"
+                      onClick={(e) => {
+                        document
+                          .getElementById("loading-page")
+                          ?.classList.remove("hidden");
+
+                        router.push("/sign-up");
+                      }}
+                    >
+                      <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
+                        Đăng Ký
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Drawer open={open} onClose={closeDrawer} className="p-4">
+                <div className="mb-6 flex items-center justify-between">
+                  <div
+                    className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
+                    onClick={() => {
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+                      closeDrawer();
+                      router.push(`/shop/${dataDrawer.storeId}`);
+                    }}
+                  >
+                    <Avatar
+                      variant="circular"
+                      alt="tania andrew"
+                      src={dataDrawer.storeAvatar}
+                      width={40}
+                      height={40}
+                    />
+                    <div className="flex flex-col gap-1">
+                      <Typography
+                        variant="small"
+                        color="gray"
+                        className="font-semibold"
+                      >
+                        {dataDrawer.storeName}
+                      </Typography>
+                    </div>
+                  </div>
+                  <IconButton
+                    variant="text"
+                    color="blue-gray"
+                    onClick={closeDrawer}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="h-5 w-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </IconButton>
+                </div>
+                <Typography
+                  variant="small"
+                  color="gray"
+                  className="font-semibold"
+                >
+                  Danh sách sản phẩm:
+                </Typography>
+                {dataDrawer.data.map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
+                    onClick={() => {
+                      document
+                        .getElementById("loading-page")
+                        ?.classList.remove("hidden");
+                      closeDrawer();
+                      router.push(`/product/${item.id}`);
+                    }}
+                  >
+                    <Avatar
+                      variant="circular"
+                      alt="tania andrew"
+                      src={item.avatar}
+                      width={40}
+                      height={40}
+                    />
+                    <div className="flex flex-col gap-1">
+                      <Typography
+                        variant="small"
+                        color="gray"
+                        className="font-semibold"
+                      >
+                        {item.name}
+                      </Typography>
+                      <Typography
+                        variant="small"
+                        color="gray"
+                        className="font-semibold"
+                      >
+                        Giá tiền: {FormatMoney(item.newPrice)}
+                      </Typography>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Tổng tiền */}
+                <div className="flex items-center justify-between mt-6 ">
+                  <Typography
+                    variant="small"
+                    color="gray"
+                    className="font-semibold text-red-400"
+                  >
+                    Tổng tiền:
+                  </Typography>
+                  <Typography
+                    variant="small"
+                    color="gray"
+                    className="font-semibold text-red-400"
+                  >
+                    {FormatMoney(
+                      dataDrawer.data.reduce(
+                        (total: number, item: any) => total + item.newPrice,
+                        0
+                      )
+                    )}
+                  </Typography>
+                </div>
+              </Drawer>
+            </header>
+            <div className="fixed bottom-0 bg-[#D2E0FB] w-full z-50 sm:hidden">
               {user && (
                 <>
-                  <div className="flex items-center cursor-pointer">
-                    <div
-                      onClick={() => OpenStore()}
-                      className="flex flex-col items-center"
-                    >
-                      <span className="text-[14px]">Kênh người bán</span>
-                      <FaStore className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
-                    </div>
-                    <div className="border-r border-gray-400 mx-10 h-6"></div>
-
-                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                  <div className="flex items-center justify-around cursor-pointer ">
+                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
                       {isShowCart && (
                         <CartPopup
                           dataCarts={dataCarts}
@@ -499,39 +839,26 @@ function Header() {
                         />
                       )}
                     </div>
-                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
                       {isShowCart && (
-                        <Menu open={isMenuOpen} handler={handleMenuOpen}>
-                          <Badge
-                            withBorder
-                            content={countNewNoti}
-                            invisible={countNewNoti == 0}
-                          >
-                            <MenuHandler>
-                              <IconButton variant="text">
-                                <FaBell className="w-[24px] h-[24px] cursor-pointer hover:fill-[#59595b]" />
-                              </IconButton>
-                            </MenuHandler>
-                          </Badge>
-                          <Notification
-                            readNoti={(id, link, isRead) =>
-                              ReadNoti(id, link, isRead)
-                            }
-                            countNewNoti={countNewNoti}
-                            dataNotiCheck={dataNotiCheck}
-                            dataNoti={dataNoti}
-                            fetchData={() => {
-                              socket.emit("getNotifications", {
-                                page: pageNoti + 1,
-                                limit: 10,
-                              });
-                              setPageNoti(pageNoti + 1);
-                            }}
-                          />
-                        </Menu>
+                        <Notification
+                          readNoti={(id, link, isRead) =>
+                            ReadNoti(id, link, isRead)
+                          }
+                          countNewNoti={countNewNoti}
+                          dataNotiCheck={dataNotiCheck}
+                          dataNoti={dataNoti}
+                          fetchData={() => {
+                            socket.emit("getNotifications", {
+                              page: pageNoti + 1,
+                              limit: 10,
+                            });
+                            setPageNoti(pageNoti + 1);
+                          }}
+                        />
                       )}
                     </div>
-                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
                       {isShowCart && (
                         <Popup
                           role={ROLE_CHAT.USER}
@@ -576,7 +903,7 @@ function Header() {
                         />
                       )}
                     </div>
-                    <div className="py-6 flex flex-col justify-center items-center mr-5">
+                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
                       {isShowCart && (
                         <Popup
                           role={ROLE_CHAT.SELLER}
@@ -650,179 +977,8 @@ function Header() {
                   </div>
                 </>
               )}
-
-              {user ? (
-                <div className="flex items-center group py-10">
-                  <MenuHeaderInfoUser user={user} role={role} />
-                </div>
-              ) : (
-                <div className="block sm:flex items-center text-center">
-                  <div
-                    className="sm:my-0 -my-2"
-                    onClick={(e) => {
-                      document
-                        .getElementById("loading-page")
-                        ?.classList.remove("hidden");
-
-                      router.push("/shipper/fill-form");
-                    }}
-                  >
-                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
-                      Trở thành shipper
-                    </span>
-                  </div>
-                  <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
-                  <div
-                    className="sm:my-0 -my-2"
-                    onClick={(e) => {
-                      document
-                        .getElementById("loading-page")
-                        ?.classList.remove("hidden");
-
-                      router.push("/login");
-                    }}
-                  >
-                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
-                      Đăng Nhập
-                    </span>
-                  </div>
-                  <div className="border-r border-gray-400 mx-3 h-6 hidden sm:block"></div>
-                  <div
-                    className="sm:my-0 -my-2"
-                    onClick={(e) => {
-                      document
-                        .getElementById("loading-page")
-                        ?.classList.remove("hidden");
-
-                      router.push("/sign-up");
-                    }}
-                  >
-                    <span className="text-[10px] sm:text-[14px] font-medium cursor-pointer">
-                      Đăng Ký
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
-            <Drawer open={open} onClose={closeDrawer} className="p-4">
-              <div className="mb-6 flex items-center justify-between">
-                <div
-                  className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
-                  onClick={() => {
-                    document
-                      .getElementById("loading-page")
-                      ?.classList.remove("hidden");
-                    closeDrawer();
-                    router.push(`/shop/${dataDrawer.storeId}`);
-                  }}
-                >
-                  <Avatar
-                    variant="circular"
-                    alt="tania andrew"
-                    src={dataDrawer.storeAvatar}
-                    width={40}
-                    height={40}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <Typography
-                      variant="small"
-                      color="gray"
-                      className="font-semibold"
-                    >
-                      {dataDrawer.storeName}
-                    </Typography>
-                  </div>
-                </div>
-                <IconButton
-                  variant="text"
-                  color="blue-gray"
-                  onClick={closeDrawer}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </IconButton>
-              </div>
-              <Typography
-                variant="small"
-                color="gray"
-                className="font-semibold"
-              >
-                Danh sách sản phẩm:
-              </Typography>
-              {dataDrawer.data.map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 py-2 pl-2 pr-8 hover:bg-gray-100 cursor-pointer rounded-md"
-                  onClick={() => {
-                    document
-                      .getElementById("loading-page")
-                      ?.classList.remove("hidden");
-                    closeDrawer();
-                    router.push(`/product/${item.id}`);
-                  }}
-                >
-                  <Avatar
-                    variant="circular"
-                    alt="tania andrew"
-                    src={item.avatar}
-                    width={40}
-                    height={40}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <Typography
-                      variant="small"
-                      color="gray"
-                      className="font-semibold"
-                    >
-                      {item.name}
-                    </Typography>
-                    <Typography
-                      variant="small"
-                      color="gray"
-                      className="font-semibold"
-                    >
-                      Giá tiền: {FormatMoney(item.newPrice)}
-                    </Typography>
-                  </div>
-                </div>
-              ))}
-
-              {/* Tổng tiền */}
-              <div className="flex items-center justify-between mt-6 ">
-                <Typography
-                  variant="small"
-                  color="gray"
-                  className="font-semibold text-red-400"
-                >
-                  Tổng tiền:
-                </Typography>
-                <Typography
-                  variant="small"
-                  color="gray"
-                  className="font-semibold text-red-400"
-                >
-                  {FormatMoney(
-                    dataDrawer.data.reduce(
-                      (total: number, item: any) => total + item.newPrice,
-                      0
-                    )
-                  )}
-                </Typography>
-              </div>
-            </Drawer>
-          </header>
+          </>
         )}
       </>
     );
