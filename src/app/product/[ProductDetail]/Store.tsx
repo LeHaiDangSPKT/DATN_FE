@@ -7,13 +7,10 @@ import {
 } from "@/services/Store";
 import Toast from "@/utils/Toast";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import React from "react";
 import { FaPlus, FaTelegramPlane } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
 import Chat from "@/components/chat/page";
 import { UserInterface } from "@/types/User";
-import io from "socket.io-client";
 import { ROLE_CHAT } from "@/constants/Conversation";
 import { ConversationDetailInterface } from "@/types/Conversation";
 import { useAppSelector } from "@/redux/store";
@@ -109,9 +106,10 @@ function Store(props: Props) {
   const socketRedux = useAppSelector(
     (state) => state.chatReducer.socketChat
   ) as any;
+
   React.useEffect(() => {
     console.log("chatDetailCheck", chatDetailCheck);
-    let chatCopy = JSON.parse(JSON.stringify(chatDetail));
+    let chatCopy = JSON.parse(JSON.stringify(chatDetailCheck));
     if (JSON.stringify(chatDetailCheck) === "{}") {
       chatCopy = {
         conversationId: "",
@@ -120,17 +118,6 @@ function Store(props: Props) {
         receiverId: storeInfo.userId,
         receiverName: storeInfo.name,
       };
-    }
-    if (
-      chatCopy.conversationId != "" &&
-      chatDetail.conversationId == chatCopy.conversationId
-    ) {
-      setChatDetail((prev) => {
-        return {
-          ...chatCopy,
-          data: [...chatCopy.data, ...prev.data],
-        };
-      });
     } else {
       setChatDetail(chatCopy);
     }
