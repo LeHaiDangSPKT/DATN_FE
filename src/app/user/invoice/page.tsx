@@ -309,26 +309,50 @@ function Info() {
               onClick={() => setStatus(item.status)}
             >
               <div className="flex items-center">
-                <div className="relative w-24 h-24 rounded-full border-2 border-gray-500 flex items-center justify-center">
+                <div
+                  className={`relative w-24 h-24 rounded-full border-2 ${
+                    item.status == status
+                      ? "border-blue-300"
+                      : "border-gray-500"
+                  } flex items-center justify-center`}
+                >
                   <div
                     className={`${
                       item.status == status && "animate-ping"
-                    } absolute w-24 h-24 rounded-full border-2 border-gray-200 flex items-center justify-center group-hover:animate-ping`}
+                    } absolute w-24 h-24 rounded-full border-2 ${
+                      item.status == status && "border-blue-200"
+                    }  flex items-center justify-center group-hover:animate-ping`}
                   ></div>
-                  <div className="text-2xl font-bold text-gray-500">
+                  <div
+                    className={`text-2xl font-bold ${
+                      item.status == status ? "text-blue-300" : "text-gray-500"
+                    }`}
+                  >
                     {item.count}
                   </div>
                 </div>
                 {index != invoice.length - 1 && (
                   <>
                     <div
-                      className={`border-t-2 w-[50px] h-1 group-hover:hidden`}
+                      className={`border-t-2 w-[50px] ${
+                        item.status == status && "border-blue-300"
+                      } h-1 group-hover:hidden`}
                     ></div>
-                    <div className="w-[50px] h-[2px] hidden group-hover:bg-gray-500 group-hover:block"></div>
+                    <div
+                      className={`w-[50px] h-[2px] hidden ${
+                        item.status == status
+                          ? "group-hover:bg-blue-300"
+                          : "group-hover:bg-gray-500"
+                      } group-hover:block`}
+                    ></div>
                   </>
                 )}
               </div>
-              <div className="text-sm text-gray-500 text-center w-24">
+              <div
+                className={`text-sm ${
+                  item.status == status ? "text-blue-300" : "text-gray-500"
+                } text-center w-24 mt-2`}
+              >
                 {item.title}
               </div>
             </div>
@@ -383,14 +407,14 @@ function Info() {
                   setCurrentBill(item);
                 }}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col items-start">
                   {item.productName?.map((item, index) => (
                     <div key={index}>{item}</div>
                   ))}
                 </div>
               </td>
               <td
-                className="px-6 py-4 text-center cursor-pointer"
+                className="px-6 py-4  cursor-pointer"
                 onClick={(e) => window.open(`/shop/${item.storeId}`)}
               >
                 {item.storeName}

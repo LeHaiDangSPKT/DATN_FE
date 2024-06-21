@@ -3,5 +3,7 @@ export default function formatToDDMMYYYY(date: Date | string): string {
   const day = dateObj.getDate();
   const month = dateObj.getMonth() + 1;
   const year = dateObj.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${day < 10 ? "0" + day : day}/${
+    month < 10 ? "0" + month : month
+  }/${year}`;
 }
