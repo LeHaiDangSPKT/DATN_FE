@@ -41,7 +41,6 @@ function Popup(props: Props) {
       fetchData();
     }
   }, [inView]);
-  console.log();
   return (
     <Menu open={isMenuOpen} handler={handleMenuOpen}>
       <Badge withBorder content={countUnread} invisible={!countUnread}>

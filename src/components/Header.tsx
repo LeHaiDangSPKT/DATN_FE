@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FaBell, FaSistrix, FaStore } from "react-icons/fa";
+import { FaSistrix, FaStore } from "react-icons/fa";
 import { UserInterface } from "@/types/User";
 import {
   ConservationInterface,
@@ -19,11 +19,8 @@ import { MenuHeaderInfoUser } from "./Menu";
 import Chat from "./chat/page";
 import {
   Avatar,
-  Badge,
   Drawer,
   IconButton,
-  Menu,
-  MenuHandler,
   Typography,
 } from "@material-tailwind/react";
 import { NotificationInterface } from "@/types/Notification";
@@ -70,8 +67,6 @@ function Header() {
   const [pageNoti, setPageNoti] = React.useState(1);
   const [pageChat, setPageChat] = React.useState(1);
   const [pageConversation, setPageConversation] = React.useState(1);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const handleMenuOpen = () => setIsMenuOpen(!isMenuOpen);
   const [isShowCart, setIsShowCart] = React.useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const dataCarts = useAppSelector((state) => state.cartPopupReducer.items);
@@ -146,6 +141,15 @@ function Header() {
         user?.role.includes(ROLE_CHAT.USER) ||
         user?.role.includes(ROLE_CHAT.SELLER)
       ) {
+        if (user?.role.includes(ROLE_CHAT.SELLER)) {
+          const fetchInforStore = async () => {
+            const store = await APIGetMyStore();
+            if (store?.status == 200 || store?.status == 201) {
+              setStoreAvater(store.data.metadata.data.avatar);
+            }
+          };
+          fetchInforStore();
+        }
         const fetchAllCart = async () => {
           const res = await APIGetAllCart();
           var total = 0;
@@ -179,13 +183,13 @@ function Header() {
           }
         };
         fetchAllCart();
-        const socket = io("https://dtex-socket.adaptable.app/notification", {
+        const socket = io(`${process.env.NEXT_PUBLIC_SOCKET}/notification`, {
           auth: {
             authorization: "Bearer " + user?.accessToken,
           },
         });
         const socketChat = io(
-          "https://dtex-socket.adaptable.app/conversation",
+          `${process.env.NEXT_PUBLIC_SOCKET}/conversation`,
           {
             auth: {
               authorization: "Bearer " + user?.accessToken,
@@ -200,25 +204,30 @@ function Header() {
             page: 1,
             limit: 10,
           });
-          socket.on("getNotifications", (data) => {
+          const handleGetNotifications = (data: any) => {
             const dataNotiFetch = data.data as NotificationInterface[];
             console.log("getNotificationsON", dataNotiFetch);
             setDataNotiCheck(dataNotiFetch);
             setDataNoti((prev) => [...prev, ...dataNotiFetch]);
-          });
+          };
+          socket.on("getNotifications", handleGetNotifications);
 
           socket.emit("countNewNotifications");
           socket.on("countNewNotifications", (data) => {
             setCountNewNoti(data);
           });
+          socket.off("countNewNotifications", (data) => {
+            setCountNewNoti(data);
+          });
 
-          socket.on("sendNotification", (data) => {
+          const handleSendNotification = (data: any) => {
             console.log("countNewNotifications ON");
             setCountNewNoti((prev) => prev + 1);
             setDataNoti((prev) => [data, ...prev]);
-          });
+          };
+          socket.on("sendNotification", handleSendNotification);
 
-          socket.on("readNotification", (data) => {
+          const handleReadNotification = (data: any) => {
             setDataNoti((prev) =>
               prev.map((item) => {
                 if (item.id == data[0].id) {
@@ -229,7 +238,8 @@ function Header() {
               })
             );
             setCountNewNoti((prev) => prev - 1);
-          });
+          };
+          socket.on("readNotification", handleReadNotification);
 
           // Chat
 
@@ -243,7 +253,7 @@ function Header() {
             limit: 10,
             senderRole: ROLE_CHAT.SELLER,
           });
-          socketChat.on("getPreviewConversations", (data) => {
+          const handleGetPreviewConversations = (data: any) => {
             console.log("getPreviewConversations ON", data);
             if (data.role == ROLE_CHAT.USER) {
               setDataChatCheckUser(data.data);
@@ -252,7 +262,11 @@ function Header() {
               setDataChatCheckSeller(data.data);
               setListPreviewSeller((prev) => [...prev, ...data.data]);
             }
-          });
+          };
+          socketChat.on(
+            "getPreviewConversations",
+            handleGetPreviewConversations
+          );
 
           socketChat.emit("countUnread", {
             senderRole: ROLE_CHAT.USER,
@@ -260,75 +274,53 @@ function Header() {
           socketChat.emit("countUnread", {
             senderRole: ROLE_CHAT.SELLER,
           });
-          socketChat.on("countUnread", (data) => {
+          const handleCountUnread = (data: any) => {
             console.log("countUnread ON", data);
             if (data.role == ROLE_CHAT.USER) {
               setCountUnreadUser(data.count);
             } else {
               setCountUnreadSeller(data.count);
             }
-          });
+          };
+          socketChat.on("countUnread", handleCountUnread);
 
           socketChat.on("getConversation", (data) => {
-            console.log("getConversation ON", data);
             setChatDetailCheck(data);
-            // if (chatDetail.conversationId == data.conversationId) {
-            //   setChatDetail((prev) => {
-            //     return {
-            //       ...data,
-            //       data: [...data.data, ...prev.data],
-            //     };
-            //   });
-            // } else {
-            //   setChatDetail(data);
-            // }
           });
 
-          socketChat.on("getPreviewConversationsOne", (data) => {
+          const handleGetPreviewConversationsOne = (data: any) => {
             console.log(
               "getPreviewConversationsOne ON",
               data,
               listPreviewUser.length
             );
             if (data.role == ROLE_CHAT.USER) {
-              if (
-                listPreviewUser.some(
-                  (item) => item.conversationId == data.data.conversationId
-                )
-              ) {
-                setListPreviewUser((prev) => {
-                  return prev.map((item) => {
-                    if (item.conversationId == data.data.conversationId) {
-                      return data.data;
-                    } else {
-                      return item;
-                    }
-                  });
+              setListPreviewUser((prev) => {
+                return prev.map((item) => {
+                  if (item.conversationId == data.data.conversationId) {
+                    return data.data;
+                  } else {
+                    return item;
+                  }
                 });
-              } else {
-                setListPreviewUser((prev) => [...prev, data.data]);
-              }
+              });
             } else {
-              if (
-                listPreviewSeller.some(
-                  (item) => item.conversationId == data.data.conversationId
-                )
-              ) {
-                setListPreviewSeller((prev) => {
-                  return prev.map((item) => {
-                    if (item.conversationId == data.data.conversationId) {
-                      return data.data;
-                    } else {
-                      return item;
-                    }
-                  });
+              setListPreviewSeller((prev) => {
+                return prev.map((item) => {
+                  if (item.conversationId == data.data.conversationId) {
+                    return data.data;
+                  } else {
+                    return item;
+                  }
                 });
-              } else {
-                setListPreviewSeller((prev) => [...prev, data.data]);
-              }
+              });
             }
-          });
-          socketChat.on("getConversationOne", (data) => {
+          };
+          socketChat.on(
+            "getPreviewConversationsOne",
+            handleGetPreviewConversationsOne
+          );
+          const handleGetConversationOne = (data: any) => {
             console.log("getConversationOne ON chatDetail", chatDetail);
             console.log("getConversationOne ON", data);
             if (!data.isMine) {
@@ -340,18 +332,24 @@ function Header() {
                 };
               });
             }
-          });
+          };
+          socketChat.on("getConversationOne", handleGetConversationOne);
+          return () => {
+            socketChat.off("getNotifications", handleGetNotifications);
+            socket.off("sendNotification", handleSendNotification);
+            socket.off("readNotification", handleReadNotification);
+            socketChat.off(
+              "getPreviewConversations",
+              handleGetPreviewConversations
+            );
+            socketChat.off("countUnread", handleCountUnread);
+            socketChat.off(
+              "getPreviewConversationsOne",
+              handleGetPreviewConversationsOne
+            );
+            socketChat.off("getConversationOne", handleGetConversationOne);
+          };
         }
-      }
-
-      if (user?.role.includes(ROLE_CHAT.SELLER)) {
-        const fetchInforStore = async () => {
-          const store = await APIGetMyStore();
-          if (store?.status == 200 || store?.status == 201) {
-            setStoreAvater(store.data.metadata.data.avatar);
-          }
-        };
-        fetchInforStore();
       }
     }
   }, []);
@@ -394,7 +392,6 @@ function Header() {
     link &&
       (document.getElementById("loading-page")?.classList.remove("hidden"),
       router.push(link));
-    setIsMenuOpen(false);
   };
   const SendMessage = (text: string) => {
     if (text.trim()) {
