@@ -127,6 +127,14 @@ function Create() {
                 onChange={(e) => {
                   setProduct({ ...product, [item.name]: e.target.value });
                 }}
+                onBlur={(e) => {
+                  if (item.identify == "number") {
+                    setProduct({
+                      ...product,
+                      [item.name]: Math.ceil(+e.target.value),
+                    });
+                  }
+                }}
               />
             </div>
           );
