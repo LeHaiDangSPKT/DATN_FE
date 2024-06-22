@@ -26,7 +26,6 @@ export const APILogin = async (email: string, password: string) => {
       password,
     }
   );
-  document.getElementById("loading-page")?.classList.add("hidden");
   return res;
 };
 

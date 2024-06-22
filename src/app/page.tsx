@@ -16,6 +16,7 @@ export default function Home() {
   const [listProduct, setListProduct] = React.useState([]);
   const [listProductMost, setListProductMost] = React.useState([]);
   React.useEffect(() => {
+    document.getElementById("loading-page")?.classList.add("hidden");
     const fetchData = async () => {
       const lst = await APIGetListProductLasted().then((res) => res);
       const lst1 = await APIGetListProducMostInStore().then((res) => res);

@@ -23,26 +23,24 @@ function Form(props: FormProps) {
       loginForm.values.password
     );
     if (res?.status !== 200 && res.status !== 201) {
+      document.getElementById("loading-page")?.classList.add("hidden");
       Toast("error", "Tài khoản hoặc mật khẩu không đúng", 5000);
       return;
     }
     localStorage.setItem("user", JSON.stringify(res?.data.metadata.data));
-    Toast("success", "Đăng nhập thành công", 2000);
-    setTimeout(() => {
-      if (res?.data.metadata.data.role.includes("ADMIN")) {
-        window.location.href = "/admin/dashboard";
-      } else if (res?.data.metadata.data.role.includes("MANAGER")) {
-        window.location.href = "/admin/user/all";
-      } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
-        window.location.href = "/shipper";
+    if (res?.data.metadata.data.role.includes("ADMIN")) {
+      window.location.href = "/admin/dashboard";
+    } else if (res?.data.metadata.data.role.includes("MANAGER")) {
+      window.location.href = "/admin/user/all";
+    } else if (res?.data.metadata.data.role.includes("SHIPPER")) {
+      window.location.href = "/shipper";
+    } else {
+      if (window.location.pathname == "/login") {
+        window.location.href = "/";
       } else {
-        if (window.location.pathname == "/login") {
-          window.location.href = "/";
-        } else {
-          window.location.reload();
-        }
+        window.location.reload();
       }
-    }, 2000);
+    }
   };
   const loginForm = useFormik({
     initialValues: {
