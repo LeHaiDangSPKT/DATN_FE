@@ -5,7 +5,7 @@ import { UserInterface } from "@/types/User";
 import Image from "next/image";
 import typing from "../../../public/typing.gif";
 import { IoClose } from "react-icons/io5";
-import { useInView } from "react-intersection-observer";
+import { InView } from "react-intersection-observer";
 import { Spinner } from "@material-tailwind/react";
 
 interface ChatProps {
@@ -42,15 +42,8 @@ function Chat(props: ChatProps) {
     isTyping: false,
     name: "",
   });
-  const { ref, inView } = useInView();
   const chatContainerRef = React.useRef<HTMLDivElement>(null);
   const previousHeightRef = React.useRef<number>(0);
-  React.useEffect(() => {
-    if (inView) {
-      previousHeightRef.current = chatContainerRef.current?.scrollHeight || 0;
-      fetchData();
-    }
-  }, [inView]);
   React.useEffect(() => {
     if (haveNewMessage) {
       if (chatContainerRef.current) {
@@ -95,12 +88,19 @@ function Chat(props: ChatProps) {
           <div className="flex flex-col overflow-x-auto mb-4">
             <div className="overflow-y-scroll h-[25rem]" ref={chatContainerRef}>
               {data.data?.length >= 10 && dataCheck?.data.length > 0 && (
-                <div
+                <InView
+                  as="div"
                   className="flex justify-center items-center p-4 col-span-1 sm:col-span-2 md:col-span-3"
-                  ref={ref}
+                  onChange={(inView) => {
+                    if (inView) {
+                      previousHeightRef.current =
+                        chatContainerRef.current?.scrollHeight || 0;
+                      fetchData();
+                    }
+                  }}
                 >
                   <Spinner />
-                </div>
+                </InView>
               )}
               <div className="grid grid-cols-12 gap-y-2">
                 {data.data?.map((item, index) => (
