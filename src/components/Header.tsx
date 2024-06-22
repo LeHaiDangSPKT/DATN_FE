@@ -295,25 +295,33 @@ function Header() {
               listPreviewUser.length
             );
             if (data.role == ROLE_CHAT.USER) {
-              setListPreviewUser((prev) => {
-                return prev.map((item) => {
-                  if (item.conversationId == data.data.conversationId) {
-                    return data.data;
-                  } else {
-                    return item;
-                  }
+              if (listPreviewSeller.length == 0) {
+                setListPreviewUser((prev) => [...prev, data.data]);
+              } else {
+                setListPreviewUser((prev) => {
+                  return prev.map((item) => {
+                    if (item.conversationId == data.data.conversationId) {
+                      return data.data;
+                    } else {
+                      return item;
+                    }
+                  });
                 });
-              });
+              }
             } else {
-              setListPreviewSeller((prev) => {
-                return prev.map((item) => {
-                  if (item.conversationId == data.data.conversationId) {
-                    return data.data;
-                  } else {
-                    return item;
-                  }
+              if (listPreviewSeller.length == 0) {
+                setListPreviewSeller((prev) => [...prev, data.data]);
+              } else {
+                setListPreviewSeller((prev) => {
+                  return prev.map((item) => {
+                    if (item.conversationId == data.data.conversationId) {
+                      return data.data;
+                    } else {
+                      return item;
+                    }
+                  });
                 });
-              });
+              }
             }
           };
           socketChat.on(

@@ -64,7 +64,9 @@ function Store(props: Props) {
       receiverId: "",
       receiverName: "",
     });
-
+  const socketRedux = useAppSelector(
+    (state) => state.chatReducer.socketChat
+  ) as any;
   React.useEffect(() => {
     // Promise all
     const user = localStorage.getItem("user")
@@ -87,6 +89,32 @@ function Store(props: Props) {
             totalFollow: res[0].metadata.data.totalFollow,
             userId: res[1].metadata.data.store.userId,
           });
+          if (socketRedux) {
+            socketRedux.on("getConversationOne", (data: any) => {
+              if (!data.isMine) {
+                setChatDetail((prev) => {
+                  return {
+                    ...prev,
+                    data: [...prev.data, data],
+                  };
+                });
+              }
+            });
+            socketRedux.on("getConversation", (data: any) => {
+              setChatDetailCheck(data);
+              let chatCopy = JSON.parse(JSON.stringify(data));
+              if (JSON.stringify(data) === "{}") {
+                chatCopy = {
+                  conversationId: "",
+                  data: [],
+                  receiverAvatar: res[1].metadata.data.store.avatar,
+                  receiverId: res[1].metadata.data.store.userId,
+                  receiverName: res[1].metadata.data.store.name,
+                };
+              }
+              setChatDetail(chatCopy);
+            });
+          }
         }));
     };
     fectData();
@@ -102,44 +130,6 @@ function Store(props: Props) {
     };
     fetchData();
   }, [product.storeId, params.ProductDetail]);
-
-  const socketRedux = useAppSelector(
-    (state) => state.chatReducer.socketChat
-  ) as any;
-
-  React.useEffect(() => {
-    console.log("chatDetailCheck", chatDetailCheck);
-    let chatCopy = JSON.parse(JSON.stringify(chatDetailCheck));
-    if (JSON.stringify(chatDetailCheck) === "{}") {
-      chatCopy = {
-        conversationId: "",
-        data: [],
-        receiverAvatar: storeInfo.avatar,
-        receiverId: storeInfo.userId,
-        receiverName: storeInfo.name,
-      };
-    } else {
-      setChatDetail(chatCopy);
-    }
-  }, [chatDetailCheck]);
-  React.useEffect(() => {
-    if (socketRedux) {
-      socketRedux.on("getConversationOne", (data: any) => {
-        console.log("getConversationOne ON Cửa hàng", data);
-        if (!data.isMine) {
-          setChatDetail((prev) => {
-            return {
-              ...prev,
-              data: [...prev.data, data],
-            };
-          });
-        }
-      });
-      socketRedux.on("getConversation", (data: any) => {
-        setChatDetailCheck(data);
-      });
-    }
-  }, []);
 
   const SendMessage = (text: string) => {
     if (text.trim()) {
@@ -187,8 +177,14 @@ function Store(props: Props) {
             src={storeInfo.avatar!}
             width={200}
             height={200}
-            className="mr-2"
+            className="mr-2 cursor-pointer"
             alt=""
+            onClick={(e) => {
+              document
+                .getElementById("loading-page")
+                ?.classList.remove("hidden");
+              router.push(`/shop/${storeInfo.id}`);
+            }}
           />
           <div className="flex flex-col">
             <div
@@ -221,89 +217,93 @@ function Store(props: Props) {
               </div>
               <span className="mx-2">|</span>
               <span className="">Theo dõi: {storeInfo.totalFollow}</span>
-              <div
-                className="ml-3 text-center font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
-                onClick={(e) => {
-                  if (!user) {
-                    e.preventDefault();
-                    Toast(
-                      "error",
-                      "Bạn cần đăng nhập để báo cáo cửa hàng này",
-                      2000
-                    );
-                    setShowLogin(true);
-                  } else {
-                    setType("STORE");
-                    setShowReport(true);
-                  }
-                }}
-              >
-                (Báo cáo cửa hàng)
-              </div>
+              {user && user._id !== storeInfo.userId && (
+                <div
+                  className="ml-3 text-center font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    if (!user) {
+                      e.preventDefault();
+                      Toast(
+                        "error",
+                        "Bạn cần đăng nhập để báo cáo cửa hàng này",
+                        2000
+                      );
+                      setShowLogin(true);
+                    } else {
+                      setType("STORE");
+                      setShowReport(true);
+                    }
+                  }}
+                >
+                  (Báo cáo cửa hàng)
+                </div>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex flex-col">
-          <button
-            type="button"
-            onClick={(e) => {
-              if (!user) {
-                e.preventDefault();
-                Toast(
-                  "error",
-                  "Bạn cần đăng nhập để nhắn tin với cửa hàng này",
-                  2000
-                );
-                setShowLogin(true);
-              } else {
-                document
-                  .getElementById("chat_header")
-                  ?.querySelector<HTMLButtonElement>("#close-chat")
-                  ?.click();
-                setHaveNewMessage(true);
-                setOpenChat(true);
-                setPageConversation(1);
-                setRoleChat({
-                  receiverRole: ROLE_CHAT.SELLER,
-                  senderRole: ROLE_CHAT.USER,
-                });
-                socketRedux.emit("getConversation", {
-                  page: 1,
-                  limit: 10,
-                  receiverId: storeInfo.userId,
-                  receiverRole: ROLE_CHAT.SELLER,
-                  senderRole: ROLE_CHAT.USER,
-                });
-              }
-            }}
-            className="flex justify-center text-white mb-2 items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            <FaTelegramPlane className="mr-3" />
-            <span>Chat</span>
-          </button>
-          <button
-            type="button"
-            className={`${
-              storeInfo.isFollow
-                ? "text-white bg-blue-700 hover:bg-blue-800"
-                : "bg-white"
-            } flex justify-center items-center w-full py-1.5 px-5 text-sm font-medium text-gray-900 focus:outline-none  rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 `}
-            onClick={(e) => {
-              if (user) {
-                if (!storeInfo.isFollow) {
-                  FollowStore(true);
+        {user && user._id !== storeInfo.userId && (
+          <div className="flex flex-col">
+            <button
+              type="button"
+              onClick={(e) => {
+                if (!user) {
+                  e.preventDefault();
+                  Toast(
+                    "error",
+                    "Bạn cần đăng nhập để nhắn tin với cửa hàng này",
+                    2000
+                  );
+                  setShowLogin(true);
                 } else {
-                  FollowStore(false);
+                  document
+                    .getElementById("chat_header")
+                    ?.querySelector<HTMLButtonElement>("#close-chat")
+                    ?.click();
+                  setHaveNewMessage(true);
+                  setOpenChat(true);
+                  setPageConversation(1);
+                  setRoleChat({
+                    receiverRole: ROLE_CHAT.SELLER,
+                    senderRole: ROLE_CHAT.USER,
+                  });
+                  socketRedux.emit("getConversation", {
+                    page: 1,
+                    limit: 10,
+                    receiverId: storeInfo.userId,
+                    receiverRole: ROLE_CHAT.SELLER,
+                    senderRole: ROLE_CHAT.USER,
+                  });
                 }
-              } else {
-                setShowLogin(true);
-              }
-            }}
-          >
-            {!storeInfo.isFollow && <FaPlus className="mr-3" />}
-            <span>{storeInfo.isFollow ? "Đã theo dõi" : "Theo dõi"}</span>
-          </button>
-        </div>
+              }}
+              className="flex justify-center text-white mb-2 items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            >
+              <FaTelegramPlane className="mr-3" />
+              <span>Chat</span>
+            </button>
+            <button
+              type="button"
+              className={`${
+                storeInfo.isFollow
+                  ? "text-white bg-blue-700 hover:bg-blue-800"
+                  : "bg-white"
+              } flex justify-center items-center w-full py-1.5 px-5 text-sm font-medium text-gray-900 focus:outline-none  rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 `}
+              onClick={(e) => {
+                if (user) {
+                  if (!storeInfo.isFollow) {
+                    FollowStore(true);
+                  } else {
+                    FollowStore(false);
+                  }
+                } else {
+                  setShowLogin(true);
+                }
+              }}
+            >
+              {!storeInfo.isFollow && <FaPlus className="mr-3" />}
+              <span>{storeInfo.isFollow ? "Đã theo dõi" : "Theo dõi"}</span>
+            </button>
+          </div>
+        )}
       </div>
       <p className="text-lg font-bold mb-2">Các sản phẩm khác của cửa hàng:</p>
       <div className="grid grid-cols-4 gap-4">
