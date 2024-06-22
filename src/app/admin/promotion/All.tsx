@@ -138,8 +138,7 @@ function All() {
   const [storeSingle, setStoreSingle] = React.useState<Single[]>([]);
   const [listPromotion, setListPromotion] = React.useState<Promotion>();
   const [promotion, setPromotion] = React.useState<PromotionDetail>({
-    avatar:
-      "https://res.cloudinary.com/dl3b2j3td/image/upload/v1718101515/DATN2024/etgbi3timoxd6fm6vyq3.png",
+    avatar: `${process.env.NEXT_PUBLIC_IMAGE_PROMOTION_URL}`,
     minSpend: 0,
     quantity: 0,
     value: 0,
