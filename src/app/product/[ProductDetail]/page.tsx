@@ -9,7 +9,13 @@ import ConvertToShortFormat from "@/utils/ConvertToShortFormat";
 import Toast from "@/utils/Toast";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
-import { FaHeart, FaShareAlt, FaShopify, FaShoppingCart } from "react-icons/fa";
+import {
+  FaHeart,
+  FaLongArrowAltRight,
+  FaShareAlt,
+  FaShopify,
+  FaShoppingCart,
+} from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import {
   FacebookShareButton,
@@ -68,7 +74,6 @@ function ProductDetail() {
   React.useEffect(() => {
     const fetchData = async () => {
       await APIGetEvaluation(params.ProductDetail).then((res) => {
-        console.log("APIGetEvaluation", res);
         setEvaluation({
           total: res.metadata.data.total,
           isReaction: res.metadata.data.isReaction,
@@ -170,11 +175,11 @@ function ProductDetail() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col px-[160px] my-4">
+    <div className="min-h-screen flex flex-col px-0 sm:px-[160px] my-0 sm:my-4">
       {product._id && (
         <>
           <div className="mb-3 w-full">
-            <div className="grid grid-flow-col grid-cols-10 gap-2">
+            <div className="block sm:grid grid-flow-col grid-cols-10 gap-2">
               <div className="bg-white rounded-md p-4 col-span-4 flex flex-col">
                 <div className="rounded-md mb-2 border-solid border-[#D2E0FB] border-2 ">
                   <Image
@@ -201,7 +206,7 @@ function ProductDetail() {
                       >
                         <Image
                           src={product.avatar[index] || noProductImage}
-                          className="w-full h-full min-w-[100px] object-cover rounded-md"
+                          className="w-full h-full min-w-[50px] sm:min-w-[100px] object-cover rounded-md"
                           width={100}
                           height={100}
                           alt=""
@@ -296,7 +301,9 @@ function ProductDetail() {
                     }}
                   >
                     <FaShoppingCart className="mr-3" />
-                    <span>Thêm vào giỏ hàng</span>
+                    <span className="sm:text-base text-sm">
+                      Thêm vào giỏ hàng
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -315,7 +322,7 @@ function ProductDetail() {
                       }}
                     >
                       <FaShopify className="mr-3" />
-                      <span>Mua ngay</span>
+                      <span className="sm:text-base text-sm">Mua ngay</span>
                     </div>
                   </button>
                 </div>
@@ -323,6 +330,18 @@ function ProductDetail() {
               <div className="bg-white rounded-md p-4 col-span-6 flex flex-col">
                 <div className="text-xl font-bold text-justify">
                   {product.name}
+                </div>
+                <div className="flex items-center mt-4 text-xl font-bold">
+                  <span>Giá bán:</span>
+                  <span className="ml-2 line-through text-red-500">
+                    {Number(product.oldPrice).toLocaleString("vi-VN", {})}
+                    <sup>đ</sup>
+                  </span>
+                  <FaLongArrowAltRight className="mx-2" />
+                  <span className="text-blue-500">
+                    {Number(product.newPrice).toLocaleString("vi-VN", {})}
+                    <sup>đ</sup>
+                  </span>
                 </div>
                 <div className="flex items-center mt-4">
                   <svg
@@ -351,10 +370,7 @@ function ProductDetail() {
                     <span className="">Đã tặng: {quantityDelivered}</span>
                   )}
                 </div>
-                <div className="flex items-center mt-4 text-3xl font-bold">
-                  {Number(product.newPrice).toLocaleString("vi-VN", {})}
-                  <sup>đ</sup>
-                </div>
+
                 <div className="flex flex-col mt-4">
                   <div className="font-bold">Mô tả sản phẩm:</div>
                   <div
