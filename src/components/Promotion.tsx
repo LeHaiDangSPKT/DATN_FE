@@ -62,7 +62,7 @@ function Promotion(props: PromotionInterface) {
   return (
     <div className="mb-3 bg-white rounded-md p-4 w-full col-span-4 flex flex-col border-solid">
       <p className="text-lg font-bold mb-2">Các mã khuyến mãi:</p>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="block sm:grid grid-cols-4 gap-2">
         {promotion.map((item: any, index: number) => (
           <Card className="" key={index}>
             <CardBody>

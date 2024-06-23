@@ -306,7 +306,7 @@ function Store(props: Props) {
         )}
       </div>
       <p className="text-lg font-bold mb-2">Các sản phẩm khác của cửa hàng:</p>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="block sm:grid grid-cols-4 gap-4">
         {productsOrderCurrent.map((item: any, index: number) => (
           <CardProduct key={index} data={item} />
         ))}

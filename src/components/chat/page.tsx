@@ -70,8 +70,8 @@ function Chat(props: ChatProps) {
     };
   }, []);
   return (
-    <div className="fixed bottom-[-30px] right-0 w-1/3 cursor-default">
-      <div className="flex flex-col flex-auto p-6">
+    <div className="fixed bottom-[-10px] sm:bottom-[-30px] right-0 w-full sm:w-1/3 cursor-default">
+      <div className="flex flex-col flex-auto p-0 sm:p-6">
         <div className="rounded-2xl bg-gray-100 p-4">
           <div className="flex justify-between items-center">
             <div>
