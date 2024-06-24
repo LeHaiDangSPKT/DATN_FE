@@ -34,6 +34,14 @@ import noProductImage from "../../../../public/noProductImage.png";
 
 import { APIReportUser } from "@/services/Report";
 import Promotion from "@/components/Promotion";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Textarea,
+} from "@material-tailwind/react";
 
 function ProductDetail() {
   const router = useRouter();
@@ -524,27 +532,47 @@ function ProductDetail() {
           </div>
         </>
       )}
-      <Modal
-        isShow={showLogin}
-        setIsShow={(e) => setShowLogin(false)}
-        confirm={() => console.log("sss")}
-        title={"Đăng nhập để tiếp tục"}
-        fastLogin={true}
-      >
-        <Form fastLogin={true} />
-      </Modal>
-      <Modal
-        isShow={showReport}
-        setIsShow={(e) => setShowReport(false)}
-        confirm={() => Report()}
-        title={`Báo cáo ${type == "PRODUCT" ? "sản phẩm" : "cửa hàng"}`}
-      >
-        <div> Nội dung báo cáo:</div>
-        <textarea
-          className="w-full h-32 border border-gray-300 rounded-md mt-2 p-2 outline-none"
-          onChange={(e) => setContentReport(e.target.value)}
-        ></textarea>
-      </Modal>
+      <Dialog open={showLogin} handler={() => setShowLogin(false)}>
+        <DialogHeader>Đăng nhập để tiếp tục</DialogHeader>
+        <DialogBody>
+          <Form fastLogin={true} />
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setShowLogin(false)}
+            className="mr-1"
+          >
+            <span>Đóng</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+      <Dialog open={showReport} handler={() => setShowReport(false)}>
+        <DialogHeader>{`Báo cáo ${
+          type == "PRODUCT" ? "sản phẩm" : "cửa hàng"
+        }`}</DialogHeader>
+        <DialogBody>
+          <Textarea
+            onChange={(e) => setContentReport(e.target.value)}
+            rows={4}
+            label="Nội dung báo cáo"
+          />
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setShowReport(false)}
+            className="mr-1"
+          >
+            <span>Đóng</span>
+          </Button>
+          <Button variant="gradient" color="green" onClick={() => Report()}>
+            <span>Xác nhận</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 }

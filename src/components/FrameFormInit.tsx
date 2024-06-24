@@ -9,7 +9,9 @@ interface FrameFormInitProps {
 function FrameFormInit({ children, title, fastLogin }: FrameFormInitProps) {
   return (
     <div
-      className={`w-[320px] sm:w-[600px] px-10 py-5 ${
+      className={`${
+        fastLogin ? "w-[300px] p-0" : "w-[320px] px-10 py-5"
+      } sm:w-[600px]  ${
         !fastLogin && "bg-opacity-80 bg-gray-200 rounded-[20px] shadow-2xl"
       } flex flex-col justify-center items-center `}
     >

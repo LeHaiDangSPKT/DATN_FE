@@ -7,6 +7,8 @@ import Toast from "@/utils/Toast";
 import React from "react";
 import { FaAddressCard, FaPhone } from "react-icons/fa";
 import { FaRegCircleUser } from "react-icons/fa6";
+import { CheckValidImage } from "@/services/Picpurify";
+import { Button, Spinner } from "@material-tailwind/react";
 const ReactQuill =
   typeof window === "object" ? require("react-quill") : () => false;
 interface Store {
@@ -49,6 +51,7 @@ function Info(props: Props) {
   const { storeProps = null, detailStore, setIsShowDetail } = props;
   const [data, setData] = React.useState<Store>({} as Store);
   const [description, setDescription] = React.useState<string>("" as string);
+  const [scanning, setScanning] = React.useState(false);
   React.useEffect(() => {
     const fetchData = async () => {
       const res = await APIGetMyStore();
@@ -88,7 +91,6 @@ function Info(props: Props) {
       fetchData();
     }
   }, [storeProps]);
-  console.log("data", data);
   const UpdateInfo = async () => {
     document.getElementById("loading-page")?.classList.remove("hidden");
     var avatarUrl = "";
@@ -195,6 +197,11 @@ function Info(props: Props) {
             className="rounded-full h-full fit-cover w-full"
             hidden
           />
+          {scanning && (
+            <div className="absolute top-[115px] w-[200px] h-[200px] rounded-full border border-[#d9d9d9] flex justify-center items-center bg-white opacity-50">
+              <Spinner />
+            </div>
+          )}
         </div>
         {/* Ẩn */}
         <input
@@ -204,8 +211,23 @@ function Info(props: Props) {
           className="hidden"
           onChange={async (e) => {
             const file = e.target.files?.[0];
+            const CheckImgValid = async (fileParam: any) => {
+              let body = new FormData();
+              body.append("files", fileParam);
+              setScanning(true);
+              const res = await CheckValidImage(body);
+              setScanning(false);
+              if (res.status != 200 && res.status != 201) {
+                Toast("error", res.data.message, 3000);
+                const avatar = document.getElementById("avatar-preview");
+                if (avatar) {
+                  avatar.setAttribute("src", data.avatar as string);
+                  avatar.hidden = false;
+                }
+                return;
+              }
+            };
             if (file) {
-              setData({ ...data, avatar: file as any });
               const reader = new FileReader();
               reader.onloadend = function () {
                 const avatar = document.getElementById("avatar-preview");
@@ -215,6 +237,8 @@ function Info(props: Props) {
                 }
               };
               reader.readAsDataURL(file);
+              CheckImgValid(file);
+              setData({ ...data, avatar: file as any });
             }
           }}
         />
@@ -364,12 +388,9 @@ function Info(props: Props) {
         </>
       ) : (
         <div className="flex justify-center my-5">
-          <button
-            className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-500"
-            onClick={(e) => UpdateInfo()}
-          >
+          <Button loading={scanning} onClick={(e) => UpdateInfo()}>
             Cập nhật thông tin
-          </button>
+          </Button>
         </div>
       )}
     </div>

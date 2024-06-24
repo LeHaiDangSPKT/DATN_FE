@@ -67,7 +67,6 @@ function Header() {
   const [pageNoti, setPageNoti] = React.useState(1);
   const [pageChat, setPageChat] = React.useState(1);
   const [pageConversation, setPageConversation] = React.useState(1);
-  const [isShowCart, setIsShowCart] = React.useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const dataCarts = useAppSelector((state) => state.cartPopupReducer.items);
   const totalCart = useAppSelector((state) => state.cartPopupReducer.totalCart);
@@ -364,14 +363,6 @@ function Header() {
     }
   }, []);
   React.useEffect(() => {
-    if (pathname == "/cart") {
-      setIsShowCart(false);
-    } else {
-      setIsShowCart(true);
-    }
-  }, []);
-
-  React.useEffect(() => {
     if (chatDetail.conversationId == chatDetailCheck.conversationId) {
       setChatDetail((prev) => {
         return {
@@ -494,134 +485,122 @@ function Header() {
                       <div className="border-r border-gray-400 mx-10 h-6 sm:block hidden"></div>
 
                       <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
-                        {isShowCart && (
-                          <CartPopup
-                            dataCarts={dataCarts}
-                            totalCart={totalCart}
-                            clickMenuItem={(store) => {
-                              setDataDrawer({
-                                storeId: store.id,
-                                storeName: store.name,
-                                storeAvatar: store.avatar,
-                                data: store.product,
-                              });
-                              openDrawer();
-                            }}
-                          />
-                        )}
+                        <CartPopup
+                          dataCarts={dataCarts}
+                          totalCart={totalCart}
+                          clickMenuItem={(store) => {
+                            setDataDrawer({
+                              storeId: store.id,
+                              storeName: store.name,
+                              storeAvatar: store.avatar,
+                              data: store.product,
+                            });
+                            openDrawer();
+                          }}
+                        />
                       </div>
                       <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
-                        {isShowCart && (
-                          <Notification
-                            readNoti={(id, link, isRead) =>
-                              ReadNoti(id, link, isRead)
+                        <Notification
+                          readNoti={(id, link, isRead) =>
+                            ReadNoti(id, link, isRead)
+                          }
+                          countNewNoti={countNewNoti}
+                          dataNotiCheck={dataNotiCheck}
+                          dataNoti={dataNoti}
+                          fetchData={() => {
+                            socket.emit("getNotifications", {
+                              page: pageNoti + 1,
+                              limit: 10,
+                            });
+                            setPageNoti(pageNoti + 1);
+                          }}
+                        />
+                      </div>
+                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
+                        <Popup
+                          role={ROLE_CHAT.USER}
+                          countUnread={countUnreadUser}
+                          data={listPreviewUser}
+                          dataCheck={dataChatCheckUser}
+                          fetchData={() => {
+                            socketChat.emit("getPreviewConversations", {
+                              page: pageChat + 1,
+                              limit: 10,
+                              senderRole: ROLE_CHAT.USER,
+                            });
+                            setPageChat(pageChat + 1);
+                          }}
+                          OpenConversation={(
+                            receiverId,
+                            idConversation,
+                            senderRole,
+                            receiverRole
+                          ) => {
+                            setHaveNewMessage(true);
+                            setPageConversation(1);
+                            document
+                              .getElementById("chat_store")
+                              ?.querySelector<HTMLButtonElement>("#close-chat")
+                              ?.click();
+                            setOpenChat(true);
+                            setRoleChat({
+                              receiverRole: receiverRole,
+                              senderRole: senderRole,
+                            });
+                            if (chatDetail.conversationId != idConversation) {
+                              socketChat.emit("getConversation", {
+                                page: 1,
+                                limit: 10,
+                                receiverId: receiverId,
+                                senderRole: senderRole,
+                                receiverRole: receiverRole,
+                              });
                             }
-                            countNewNoti={countNewNoti}
-                            dataNotiCheck={dataNotiCheck}
-                            dataNoti={dataNoti}
-                            fetchData={() => {
-                              socket.emit("getNotifications", {
-                                page: pageNoti + 1,
-                                limit: 10,
-                              });
-                              setPageNoti(pageNoti + 1);
-                            }}
-                          />
-                        )}
+                          }}
+                        />
                       </div>
                       <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
-                        {isShowCart && (
-                          <Popup
-                            role={ROLE_CHAT.USER}
-                            countUnread={countUnreadUser}
-                            data={listPreviewUser}
-                            dataCheck={dataChatCheckUser}
-                            fetchData={() => {
-                              socketChat.emit("getPreviewConversations", {
-                                page: pageChat + 1,
+                        <Popup
+                          role={ROLE_CHAT.SELLER}
+                          countUnread={countUnreadSeller}
+                          data={listPreviewSeller}
+                          dataCheck={dataChatCheckSeller}
+                          fetchData={() => {
+                            socketChat.emit("getPreviewConversations", {
+                              page: pageChat + 1,
+                              limit: 10,
+                              senderRole: ROLE_CHAT.SELLER,
+                            });
+                            setPageChat(pageChat + 1);
+                          }}
+                          OpenConversation={(
+                            receiverId,
+                            idConversation,
+                            senderRole,
+                            receiverRole
+                          ) => {
+                            setHaveNewMessage(true);
+                            setPageConversation(1);
+                            document
+                              .getElementById("chat_store")
+                              ?.querySelector<HTMLButtonElement>("#close-chat")
+                              ?.click();
+                            setOpenChat(true);
+                            setRoleChat({
+                              receiverRole: receiverRole,
+                              senderRole: senderRole,
+                            });
+                            if (chatDetail.conversationId != idConversation) {
+                              socketChat.emit("getConversation", {
+                                page: 1,
                                 limit: 10,
-                                senderRole: ROLE_CHAT.USER,
-                              });
-                              setPageChat(pageChat + 1);
-                            }}
-                            OpenConversation={(
-                              receiverId,
-                              idConversation,
-                              senderRole,
-                              receiverRole
-                            ) => {
-                              setHaveNewMessage(true);
-                              setPageConversation(1);
-                              document
-                                .getElementById("chat_store")
-                                ?.querySelector<HTMLButtonElement>(
-                                  "#close-chat"
-                                )
-                                ?.click();
-                              setOpenChat(true);
-                              setRoleChat({
-                                receiverRole: receiverRole,
+                                receiverId: receiverId,
                                 senderRole: senderRole,
-                              });
-                              if (chatDetail.conversationId != idConversation) {
-                                socketChat.emit("getConversation", {
-                                  page: 1,
-                                  limit: 10,
-                                  receiverId: receiverId,
-                                  senderRole: senderRole,
-                                  receiverRole: receiverRole,
-                                });
-                              }
-                            }}
-                          />
-                        )}
-                      </div>
-                      <div className="py-6 flex flex-col sm:flex justify-center items-center mr-5">
-                        {isShowCart && (
-                          <Popup
-                            role={ROLE_CHAT.SELLER}
-                            countUnread={countUnreadSeller}
-                            data={listPreviewSeller}
-                            dataCheck={dataChatCheckSeller}
-                            fetchData={() => {
-                              socketChat.emit("getPreviewConversations", {
-                                page: pageChat + 1,
-                                limit: 10,
-                                senderRole: ROLE_CHAT.SELLER,
-                              });
-                              setPageChat(pageChat + 1);
-                            }}
-                            OpenConversation={(
-                              receiverId,
-                              idConversation,
-                              senderRole,
-                              receiverRole
-                            ) => {
-                              setHaveNewMessage(true);
-                              setPageConversation(1);
-                              document
-                                .getElementById("chat_store")
-                                ?.querySelector<HTMLButtonElement>(
-                                  "#close-chat"
-                                )
-                                ?.click();
-                              setOpenChat(true);
-                              setRoleChat({
                                 receiverRole: receiverRole,
-                                senderRole: senderRole,
                               });
-                              if (chatDetail.conversationId != idConversation) {
-                                socketChat.emit("getConversation", {
-                                  page: 1,
-                                  limit: 10,
-                                  receiverId: receiverId,
-                                  senderRole: senderRole,
-                                  receiverRole: receiverRole,
-                                });
-                              }
-                            }}
-                          />
-                        )}
+                            }
+                          }}
+                        />
                       </div>
                       {openChat && (
                         <div id="chat_header">
@@ -830,130 +809,122 @@ function Header() {
                 <>
                   <div className="flex items-center justify-around cursor-pointer ">
                     <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
-                      {isShowCart && (
-                        <CartPopup
-                          dataCarts={dataCarts}
-                          totalCart={totalCart}
-                          clickMenuItem={(store) => {
-                            setDataDrawer({
-                              storeId: store.id,
-                              storeName: store.name,
-                              storeAvatar: store.avatar,
-                              data: store.product,
-                            });
-                            openDrawer();
-                          }}
-                        />
-                      )}
+                      <CartPopup
+                        dataCarts={dataCarts}
+                        totalCart={totalCart}
+                        clickMenuItem={(store) => {
+                          setDataDrawer({
+                            storeId: store.id,
+                            storeName: store.name,
+                            storeAvatar: store.avatar,
+                            data: store.product,
+                          });
+                          openDrawer();
+                        }}
+                      />
                     </div>
                     <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
-                      {isShowCart && (
-                        <Notification
-                          readNoti={(id, link, isRead) =>
-                            ReadNoti(id, link, isRead)
+                      <Notification
+                        readNoti={(id, link, isRead) =>
+                          ReadNoti(id, link, isRead)
+                        }
+                        countNewNoti={countNewNoti}
+                        dataNotiCheck={dataNotiCheck}
+                        dataNoti={dataNoti}
+                        fetchData={() => {
+                          socket.emit("getNotifications", {
+                            page: pageNoti + 1,
+                            limit: 10,
+                          });
+                          setPageNoti(pageNoti + 1);
+                        }}
+                      />
+                    </div>
+                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
+                      <Popup
+                        role={ROLE_CHAT.USER}
+                        countUnread={countUnreadUser}
+                        data={listPreviewUser}
+                        dataCheck={dataChatCheckUser}
+                        fetchData={() => {
+                          socketChat.emit("getPreviewConversations", {
+                            page: pageChat + 1,
+                            limit: 10,
+                            senderRole: ROLE_CHAT.USER,
+                          });
+                          setPageChat(pageChat + 1);
+                        }}
+                        OpenConversation={(
+                          receiverId,
+                          idConversation,
+                          senderRole,
+                          receiverRole
+                        ) => {
+                          setHaveNewMessage(true);
+                          setPageConversation(1);
+                          document
+                            .getElementById("chat_store")
+                            ?.querySelector<HTMLButtonElement>("#close-chat")
+                            ?.click();
+                          setOpenChat(true);
+                          setRoleChat({
+                            receiverRole: receiverRole,
+                            senderRole: senderRole,
+                          });
+                          if (chatDetail.conversationId != idConversation) {
+                            socketChat.emit("getConversation", {
+                              page: 1,
+                              limit: 10,
+                              receiverId: receiverId,
+                              senderRole: senderRole,
+                              receiverRole: receiverRole,
+                            });
                           }
-                          countNewNoti={countNewNoti}
-                          dataNotiCheck={dataNotiCheck}
-                          dataNoti={dataNoti}
-                          fetchData={() => {
-                            socket.emit("getNotifications", {
-                              page: pageNoti + 1,
-                              limit: 10,
-                            });
-                            setPageNoti(pageNoti + 1);
-                          }}
-                        />
-                      )}
+                        }}
+                      />
                     </div>
                     <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
-                      {isShowCart && (
-                        <Popup
-                          role={ROLE_CHAT.USER}
-                          countUnread={countUnreadUser}
-                          data={listPreviewUser}
-                          dataCheck={dataChatCheckUser}
-                          fetchData={() => {
-                            socketChat.emit("getPreviewConversations", {
-                              page: pageChat + 1,
+                      <Popup
+                        role={ROLE_CHAT.SELLER}
+                        countUnread={countUnreadSeller}
+                        data={listPreviewSeller}
+                        dataCheck={dataChatCheckSeller}
+                        fetchData={() => {
+                          socketChat.emit("getPreviewConversations", {
+                            page: pageChat + 1,
+                            limit: 10,
+                            senderRole: ROLE_CHAT.SELLER,
+                          });
+                          setPageChat(pageChat + 1);
+                        }}
+                        OpenConversation={(
+                          receiverId,
+                          idConversation,
+                          senderRole,
+                          receiverRole
+                        ) => {
+                          setHaveNewMessage(true);
+                          setPageConversation(1);
+                          document
+                            .getElementById("chat_store")
+                            ?.querySelector<HTMLButtonElement>("#close-chat")
+                            ?.click();
+                          setOpenChat(true);
+                          setRoleChat({
+                            receiverRole: receiverRole,
+                            senderRole: senderRole,
+                          });
+                          if (chatDetail.conversationId != idConversation) {
+                            socketChat.emit("getConversation", {
+                              page: 1,
                               limit: 10,
-                              senderRole: ROLE_CHAT.USER,
-                            });
-                            setPageChat(pageChat + 1);
-                          }}
-                          OpenConversation={(
-                            receiverId,
-                            idConversation,
-                            senderRole,
-                            receiverRole
-                          ) => {
-                            setHaveNewMessage(true);
-                            setPageConversation(1);
-                            document
-                              .getElementById("chat_store")
-                              ?.querySelector<HTMLButtonElement>("#close-chat")
-                              ?.click();
-                            setOpenChat(true);
-                            setRoleChat({
-                              receiverRole: receiverRole,
+                              receiverId: receiverId,
                               senderRole: senderRole,
-                            });
-                            if (chatDetail.conversationId != idConversation) {
-                              socketChat.emit("getConversation", {
-                                page: 1,
-                                limit: 10,
-                                receiverId: receiverId,
-                                senderRole: senderRole,
-                                receiverRole: receiverRole,
-                              });
-                            }
-                          }}
-                        />
-                      )}
-                    </div>
-                    <div className="pb-1 pt-4 flex flex-col justify-center items-center mr-5">
-                      {isShowCart && (
-                        <Popup
-                          role={ROLE_CHAT.SELLER}
-                          countUnread={countUnreadSeller}
-                          data={listPreviewSeller}
-                          dataCheck={dataChatCheckSeller}
-                          fetchData={() => {
-                            socketChat.emit("getPreviewConversations", {
-                              page: pageChat + 1,
-                              limit: 10,
-                              senderRole: ROLE_CHAT.SELLER,
-                            });
-                            setPageChat(pageChat + 1);
-                          }}
-                          OpenConversation={(
-                            receiverId,
-                            idConversation,
-                            senderRole,
-                            receiverRole
-                          ) => {
-                            setHaveNewMessage(true);
-                            setPageConversation(1);
-                            document
-                              .getElementById("chat_store")
-                              ?.querySelector<HTMLButtonElement>("#close-chat")
-                              ?.click();
-                            setOpenChat(true);
-                            setRoleChat({
                               receiverRole: receiverRole,
-                              senderRole: senderRole,
                             });
-                            if (chatDetail.conversationId != idConversation) {
-                              socketChat.emit("getConversation", {
-                                page: 1,
-                                limit: 10,
-                                receiverId: receiverId,
-                                senderRole: senderRole,
-                                receiverRole: receiverRole,
-                              });
-                            }
-                          }}
-                        />
-                      )}
+                          }
+                        }}
+                      />
                     </div>
                     {openChat && (
                       <div id="chat_header">
