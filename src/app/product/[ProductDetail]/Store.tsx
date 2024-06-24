@@ -198,28 +198,30 @@ function Store(props: Props) {
             >
               {storeInfo.name}
             </div>
-            <div className="flex items-center justify-center">
-              <svg
-                className="w-4 h-4 text-yellow-300 mr-1 mb-1"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 22 20"
-              >
-                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-              </svg>
-              <p className="ml-1  text-gray-900 dark:text-white">
-                {storeInfo.averageStar || 0}
-              </p>
-              <span className="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
+            <div className="flex sm:flex-row flex-col sm:items-center items-start justify-center">
+              <div className="flex">
+                <svg
+                  className="w-4 h-4 text-yellow-300 mr-1 mb-1"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 22 20"
+                >
+                  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <p className="ml-1  text-gray-900 dark:text-white">
+                  {storeInfo.averageStar || 0}
+                </p>
+              </div>
+              <span className="w-1 h-1 mx-1.5 hidden sm:block bg-gray-500 rounded-full dark:bg-gray-400"></span>
               <div className=" text-gray-900 dark:text-white">
                 {storeInfo.totalFeedback} đánh giá
               </div>
-              <span className="mx-2">|</span>
+              <span className="mx-2 hidden sm:block">|</span>
               <span className="">Theo dõi: {storeInfo.totalFollow}</span>
               {user && user._id !== storeInfo.userId && (
                 <div
-                  className="ml-3 text-center font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
+                  className="sm:ml-3 sm:text-center font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
                   onClick={(e) => {
                     if (!user) {
                       e.preventDefault();
@@ -242,7 +244,7 @@ function Store(props: Props) {
           </div>
         </div>
         {user && user._id !== storeInfo.userId && (
-          <div className="flex flex-col">
+          <div className="sm:flex flex-col">
             <button
               type="button"
               onClick={(e) => {
@@ -306,13 +308,13 @@ function Store(props: Props) {
         )}
       </div>
       <p className="text-lg font-bold mb-2">Các sản phẩm khác của cửa hàng:</p>
-      <div className="block sm:grid grid-cols-4 gap-4">
+      <div className="sm:grid grid-cols-4 gap-4">
         {productsOrderCurrent.map((item: any, index: number) => (
           <CardProduct key={index} data={item} />
         ))}
       </div>
       {openChat && (
-        <div id="chat_store">
+        <div id="chat_store" className="absolute bottom-0 z-50">
           <Chat
             socketChat={socketRedux}
             roleChat={roleChat}

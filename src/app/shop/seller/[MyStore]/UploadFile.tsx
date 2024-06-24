@@ -13,9 +13,8 @@ interface UploadFileProps {
 
 function UploadFile(props: UploadFileProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { index, setProduct, dataOrigin } = props;
-  console.log("dataOrigin", dataOrigin);
   const [scanning, setScanning] = React.useState(false);
+  const { index, setProduct, dataOrigin } = props;
   return (
     <div className="relative">
       <div

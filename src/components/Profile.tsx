@@ -1,9 +1,12 @@
 "use client";
+import { AppDispatch } from "@/redux/store";
+import { CheckValidImage } from "@/services/Picpurify";
 import { APIUploadImage } from "@/services/UploadImage";
 import { APIGetUserById, APIUpdateUser } from "@/services/User";
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
+import { Button, Spinner } from "@material-tailwind/react";
 import React from "react";
 import {
   FaAddressCard,
@@ -11,6 +14,7 @@ import {
   FaRegCircleUser,
   FaTransgender,
 } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
 interface ProfileProps {
   idProps?: string;
   setIsShow?: (data: boolean) => any;
@@ -18,6 +22,7 @@ interface ProfileProps {
 
 function Profile(props: ProfileProps) {
   const { idProps, setIsShow } = props;
+  const [scanning, setScanning] = React.useState(false);
   const [userInfo, setUserInfo] = React.useState({
     id: idProps || "",
     avatar: "",
@@ -150,6 +155,11 @@ function Profile(props: ProfileProps) {
               className="rounded-full h-full fit-cover w-full"
               hidden
             />
+            {scanning && (
+              <div className="absolute top-[115px] w-[200px] h-[200px] rounded-full border border-[#d9d9d9] flex justify-center items-center bg-white opacity-50">
+                <Spinner />
+              </div>
+            )}
           </div>
           {/* Ẩn */}
           <input
@@ -159,8 +169,24 @@ function Profile(props: ProfileProps) {
             className="hidden"
             onChange={async (e) => {
               const file = e.target.files?.[0];
+              const CheckImgValid = async (fileParam: any) => {
+                let body = new FormData();
+                body.append("files", fileParam);
+                setScanning(true);
+                const res = await CheckValidImage(body);
+                setScanning(false);
+                if (res.status != 200 && res.status != 201) {
+                  Toast("error", res.data.message, 3000);
+                  const avatar = document.getElementById("avatar-preview");
+                  if (avatar) {
+                    avatar.setAttribute("src", userInfo.avatar as string);
+                    avatar.hidden = false;
+                  }
+
+                  return;
+                }
+              };
               if (file) {
-                setUserInfo({ ...userInfo, avatar: file as any });
                 const reader = new FileReader();
                 reader.onloadend = function () {
                   const avatar = document.getElementById("avatar-preview");
@@ -170,6 +196,8 @@ function Profile(props: ProfileProps) {
                   }
                 };
                 reader.readAsDataURL(file);
+                CheckImgValid(file);
+                setUserInfo({ ...userInfo, avatar: file as any });
               }
             }}
           />
@@ -264,12 +292,9 @@ function Profile(props: ProfileProps) {
         </div>
         {!idProps && (
           <div className="flex justify-center my-5">
-            <button
-              className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-500"
-              onClick={(e) => UpdateInfo()}
-            >
+            <Button loading={scanning} onClick={(e) => UpdateInfo()}>
               Cập nhật thông tin
-            </button>
+            </Button>
           </div>
         )}
         <div className="text-2xl font-bold text-blue-600 mt-10">
