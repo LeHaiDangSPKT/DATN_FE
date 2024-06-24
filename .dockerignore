@@ -5,6 +5,8 @@ node_modules
 .next
 .github
 
+npm-debug.log
+
 # code formatter
 
 .eslintrc
@@ -22,3 +24,4 @@ jest.config.js
 
 Dockerfile
 docker-compose.yml
+.dockerignore
