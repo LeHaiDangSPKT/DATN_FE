@@ -297,8 +297,8 @@ function Header() {
               let check = true;
               setListPreviewUser((prev) => {
                 return prev.map((item) => {
-                  check = false;
                   if (item.conversationId == data.data.conversationId) {
+                    check = false;
                     return data.data;
                   } else {
                     return item;
@@ -306,14 +306,24 @@ function Header() {
                 });
               });
               if (check) {
-                setListPreviewUser((prev) => [...prev, data.data]);
+                setListPreviewUser((prev) => [data.data, ...prev]);
               }
+              // Lọc ra những conversationId không trùng
+              setListPreviewUser((prev) => {
+                return prev.filter((item, index) => {
+                  return (
+                    prev.findIndex((item2) => {
+                      return item.conversationId == item2.conversationId;
+                    }) == index
+                  );
+                });
+              });
             } else {
               let check = true;
               setListPreviewSeller((prev) => {
                 return prev.map((item) => {
-                  check = false;
                   if (item.conversationId == data.data.conversationId) {
+                    check = false;
                     return data.data;
                   } else {
                     return item;
@@ -321,8 +331,17 @@ function Header() {
                 });
               });
               if (check) {
-                setListPreviewSeller((prev) => [...prev, data.data]);
+                setListPreviewSeller((prev) => [data.data, ...prev]);
               }
+              setListPreviewSeller((prev) => {
+                return prev.filter((item, index) => {
+                  return (
+                    prev.findIndex((item2) => {
+                      return item.conversationId == item2.conversationId;
+                    }) == index
+                  );
+                });
+              });
             }
           };
           socketChat.on(
@@ -363,15 +382,17 @@ function Header() {
     }
   }, []);
   React.useEffect(() => {
-    if (chatDetail.conversationId == chatDetailCheck.conversationId) {
-      setChatDetail((prev) => {
-        return {
-          ...chatDetailCheck,
-          data: [...chatDetailCheck.data, ...prev.data],
-        };
-      });
-    } else {
-      setChatDetail(chatDetailCheck);
+    if (chatDetailCheck.data) {
+      if (chatDetail.conversationId == chatDetailCheck.conversationId) {
+        setChatDetail((prev) => {
+          return {
+            ...chatDetailCheck,
+            data: [...chatDetailCheck.data, ...prev.data],
+          };
+        });
+      } else {
+        setChatDetail(chatDetailCheck);
+      }
     }
   }, [chatDetailCheck]);
 

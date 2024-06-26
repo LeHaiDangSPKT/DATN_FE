@@ -69,7 +69,7 @@ function Warehouse() {
     },
     {
       title: "Tên sản phẩm",
-      sort: true,
+      sort: false,
       name: "name",
     },
     {
@@ -79,27 +79,27 @@ function Warehouse() {
     },
     {
       title: "Giá trước giảm",
-      sort: true,
+      sort: false,
       name: "oldPrice",
     },
     {
       title: "Giá sau khi giảm (bán)",
-      sort: true,
+      sort: false,
       name: "newPrice",
     },
     {
       title: "Số lượng còn lại",
-      sort: true,
+      sort: false,
       name: "quantity",
     },
     {
       title: "Số lượng đã bán/tặng",
-      sort: true,
+      sort: false,
       name: "quantitySold",
     },
     {
       title: "Doanh số",
-      sort: true,
+      sort: false,
       name: "revenue",
     },
     {
@@ -126,6 +126,9 @@ function Warehouse() {
   const [creating, setCreating] = React.useState(false);
   const [data, setData] = React.useState<WarehouseProps>({} as WarehouseProps);
   const [listImgTemp, setListImgTemp] = React.useState<any[]>([]);
+  const category = localStorage.getItem("category")
+    ? JSON.parse(localStorage.getItem("category")!)
+    : null;
   React.useEffect(() => {
     const fetchData = async () => {
       const data = await APIGetListProduct(
@@ -134,14 +137,12 @@ function Warehouse() {
         "",
         sortType,
         sortValue
-      ).then((res) => res);
+      );
       setData(data.metadata);
     };
     fetchData();
   }, [page, sortType, sortValue]);
-  const category = localStorage.getItem("category")
-    ? JSON.parse(localStorage.getItem("category")!)
-    : null;
+
   const SortbyField = (field: any) => {
     if (sortType === "asc") {
       setData({
@@ -270,6 +271,10 @@ function Warehouse() {
     handleOpenDel();
     if (res?.status == 200 || res?.status == 201) {
       Toast("success", "Xoá sản phẩm thành công", 2000);
+      const newData = data.products.filter(
+        (item) => item._id != currentProduct._id
+      );
+      setData({ ...data, products: newData });
     } else {
       Toast("error", "Xoá sản phẩm thất bại", 2000);
     }

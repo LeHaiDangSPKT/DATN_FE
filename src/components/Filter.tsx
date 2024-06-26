@@ -73,10 +73,6 @@ function Filter(props: FilterProps) {
         <Button
           color="blue"
           onClick={(e) => {
-            if (price[0] == price[1]) {
-              Toast("error", "Giá tiền không hợp lệ", 2000);
-              return;
-            }
             const convertDate = JSON.parse(JSON.stringify(date));
             setQuery({
               priceMin: price[0],

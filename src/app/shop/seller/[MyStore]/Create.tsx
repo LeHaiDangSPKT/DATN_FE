@@ -59,15 +59,17 @@ function Create() {
       const listImg: any = [];
       setCreating(true);
       for (let i = 0; i < product.avatar.length; i++) {
-        let formData = new FormData();
-        formData.append("file", product.avatar[i]);
-        const res = await APIUploadImage(formData);
-        if (res?.status == 200 || res?.status == 201) {
-          listImg.push(res?.data.url);
-        } else {
-          Toast("error", res.data.message, 2000);
-          setCreating(false);
-          return;
+        if (product.avatar[i]) {
+          let formData = new FormData();
+          formData.append("file", product.avatar[i]);
+          const res = await APIUploadImage(formData);
+          if (res?.status == 200 || res?.status == 201) {
+            listImg.push(res?.data.url);
+          } else {
+            Toast("error", res.data.message, 2000);
+            setCreating(false);
+            return;
+          }
         }
       }
       product.avatar = listImg;
@@ -108,9 +110,17 @@ function Create() {
             index={index}
             key={index}
             setProduct={(data: any) => {
-              const img = product.avatar;
-              img.push(data);
-              setProduct({ ...product, avatar: img });
+              if (product.avatar[index]) {
+                setProduct((prev) => {
+                  prev.avatar[index] = data;
+                  return { ...prev };
+                });
+              } else {
+                setProduct((prev) => {
+                  prev.avatar.push(data);
+                  return { ...prev };
+                });
+              }
             }}
           />
         ))}
