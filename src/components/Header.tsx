@@ -223,6 +223,16 @@ function Header() {
             console.log("countNewNotifications ON");
             setCountNewNoti((prev) => prev + 1);
             setDataNoti((prev) => [data, ...prev]);
+
+            setDataNoti((prev) => {
+              return prev.filter((item, index) => {
+                return (
+                  prev.findIndex((item2) => {
+                    return item.id == item2.id;
+                  }) == index
+                );
+              });
+            });
           };
           socket.on("sendNotification", handleSendNotification);
 

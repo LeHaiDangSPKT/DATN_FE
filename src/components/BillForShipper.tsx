@@ -79,7 +79,7 @@ interface BillForShipperProps {
 export function BillForShipper(props: BillForShipperProps) {
   const { data, setListBill, statusBill, isComponent, closeModal } = props;
   const ChangeStateOrther = async () => {
-    if (action === "REFUSE" && contentPopup === "") {
+    if (action === "BACK" && contentPopup === "") {
       setAlert({ open: true, message: "Vui lòng nhập lý do trả hàng" });
       setTimeout(() => {
         setAlert({
