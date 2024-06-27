@@ -71,10 +71,7 @@ function ProductDetail() {
     const fetchData = async () => {
       const pd = await APIGetProduct(params.ProductDetail).then((res) => res);
       setQuantityDelivered(pd.metadata.data.quantityDelivered);
-      setProduct({
-        ...pd.metadata.data.data,
-        storeName: pd.metadata.data.storeName,
-      });
+      setProduct(pd.metadata.data.data);
     };
     fetchData();
   }, [params.ProductDetail]);
@@ -103,6 +100,7 @@ function ProductDetail() {
 
   const carts = useAppSelector((state) => state.cartPopupReducer.items);
   const AddToCart = async (buyNow?: boolean) => {
+    console.log("AddToCart", product);
     let isProductInCart = false;
     carts?.store?.map((data: any) => {
       if (data.id == product.storeId) {

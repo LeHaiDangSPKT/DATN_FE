@@ -126,7 +126,7 @@ function Page() {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const res = await APIGetListBills(1, 1, statusBill);
+      const res = await APIGetListBills(1, 20, statusBill);
       setTotalPage(res.total);
       setListBill(
         res.data.map((item: any) => {

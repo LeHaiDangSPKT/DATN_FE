@@ -52,7 +52,7 @@ function UploadFile(props: UploadFileProps) {
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => {
+        onChange={async (e) => {
           const file = e.target.files?.[0];
           const CheckImgValid = async (fileParam: any) => {
             let body = new FormData();
@@ -67,7 +67,7 @@ function UploadFile(props: UploadFileProps) {
               const img = document.getElementById(`img-preview-${index}`);
               const symbol = document.getElementById(`symbol-upload-${index}`);
               if (img) {
-                img.setAttribute("src", Math.random().toString());
+                img.setAttribute("src", "");
                 img.hidden = true;
               }
               if (symbol) {
