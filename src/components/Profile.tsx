@@ -109,7 +109,9 @@ function Profile(props: ProfileProps) {
     });
   };
   return (
-    <div className={`min-h-screen ${!idProps ? "px-[150px]" : ""} my-4`}>
+    <div
+      className={`min-h-screen ${!idProps ? "p-0 sm:px-[150px]" : "p-0"} my-4`}
+    >
       <div className="flex flex-col bg-white rounded-md py-2 px-4 mb-5">
         {idProps && (
           <div className="flex justify-end">
@@ -222,7 +224,7 @@ function Profile(props: ProfileProps) {
             </div>
 
             <div className="flex flex-col text-lg">
-              <p className=" font-semibold">Họ và tên</p>
+              <p className="text-center font-semibold">Họ và tên</p>
               <input
                 disabled={idProps ? true : false}
                 type="text"
@@ -239,7 +241,7 @@ function Profile(props: ProfileProps) {
               <FaTransgender />
             </div>
             <div className="flex flex-col text-lg">
-              <p className=" font-semibold">Giới tính</p>
+              <p className="text-center font-semibold">Giới tính</p>
               <select
                 disabled={idProps ? true : false}
                 className="w-full border border-[#d9d9d9] rounded-md px-2 py-1"
@@ -260,7 +262,7 @@ function Profile(props: ProfileProps) {
             </div>
 
             <div className="flex flex-col text-lg">
-              <p className=" font-semibold">Email</p>
+              <p className="text-center font-semibold">Email</p>
               <input
                 disabled={true}
                 type="text"
@@ -277,7 +279,7 @@ function Profile(props: ProfileProps) {
               <FaPhone />
             </div>
             <div className="flex flex-col text-lg">
-              <p className=" font-semibold">Số điện thoại</p>
+              <p className="text-center font-semibold">Số điện thoại</p>
               <input
                 disabled={idProps ? true : false}
                 type="text"
@@ -302,29 +304,35 @@ function Profile(props: ProfileProps) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-5">
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold">Số lượng của hàng đang theo dõi</p>
+            <p className="text-center font-semibold">
+              Số lượng của hàng đang theo dõi
+            </p>
             <p className="">{ortherInfo.followStores}</p>
           </div>
 
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold">Số lượng bạn bè</p>
+            <p className="text-center font-semibold">Số lượng bạn bè</p>
             <p className="">{ortherInfo.friends}</p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold">Số lượng đơn hàng đã mua</p>
+            <p className="text-center font-semibold">
+              Số lượng đơn hàng đã mua
+            </p>
             <p className="">{ortherInfo.totalBills}</p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold">Số số tiền đã mua</p>
+            <p className="text-center font-semibold">Số số tiền đã mua</p>
             <p className="">{FormatMoney(ortherInfo.totalPricePaid)}</p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold">Số lượng quà đã nhận</p>
+            <p className="text-center font-semibold">Số lượng quà đã nhận</p>
             <p className="">{ortherInfo.totalReceived}</p>
           </div>
 
           <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
-            <p className=" font-semibold text-red-500">Số lần bị cảnh báo</p>
+            <p className="text-center font-semibold text-red-500">
+              Số lần bị cảnh báo
+            </p>
             <p className="">{ortherInfo.warningCount}</p>
           </div>
         </div>

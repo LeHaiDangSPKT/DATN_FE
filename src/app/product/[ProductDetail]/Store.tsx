@@ -307,12 +307,18 @@ function Store(props: Props) {
           </div>
         )}
       </div>
-      <p className="text-lg font-bold mb-2">Các sản phẩm khác của cửa hàng:</p>
-      <div className="sm:grid grid-cols-4 gap-4">
-        {productsOrderCurrent.map((item: any, index: number) => (
-          <CardProduct key={index} data={item} />
-        ))}
-      </div>
+      {productsOrderCurrent.length > 0 && (
+        <>
+          <p className="text-lg font-bold mb-2">
+            Các sản phẩm khác của cửa hàng:
+          </p>
+          <div className="sm:grid grid-cols-4 gap-4">
+            {productsOrderCurrent.map((item: any, index: number) => (
+              <CardProduct key={index} data={item} />
+            ))}
+          </div>
+        </>
+      )}
       {openChat && (
         <div id="chat_store" className="absolute bottom-0 z-50">
           <Chat

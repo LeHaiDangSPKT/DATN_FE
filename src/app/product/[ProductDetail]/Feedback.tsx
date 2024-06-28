@@ -122,12 +122,12 @@ function Feedback(props: Props) {
                 height={40}
               />
               <div className="font-medium dark:text-white">
-                <p>
+                <div>
                   {item.name}
                   <div className="block text-sm text-gray-500 dark:text-gray-400">
                     {ConvertDate(item.createdAt)}
                   </div>
-                </p>
+                </div>
               </div>
             </div>
             <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse">
@@ -147,9 +147,9 @@ function Feedback(props: Props) {
             ></div>
             {item.userId != user?._id && (
               <aside>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   {item.consensus.length} người đồng thuận
-                </p>
+                </div>
                 <div className="flex items-center mt-3">
                   <div
                     className={`text-gray-900 ${
@@ -253,12 +253,16 @@ function Feedback(props: Props) {
               <Textarea
                 id="cmt"
                 rows={4}
+                maxLength={500}
                 label="Viết bình luận"
                 color="blue-gray"
                 onChange={(e) =>
                   setFeedback({ ...feedback, content: e.target.value })
                 }
               />
+              <div className="text-end italic text-gray-500 text-sm">
+                {feedback.content.length}/500
+              </div>
             </div>
             {/* Button send */}
             <button

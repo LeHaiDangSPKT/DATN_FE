@@ -34,6 +34,7 @@ function CategoryPage() {
   const [totalPage, setTotalPage] = React.useState<any>(1);
   const [categoryName, setCategoryName] = React.useState<any>("");
   const [idFree, setIdFree] = React.useState("65d20668b91436a3f359ad43");
+  const ref = React.useRef<HTMLElement | null>(null);
   React.useEffect(() => {
     if (param.id === idFree) {
       const fetchData = async () => {
@@ -75,29 +76,37 @@ function CategoryPage() {
       };
       fetchData();
     }
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Scroll to "Các sản phẩm liên quan đến"
   }, [page, query, idFree, param.id]);
   return (
     <FrameMainContent>
-      <div className="flex mt-2">
-        <div className="flex flex-col mr-2 w-[20%]">
+      <div className="sm:flex sm:mt-2">
+        <div className="sm:flex flex-col sm:mr-2 sm:w-[20%]">
           {param.id !== idFree && (
-            <div className="bg-white p-2 rounded-xl mb-5">
-              <div className="font-bold py-2">Bộ lọc</div>
+            <div className="bg-white p-2 sm:rounded-xl mb-5">
+              <div className="font-bold sm:py-2">Bộ lọc</div>
               <Filter setQuery={setQuery} />
             </div>
           )}
-          <div className="bg-white p-2 rounded-xl ">
+          <div className="bg-white p-2 rounded-xl mb-5 sm:mb-0">
             <div className="font-bold py-2">Danh mục</div>
             <Category />
           </div>
         </div>
 
-        <div className="flex flex-col bg-white p-4 rounded-xl mb-2 w-full">
+        <div
+          ref={ref as any}
+          className="flex flex-col bg-white p-4 rounded-xl mb-2 w-full"
+        >
           <div>
             Các sản phẩm liên quan đến &ldquo;
             <i className="font-bold text-">{categoryName}</i>&ldquo;
           </div>
-          <div className="grid grid-cols-4 gap-y-4 mt-5">
+          <div className="sm:grid grid-cols-4 gap-y-4 mt-5">
             {lstProduct &&
               lstProduct.map((item: any, index: any) => {
                 return <CardProduct key={index} data={item} />;

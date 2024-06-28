@@ -13,10 +13,10 @@ function Review(props: Props) {
   return (
     // <div className="overscroll-contain hidden-scrollbar justify-center items-center flex overflow-x-hidden overflow-y-auto absolute inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
     <div className="justify-center items-center flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
-      <div className="relative w-auto my-3 mx-auto max-w-3xl min-w-[40rem]">
+      <div className="relative w-auto my-3 mx-auto sm:max-w-3xl min-w-[10rem] sm:min-w-[40rem]">
         <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
           <div className="relative flex flex-col bg-white shadow-lg rounded-xl pointer-events-auto dark:bg-gray-800">
-            <div className="relative min-h-[6rem] bg-gray-900 text-center rounded-t-lg">
+            <div className="relative sm:min-h-[6rem] bg-gray-900 text-center rounded-t-lg">
               <div className="absolute top-2 end-2">
                 <button
                   type="button"
@@ -199,15 +199,15 @@ function Review(props: Props) {
             </div>
 
             <div className="mt-5 sm:mt-10 p-4">
-              <p className="text-sm text-gray-500">
-                If you have any questions, please contact us at{" "}
+              <p className="text-sm text-center text-gray-500">
+                Nếu như bạn có mọi vấn đế gì về hoá đơn, xin vui lòng liên hệ{" "}
                 <a
                   className=" items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium"
                   href="mailto: dtex.helpdesk@gmail.com"
                 >
                   dtex.helpdesk@gmail.com
                 </a>{" "}
-                or call at{" "}
+                hoặc họi hotline{" "}
                 <a
                   className=" items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium"
                   href="tel:+84868366694"
