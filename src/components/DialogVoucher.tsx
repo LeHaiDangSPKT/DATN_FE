@@ -137,14 +137,22 @@ function DialogVoucher(props: DialogVoucherProps) {
           </Card>
         ))}
       </DialogBody>
-      <DialogFooter className="flex justify-between">
+      <DialogFooter className="flex justify-center sm:justify-between">
         <Button
           variant="text"
           color="red"
           onClick={() => handleOpen(false)}
-          className="mr-1"
+          className="mr-4 mb-2 sm:mr-1 sm:mb-0"
         >
           <span>Đóng</span>
+        </Button>
+        <Button
+          variant="gradient"
+          color="blue"
+          onClick={() => handleSubmit(selectedVoucher)}
+          className=" mb-2 sm:mb-0"
+        >
+          <span>Xác nhận</span>
         </Button>
         <Button
           variant="gradient"
@@ -152,13 +160,6 @@ function DialogVoucher(props: DialogVoucherProps) {
           onClick={() => handleSubmit({} as any)}
         >
           <span>Bỏ khuyến mãi</span>
-        </Button>
-        <Button
-          variant="gradient"
-          color="blue"
-          onClick={() => handleSubmit(selectedVoucher)}
-        >
-          <span>Xác nhận</span>
         </Button>
       </DialogFooter>
     </Dialog>

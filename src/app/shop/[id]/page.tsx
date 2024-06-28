@@ -67,7 +67,7 @@ function DetailStore() {
     user && setUser(user?.providerData[0]);
   }, []);
   return (
-    <div className="min-h-screen px-[150px] my-4">
+    <div className="min-h-screen sm:px-[150px] sm:my-4">
       {storeProps._id && (
         <Info detailStore={detailStore} storeProps={storeProps} />
       )}
@@ -77,7 +77,7 @@ function DetailStore() {
         <p className="text-lg font-bold my-4">
           Các sản phẩm khác của cửa hàng:
         </p>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="sm:grid grid-cols-4 gap-4">
           {productsOrderCurrent.map((item: any, index: number) => (
             <CardProduct key={index} data={item} />
           ))}

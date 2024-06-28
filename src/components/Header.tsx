@@ -32,6 +32,7 @@ import { ROLE_CHAT } from "@/constants/Conversation";
 import { setParamSearch } from "@/redux/features/search/search-slice";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+
 function Header() {
   const arrPathName = [
     "/login",
@@ -421,9 +422,16 @@ function Header() {
         notificationIds: [id],
       });
     }
-    link &&
-      (document.getElementById("loading-page")?.classList.remove("hidden"),
-      router.push(link));
+    if (pathname == link) {
+      document.getElementById("loading-page")?.classList.remove("hidden");
+      setTimeout(() => {
+        document.getElementById("loading-page")?.classList.add("hidden");
+      }, 1000);
+    } else {
+      link &&
+        (document.getElementById("loading-page")?.classList.remove("hidden"),
+        router.push(link));
+    }
   };
   const SendMessage = (text: string) => {
     if (text.trim()) {

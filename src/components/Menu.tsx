@@ -28,7 +28,7 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
       <MenuHandler>
         <div className="flex items-center">
           <img
-            className="rounded-full w-[50px] h-[50px] cursor-pointer"
+            className="rounded-full w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] cursor-pointer"
             src={user.avatar || user.photoURL}
             alt="Loading..."
           />

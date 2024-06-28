@@ -60,49 +60,54 @@ function Promotion(props: PromotionInterface) {
     setLoading(false);
   };
   return (
-    <div className="mb-3 bg-white rounded-md p-4 w-full col-span-4 flex flex-col border-solid">
-      <p className="text-lg font-bold mb-2">Các mã khuyến mãi:</p>
-      <div className="block sm:grid grid-cols-4 gap-2">
-        {promotion.map((item: any, index: number) => (
-          <Card className="" key={index}>
-            <CardBody>
-              {/* Image */}
-              <div className="flex items-center">
-                <img src={item.avatar} alt="" height={50} width={50} />
-                <Typography variant="h6" color="blue-gray" className="ml-2">
-                  Giảm {item.value}% tối đa {FormatMoney(item.maxDiscountValue)}
-                </Typography>
-              </div>
-              <Typography>
-                Hạn sử dụng: {formatToDDMMYYYY(item.endTime)}
-              </Typography>
-              <Progress
-                className="mt-2"
-                value={item.usagePercent}
-                label={item.usagePercent >= 50 ? "Đã sử dụng" : ""}
-              />
-            </CardBody>
-            <CardFooter className="pt-0 mx-auto">
-              <Button
-                loading={loading && item.id == currentId}
-                onClick={(e) => SavePromotion(item.id)}
-              >
-                {item.isSaved ? "Đã lưu mã" : "Lưu mã"}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-      <Modal
-        isShow={showLogin}
-        setIsShow={(e) => setShowLogin(false)}
-        confirm={() => console.log("sss")}
-        title={"Đăng nhập để tiếp tục"}
-        fastLogin={true}
-      >
-        <Form fastLogin={true} />
-      </Modal>
-    </div>
+    <>
+      {promotion.length > 0 && (
+        <div className="mb-3 bg-white rounded-md p-4 w-full col-span-4 flex flex-col border-solid">
+          <p className="text-lg font-bold mb-2">Các mã khuyến mãi:</p>
+          <div className="block sm:grid grid-cols-4 gap-2">
+            {promotion.map((item: any, index: number) => (
+              <Card className="" key={index}>
+                <CardBody>
+                  {/* Image */}
+                  <div className="flex items-center">
+                    <img src={item.avatar} alt="" height={50} width={50} />
+                    <Typography variant="h6" color="blue-gray" className="ml-2">
+                      Giảm {item.value}% tối đa{" "}
+                      {FormatMoney(item.maxDiscountValue)}
+                    </Typography>
+                  </div>
+                  <Typography>
+                    Hạn sử dụng: {formatToDDMMYYYY(item.endTime)}
+                  </Typography>
+                  <Progress
+                    className="mt-2"
+                    value={item.usagePercent}
+                    label={item.usagePercent >= 50 ? "Đã sử dụng" : ""}
+                  />
+                </CardBody>
+                <CardFooter className="pt-0 mx-auto">
+                  <Button
+                    loading={loading && item.id == currentId}
+                    onClick={(e) => SavePromotion(item.id)}
+                  >
+                    {item.isSaved ? "Đã lưu mã" : "Lưu mã"}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          <Modal
+            isShow={showLogin}
+            setIsShow={(e) => setShowLogin(false)}
+            confirm={() => console.log("sss")}
+            title={"Đăng nhập để tiếp tục"}
+            fastLogin={true}
+          >
+            <Form fastLogin={true} />
+          </Modal>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -64,7 +64,7 @@ function Filter(props: FilterProps) {
           aria-label="Date (Controlled)"
           value={date}
           onChange={setDate}
-          className="w-fit-content"
+          className="sm:w-fit-content"
           maxValue={today(getLocalTimeZone())}
         />
       </div>

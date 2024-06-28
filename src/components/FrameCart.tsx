@@ -17,7 +17,7 @@ function FrameCart(props: FrameCartProps) {
   const dispatch = useDispatch<AppDispatch>();
   return (
     <div
-      className={`flex flex-col my-[1%] border-b-2 max-w-full bg-white rounded-lg px-6 py-3 `}
+      className={`flex flex-col my-[1%] border-b-2 max-w-full bg-white rounded-lg p-2 sm:px-6 sm:py-3 `}
     >
       <div className="flex items-center  rounded-lg">
         <input
@@ -32,7 +32,7 @@ function FrameCart(props: FrameCartProps) {
         ></input>
         <Link href={`/shop/${storeId}`} className="flex items-center mr-8">
           <img
-            className="rounded-full w-[54px] h-[54px] mr-4"
+            className="rounded-full w-[30px] h-[30px]  sm:w-[54px] sm:h-[54px] mr-4"
             src={storeAvatar}
           />
           <span className="text-[14px] font-bold min-w-fit">{storeName}</span>

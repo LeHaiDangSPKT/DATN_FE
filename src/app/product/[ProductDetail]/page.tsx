@@ -92,7 +92,8 @@ function ProductDetail() {
   React.useEffect(() => {
     const fetchData = async () => {
       await APIGetFeedbackStar(params.ProductDetail).then((res) => {
-        setStar(res?.metadata);
+        console.log("res", res?.metadata.data.starPercent["4"]);
+        setStar(res?.metadata.data);
       });
     };
     fetchData();
@@ -359,9 +360,9 @@ function ProductDetail() {
                   >
                     <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                   </svg>
-                  <p className="ml-1 font-bold text-gray-900 dark:text-white">
+                  <span className="ml-1 font-bold text-gray-900 dark:text-white">
                     {star?.averageStar || 0}
-                  </p>
+                  </span>
                   <span className="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
                   <a
                     href="#"
@@ -409,13 +410,13 @@ function ProductDetail() {
                   <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                 </svg>
 
-                <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <span className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                   {star?.averageStar || 0} / 5
-                </p>
+                </span>
               </div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 {totalFeedback} lượt đánh giá
-              </p>
+              </span>
               <div className="flex items-end mt-4 justify-center w-full">
                 <a
                   href="#"
@@ -428,9 +429,7 @@ function ProductDetail() {
                     className="h-5 bg-yellow-300 rounded"
                     style={{
                       width: `${
-                        star?.startPercent?.["5"]
-                          ? star?.startPercent?.["5"]
-                          : 0
+                        star?.starPercent["4"] ? star?.starPercent?.["5"] : 0
                       }%`,
                     }}
                   ></div>
@@ -448,9 +447,7 @@ function ProductDetail() {
                     className="h-5 bg-yellow-300 rounded"
                     style={{
                       width: `${
-                        star?.startPercent?.["4"]
-                          ? star?.startPercent?.["4"]
-                          : 0
+                        star?.starPercent?.["4"] ? star?.starPercent?.["4"] : 0
                       }%`,
                     }}
                   ></div>
@@ -469,9 +466,7 @@ function ProductDetail() {
                     className="h-5 bg-yellow-300 rounded"
                     style={{
                       width: `${
-                        star?.startPercent?.["3"]
-                          ? star?.startPercent?.["3"]
-                          : 0
+                        star?.starPercent?.["3"] ? star?.starPercent?.["3"] : 0
                       }%`,
                     }}
                   ></div>
@@ -490,9 +485,7 @@ function ProductDetail() {
                     className="h-5 bg-yellow-300 rounded"
                     style={{
                       width: `${
-                        star?.startPercent?.["2"]
-                          ? star?.startPercent?.["2"]
-                          : 0
+                        star?.starPercent?.["2"] ? star?.starPercent?.["2"] : 0
                       }%`,
                     }}
                   ></div>
@@ -511,9 +504,7 @@ function ProductDetail() {
                     className="h-5 bg-yellow-300 rounded"
                     style={{
                       width: `${
-                        star?.startPercent?.["1"]
-                          ? star?.startPercent?.["1"]
-                          : 0
+                        star?.starPercent?.["1"] ? star?.starPercent?.["1"] : 0
                       }%`,
                     }}
                   ></div>

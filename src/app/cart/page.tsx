@@ -8,6 +8,7 @@ import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { Button } from "@material-tailwind/react";
 
 function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,11 +26,11 @@ function CartPage() {
     (state) => state.cartPopupReducer.totalMoney
   );
   return (
-    <div className="min-h-screen px-[10%]">
+    <div className="min-h-screen sm:px-[10%]">
       {totalCart > 0 ? (
         <>
-          <div className="flex items-center px-8 py-5 mt-[2%] rounded-lg bg-white text-center font-bold text-sm">
-            <div className="flex items-center w-[35%] mr-[5%]">
+          <div className="hidden sm:flex items-center p-2 sm:px-8 sm:py-5 sm:mt-[2%] rounded-lg bg-white text-center font-bold text-sm">
+            <div className="flex items-center sm:w-[35%]">
               <input
                 className="w-4 h-5 border-2 border-slate-400 rounded-full mr-[4%] checkbox-cart-all"
                 type="checkbox"
@@ -38,10 +39,10 @@ function CartPage() {
               ></input>
               <span className="text-left"> Sản Phẩm</span>
             </div>
-            <span className="w-[20%]"> Đơn Giá </span>
-            <span className="w-[20%]"> Số Lượng </span>
-            <span className="w-[20%]"> Số Tiền </span>
-            <span className="w-[15%]"> Thao Tác </span>
+            <div className="sm:w-[15%] text-end"> Đơn Giá </div>
+            <div className="sm:w-[15%] text-end"> Số Lượng </div>
+            <div className="sm:w-[20%] text-end"> Số Tiền </div>
+            <div className="sm:w-[15%]"> Thao Tác </div>
           </div>
 
           {dataCarts.store?.length > 0 &&
@@ -58,7 +59,7 @@ function CartPage() {
                 ))}
               </FrameCart>
             ))}
-          <div className="flex flex-col rounded-lg bg-white p-4 mb-[5%]">
+          <div className="flex flex-col rounded-lg bg-white p-2 sm:p-4 mb-[5%]">
             <div className="flex items-center justify-between px-4">
               <div className="flex items-center min-w-[200px]">
                 <input
@@ -67,16 +68,19 @@ function CartPage() {
                   checked={dataCarts.isCheckAll}
                   onChange={(e) => dispatch(clickAll(e.target.checked))}
                 ></input>
-                <span className="text-[16px] ">Chọn Tất Cả</span>
+                <span className="text-sm sm:text-[16px] ">Chọn Tất Cả</span>
               </div>
 
-              <p className="text-[16px] mr-[-25%]">
-                Tổng thanh toán ({totalChecked} Sản Phẩm):{" "}
-                <span>{FormatMoney(totalMoney)}</span>
-              </p>
+              <div className="sm:block flex flex-col justify-center items-center  sm:mr-[-25%]">
+                <span className="text-sm sm:text-[16px] text-center">
+                  Tổng thanh toán ({totalChecked} Sản Phẩm):{" "}
+                </span>
+                <span className="font-bold">{FormatMoney(totalMoney)}</span>
+              </div>
 
-              <button
-                className="w-[15%] h-[10%] bg-[#648fe3] rounded-lg p-2"
+              <Button
+                color="blue"
+                className="hidden sm:block"
                 onClick={(e) => {
                   if (totalChecked === 0) {
                     Toast("warning", "Vui lòng chọn sản phẩm", 2000);
@@ -90,8 +94,25 @@ function CartPage() {
                 }}
               >
                 Đặt Hàng
-              </button>
+              </Button>
             </div>
+            <Button
+              className="sm:hidden"
+              color="blue"
+              onClick={(e) => {
+                if (totalChecked === 0) {
+                  Toast("warning", "Vui lòng chọn sản phẩm", 2000);
+                } else {
+                  document
+                    .getElementById("loading-page")
+                    ?.classList.remove("hidden");
+
+                  router.push("/payment");
+                }
+              }}
+            >
+              Đặt Hàng
+            </Button>
           </div>
         </>
       ) : (

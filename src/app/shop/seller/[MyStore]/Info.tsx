@@ -329,14 +329,14 @@ function Info(props: Props) {
             />
           </div>
         </div>
-        <div className="flex flex-col items-center pb-10 col-span-2 w-full">
+        <div className="flex flex-col items-center sm:pb-10 col-span-2 w-full">
           {storeProps ? (
             <>
               <div className="text-2xl font-bold text-blue-600 mt-10">
                 Mô tả cửa hàng:
               </div>
               <div
-                className="text-justify indent-8"
+                className="text-justify sm:indent-8"
                 dangerouslySetInnerHTML={{ __html: description }}
               ></div>
             </>

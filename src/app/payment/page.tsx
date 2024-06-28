@@ -10,7 +10,15 @@ import CheckValidInput from "@/utils/CheckValidInput";
 import FormatMoney from "@/utils/FormatMoney";
 import Image from "next/image";
 import Toast from "@/utils/Toast";
-import { Checkbox, Input } from "@material-tailwind/react";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Input,
+} from "@material-tailwind/react";
 import React from "react";
 import { FaCartPlus, FaTruckFast, FaTruckField } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
@@ -401,8 +409,8 @@ function Payment() {
   };
 
   return (
-    <div className="min-h-screen flex px-[160px] my-4">
-      <div className="w-[70%] mr-4 rounded-sm">
+    <div className="min-h-screen sm:flex sm:px-[160px] sm:my-4">
+      <div className="sm:w-[70%] sm:mr-4 rounded-sm">
         {data?.map((item, index) => (
           <div key={index} className="bg-white rounded-md p-4 mb-5">
             {/* List store */}
@@ -458,7 +466,7 @@ function Payment() {
           </div>
         ))}
       </div>
-      <div className="w-[30%] rounded-sm flex flex-col">
+      <div className="sm:w-[30%] rounded-sm flex flex-col">
         <div className="bg-white rounded-md p-4 mb-4">
           <div className="text-lg font-bold mb-3">
             Chọn phương thức giao hàng
@@ -532,127 +540,154 @@ function Payment() {
           </div>
           <div className="text-gray-500">{receiverInfo.address}</div>
         </div>
-        <Modal
-          isShow={isShow}
-          setIsShow={(data: any) => setIsShow(data)}
-          confirm={() => ConfirmChangeAddress()}
-          title="Thay đổi địa chỉ giao hàng"
-        >
-          {isUpdate_Add.state && (
-            <div className="flex flex-col w-full">
-              <CustomInput label="Họ và tên">
-                <input
-                  type="text"
-                  className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
-                  value={addressPopup.receiverName}
-                  onChange={(e) => {
-                    setAddressPopup({
-                      ...addressPopup,
-                      receiverName: e.target.value,
-                    });
-                  }}
-                />
-              </CustomInput>
-              <CustomInput label="Số điện thoại">
-                <input
-                  type="text"
-                  className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
-                  value={addressPopup.receiverPhone}
-                  onChange={(e) => {
-                    setAddressPopup({
-                      ...addressPopup,
-                      receiverPhone: e.target.value,
-                    });
-                  }}
-                />
-              </CustomInput>
-              <CustomInput label="Địa chỉ">
-                <input
-                  type="text"
-                  className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
-                  value={addressPopup.address}
-                  onChange={(e) => {
-                    setAddressPopup({
-                      ...addressPopup,
-                      address: e.target.value,
-                    });
-                  }}
-                />
-              </CustomInput>
-              <div className="flex justify-between my-3">
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md w-full mr-2"
-                  onClick={() => ChangeAddress()}
-                >
-                  Lưu
-                </button>
-                <button
-                  className="bg-gray-500 text-white px-4 py-2 rounded-md w-full ml-2"
-                  onClick={() =>
-                    setIsUpdate_Add({ state: false, add: false, edit: false })
-                  }
-                >
-                  Đóng
-                </button>
-              </div>
-            </div>
-          )}
-          {user.address?.length > 0 && (
-            <>
-              <div className="grid grid-cols-5 gap-3 my-3">
-                {user.address.map((item: any, index: number) => (
-                  <div
-                    key={index}
-                    className={`hover:shadow-lg cursor-pointer rounded-md  ease-linear transition-all duration-150 p-3 ${
-                      indexAddressPicked == index
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-black"
-                    }`}
-                    onClick={() => {
+        <Dialog open={isShow} handler={() => setIsShow(false)}>
+          <DialogHeader>Thay đổi địa chỉ giao hàng</DialogHeader>
+          <DialogBody className="sm:h-auto h-[30rem]  sm:overflow-auto overflow-scroll">
+            {isUpdate_Add.state && (
+              <div className="flex flex-col w-full">
+                <CustomInput label="Họ và tên">
+                  <input
+                    type="text"
+                    className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
+                    value={addressPopup.receiverName}
+                    onChange={(e) => {
                       setAddressPopup({
-                        receiverName: item.receiverName,
-                        receiverPhone: item.receiverPhone,
-                        address: item.address,
+                        ...addressPopup,
+                        receiverName: e.target.value,
                       });
-                      setIsUpdate_Add({ state: true, add: false, edit: true });
-                      setIndexAddressPicked(index);
                     }}
+                  />
+                </CustomInput>
+                <CustomInput label="Số điện thoại">
+                  <input
+                    type="text"
+                    className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
+                    value={addressPopup.receiverPhone}
+                    onChange={(e) => {
+                      setAddressPopup({
+                        ...addressPopup,
+                        receiverPhone: e.target.value,
+                      });
+                    }}
+                  />
+                </CustomInput>
+                <CustomInput label="Địa chỉ">
+                  <input
+                    type="text"
+                    className="w-full outline-none border-solid border-2 border-gray-300 rounded-md p-2"
+                    value={addressPopup.address}
+                    onChange={(e) => {
+                      setAddressPopup({
+                        ...addressPopup,
+                        address: e.target.value,
+                      });
+                    }}
+                  />
+                </CustomInput>
+                <div className="flex justify-between my-3">
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md w-full mr-2"
+                    onClick={() => ChangeAddress()}
                   >
-                    <div className="font-bold">{item.receiverName}</div>
-                    <div>{item.address}</div>
-                    <div>{item.receiverPhone}</div>
-                    {item.default && (
-                      <div
-                        className={`${
-                          indexAddressPicked == index
-                            ? "text-white"
-                            : "text-black"
-                        }`}
-                      >
-                        (Mặc định)
-                      </div>
-                    )}
-                  </div>
-                ))}
-                <div
-                  className={`flex items-center justify-center cursor-pointer rounded-md p-3 bg-gray-100 outline-dashed opacity-50 hover:opacity-100 ease-linear transition-all duration-150`}
-                  onClick={() => {
-                    setIsUpdate_Add({ state: true, add: true, edit: false });
-                    setAddressPopup({
-                      receiverName: "",
-                      receiverPhone: "",
-                      address: "",
-                    });
-                  }}
-                >
-                  <div className="flex items-center justify-center text-[65px] font-thin">
-                    +
-                  </div>
+                    Lưu
+                  </button>
+                  <button
+                    className="bg-gray-500 text-white px-4 py-2 rounded-md w-full ml-2"
+                    onClick={() =>
+                      setIsUpdate_Add({ state: false, add: false, edit: false })
+                    }
+                  >
+                    Đóng
+                  </button>
                 </div>
               </div>
-            </>
-          )}
-        </Modal>
+            )}
+            {user.address?.length > 0 && (
+              <>
+                <div className="sm:grid grid-cols-5 gap-3 my-3">
+                  {user.address.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className={`hover:shadow-lg cursor-pointer rounded-md  sm:my-0 my-2 ease-linear transition-all duration-150 p-3 ${
+                        indexAddressPicked == index
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-black"
+                      }`}
+                      onClick={() => {
+                        setAddressPopup({
+                          receiverName: item.receiverName,
+                          receiverPhone: item.receiverPhone,
+                          address: item.address,
+                        });
+                        setIsUpdate_Add({
+                          state: true,
+                          add: false,
+                          edit: true,
+                        });
+                        setIndexAddressPicked(index);
+                      }}
+                    >
+                      <div className="font-bold">{item.receiverName}</div>
+                      <div>{item.address}</div>
+                      <div>{item.receiverPhone}</div>
+                      {item.default && (
+                        <div
+                          className={`${
+                            indexAddressPicked == index
+                              ? "text-white"
+                              : "text-black"
+                          }`}
+                        >
+                          (Mặc định)
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <div
+                    className={`flex items-center justify-center cursor-pointer rounded-md p-3 bg-gray-100 outline-dashed opacity-50 hover:opacity-100 ease-linear transition-all duration-150`}
+                    onClick={() => {
+                      setIsUpdate_Add({ state: true, add: true, edit: false });
+                      setAddressPopup({
+                        receiverName: "",
+                        receiverPhone: "",
+                        address: "",
+                      });
+                    }}
+                  >
+                    <div className="flex items-center justify-center text-[65px] font-thin">
+                      +
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="red"
+              onClick={() => setIsShow(false)}
+              className="mr-1"
+            >
+              <span>Đóng</span>
+            </Button>
+            <Button
+              variant="gradient"
+              color="red"
+              onClick={() => ConfirmChangeAddress()}
+            >
+              <span>Xác nhận</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+        {/* <Modal
+          isShow={isShow}
+          setIsShow={(data: any) => setIsShow(data)}
+          confirm={}
+          title="Thay đổi địa chỉ giao hàng"
+        >
+        
+        </Modal> */}
 
         <ModalRequired
           isShow={showModalRequied}
