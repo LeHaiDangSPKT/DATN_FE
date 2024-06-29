@@ -365,7 +365,7 @@ function ProductDetail() {
                   </span>
                   <span className="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
                   <a
-                    href="#"
+                    href="#feedback"
                     className="font-medium text-gray-900 underline hover:no-underline dark:text-white"
                   >
                     {totalFeedback} đánh giá
@@ -491,7 +491,10 @@ function ProductDetail() {
                   ></div>
                 </div>
               </div>
-              <div className="flex items-end mt-4 justify-center w-full">
+              <div
+                id="feedback"
+                className="flex items-end mt-4 justify-center w-full"
+              >
                 <a
                   href="#"
                   className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline"

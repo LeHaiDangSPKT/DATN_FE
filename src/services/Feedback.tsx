@@ -43,15 +43,15 @@ export const APICreateFeedback = async (productId: string, body: any) => {
   }
 };
 
-//api/feedback-consensus?productId=131231&userId=123123 => PUT
-export const APIUpdateFeedback = async (productId: string, userId: string) => {
+// feedback/:id/consensus
+export const APIGetFeedbackConsensus = async (id: string) => {
   const headers = GetHeaders();
   if (headers) {
-    const res = await axiosInstance.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/feedback-consensus?productId=${productId}&userId=${userId}`,
+    const res = await axiosInstance.patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/feedback/${id}/consensus`,
       {},
       { headers }
     );
-    return res.data;
+    return res;
   }
 };

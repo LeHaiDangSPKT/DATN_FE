@@ -2,7 +2,7 @@ import Star from "@/components/Star";
 import {
   APICreateFeedback,
   APIGetFeedbackUser,
-  APIUpdateFeedback,
+  APIGetFeedbackConsensus,
 } from "@/services/Feedback";
 import { UserInterface } from "@/types/User";
 import ConvertDate from "@/utils/ConvertDate";
@@ -88,20 +88,25 @@ function Feedback(props: Props) {
     }
   };
 
-  const Cosensus = async (fb: any, id: string) => {
-    const res = await APIUpdateFeedback(params.ProductDetail + "", id);
-    if (res?.status !== 200 && res.status !== 201) {
-      Toast("warning", res.message, 3000);
+  const Cosensus = async (id: string) => {
+    const res = await APIGetFeedbackConsensus(id);
+    if (res?.status !== 200 && res?.status !== 201) {
+      Toast("warning", res?.data.message, 3000);
     } else {
       var arr = feedbacks.map((item: any) => {
-        if (item._id == fb._id) {
+        if (item._id === id) {
+          var consensusArr = item.consensus;
           if (item.consensus.includes(user?._id)) {
-            item.consensus = item.consensus.filter(
-              (item: any) => item != user?._id
+            consensusArr = item.consensus.filter(
+              (item: any) => item !== user?._id
             );
           } else {
-            item.consensus.push(user?._id);
+            consensusArr.push(user?._id);
           }
+          return {
+            ...item,
+            consensus: consensusArr,
+          };
         }
         return item;
       });
@@ -145,33 +150,41 @@ function Feedback(props: Props) {
               className="my-2 text-gray-500 dark:text-gray-400"
               dangerouslySetInnerHTML={{ __html: item.content }}
             ></div>
-            {item.userId != user?._id && (
-              <aside>
-                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  {item.consensus.length} người đồng thuận
-                </div>
-                <div className="flex items-center mt-3">
-                  <div
-                    className={`text-gray-900 ${
-                      item.consensus.includes(user?._id)
-                        ? "bg-blue-700 text-white hover:bg-blue-600"
-                        : "bg-white hover:bg-gray-100"
-                    } cursor-pointer border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700`}
-                    onClick={(e) => {
-                      if (user) {
-                        Cosensus(item, item.userId);
-                      } else {
+            <aside>
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {item.consensus.length} người đồng thuận
+              </div>
+              <div className="flex items-center mt-3">
+                <div
+                  className={`text-gray-900 ${
+                    item.consensus.includes(user?._id)
+                      ? "bg-blue-700 text-white hover:bg-blue-600"
+                      : "bg-white hover:bg-gray-100"
+                  } ${
+                    item.userId != user?._id && "cursor-pointer"
+                  }  border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700`}
+                  onClick={(e) => {
+                    if (item.userId != user?._id) {
+                      if (!user) {
                         setShowLogin(true);
+                      } else if (!isPurchase) {
+                        Toast(
+                          "warning",
+                          "Bạn cần mua hàng để có thể thao tác",
+                          3000
+                        );
+                      } else {
+                        Cosensus(item._id);
                       }
-                    }}
-                  >
-                    {item.consensus.includes(user?._id)
-                      ? "Đã đồng thuận"
-                      : "Đồng thuận"}
-                  </div>
+                    }
+                  }}
+                >
+                  {item.consensus.includes(user?._id)
+                    ? "Đã đồng thuận"
+                    : "Đồng thuận"}
                 </div>
-              </aside>
-            )}
+              </div>
+            </aside>
           </article>
           <hr className="w-full my-5" />
         </div>
