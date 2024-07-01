@@ -124,6 +124,7 @@ function Header() {
     var user =
       localStorage.getItem("user") &&
       JSON.parse(localStorage.getItem("user") || "");
+    if (user) return;
     if (
       !localStorage.getItem("user") &&
       status === "authenticated" &&
