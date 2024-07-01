@@ -128,6 +128,7 @@ function Form(props: FormProps) {
           <div
             className="py-2 bg-red-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
             onClick={(e) => {
+              e.preventDefault();
               HandleSocial("google");
             }}
           >
@@ -139,6 +140,7 @@ function Form(props: FormProps) {
           <div
             className="py-2 bg-blue-600 rounded-[10px] w-[49%] px-4 font-bold text-lg"
             onClick={(e) => {
+              e.preventDefault();
               HandleSocial("facebook");
             }}
           >

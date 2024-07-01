@@ -391,7 +391,8 @@ function Header() {
         }
       }
     }
-  }, []);
+  }, [session]);
+
   React.useEffect(() => {
     if (chatDetailCheck.data) {
       if (chatDetail.conversationId == chatDetailCheck.conversationId) {
