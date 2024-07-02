@@ -14,6 +14,7 @@ const nextConfig = {
       "salt.tikicdn.com",
     ],
   },
+  output: 'standalone',
 };
 
 module.exports = withBundleAnalyzer(nextConfig);
