@@ -124,7 +124,6 @@ function Header() {
     var user =
       localStorage.getItem("user") &&
       JSON.parse(localStorage.getItem("user") || "");
-    if (user) return;
     if (
       !localStorage.getItem("user") &&
       status === "authenticated" &&
@@ -134,9 +133,14 @@ function Header() {
       localStorage.setItem("user", userData);
       user = JSON.parse(userData);
     }
-
     user && setUser(user?.providerData[0]);
     user && setRole(user?.role);
+  }, [status]);
+
+  React.useEffect(() => {
+    const user =
+      localStorage.getItem("user") &&
+      JSON.parse(localStorage.getItem("user") || "");
     if (user?.providerData[0]) {
       if (
         user?.role.includes(ROLE_CHAT.USER) ||
@@ -392,7 +396,7 @@ function Header() {
         }
       }
     }
-  }, [session]);
+  }, [user]);
 
   React.useEffect(() => {
     if (chatDetailCheck.data) {
