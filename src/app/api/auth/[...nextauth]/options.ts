@@ -16,6 +16,7 @@ export const authOptions: AuthOptions = {
     callbacks: {
         async signIn({ user, account, profile }) {
             let res = null;
+            console.log(account, profile, user)
             if (account?.provider === 'google') {
                 res = await APIGoogleLogin(account!.id_token! as string);
             } else {
