@@ -542,7 +542,7 @@ function Payment() {
         </div>
         <Dialog open={isShow} handler={() => setIsShow(false)}>
           <DialogHeader>Thay đổi địa chỉ giao hàng</DialogHeader>
-          <DialogBody className="sm:h-auto h-[30rem]  sm:overflow-auto overflow-scroll">
+          <DialogBody className="sm:h-[30rem] h-[30rem] sm:overflow-auto overflow-scroll">
             {isUpdate_Add.state && (
               <div className="flex flex-col w-full">
                 <CustomInput label="Họ và tên">

@@ -28,6 +28,7 @@ export const APIReportAdmin = async (
       `${process.env.NEXT_PUBLIC_API_URL}/report/admin?page=${page}&limit=${limit}&type=${type}&status=${status}&search=${search}`,
       { headers }
     );
+    console.log(res);
     return res.data.metadata;
   }
 };
