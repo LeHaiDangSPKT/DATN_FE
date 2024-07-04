@@ -583,6 +583,7 @@ function All() {
         currentPage={page}
         setPage={(data) => setPage(data)}
         perPage={20}
+        noData={true}
       >
         {listPromotion?.data.map((item, index) => (
           <tr
@@ -629,6 +630,7 @@ function All() {
           currentPage={pageNotUse}
           setPage={(data) => setPageNotUse(data)}
           perPage={20}
+          noData={true}
         >
           {listPromotionNotUse?.data?.map((item, index) => (
             <tr

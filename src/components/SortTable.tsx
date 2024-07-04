@@ -18,15 +18,24 @@ interface SortTableProps {
   setPage?: (arg: number) => void;
   noPaging?: boolean;
   perPage?: number;
+  noData?: boolean;
 }
 
 function SortTable(props: SortTableProps) {
-  const { title, children, totalPage = 1, sort, setPage, noPaging } = props;
+  const {
+    title,
+    children,
+    totalPage = 1,
+    sort,
+    setPage,
+    noPaging,
+    noData,
+  } = props;
   const totalPaging =
     (totalPage / 20) % 1 == 0 ? totalPage / 20 : Math.ceil(totalPage / 20);
   return (
     <>
-      {totalPage > 0 ? (
+      {totalPage > 0 || noData ? (
         <>
           <div className="relative overflow-x-auto overflow-y-hidden shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -84,7 +93,9 @@ function SortTable(props: SortTableProps) {
           )}
         </>
       ) : (
-        <div className="flex items-center justify-center">
+        <div
+          className={`flex items-center justify-center ${noData && "hidden"}`}
+        >
           <Image priority src={EmptyData} alt="" />
         </div>
       )}

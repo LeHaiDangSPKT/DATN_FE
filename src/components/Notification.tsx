@@ -58,9 +58,11 @@ function Notification(props: NotificationProps) {
                   color="gray"
                   className="font-semibold"
                 >
-                  {item.type == "UPDATE_INFO" || item.type == "BILL"
-                    ? item.content
-                    : `${item.subjectName} ${item.content}`}
+                  <p className="line-clamp-1 max-w-[360px]">
+                    {item.type == "UPDATE_INFO" || item.type == "BILL"
+                      ? item.content
+                      : `${item.subjectName} ${item.content}`}
+                  </p>
                 </Typography>
 
                 <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500">
