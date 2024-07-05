@@ -21,7 +21,6 @@ axiosInstance.interceptors.response.use(function (response) {
     if (status === 401 || status === 403) {
         localStorage.removeItem("user");
         window.location.href = "/login";
-
     }
     return error.response
 });

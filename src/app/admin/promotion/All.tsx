@@ -299,7 +299,7 @@ function All() {
       setListPromotionUnlock((prevPromotion) => {
         return {
           total: prevPromotion!.total + 1,
-          data: [...prevPromotion!.data, res.data],
+          data: [...prevPromotion!.data, res.data.metadata.data],
         };
       });
       Toast("success", "Thêm khuyến mãi thành công", 2000);
