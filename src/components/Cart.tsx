@@ -189,7 +189,7 @@ function Cart(props: CartProps) {
           {name}
         </Link>
       </div>
-      <span className="hidden sm:text-[14px] w-[15%] text-end">
+      <span className="hidden sm:block sm:text-[14px] w-[15%] text-end">
         {FormatMoney(newPrice)}
       </span>
 
