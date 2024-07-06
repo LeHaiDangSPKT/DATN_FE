@@ -9,6 +9,9 @@ module.exports = withMT({
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    colors: {
+      current: "#D2E0FB",
+    },
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

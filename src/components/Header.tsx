@@ -211,9 +211,15 @@ function Header() {
           });
           const handleGetNotifications = (data: any) => {
             const dataNotiFetch = data.data as NotificationInterface[];
-            console.log("getNotificationsON", dataNotiFetch);
             setDataNotiCheck(dataNotiFetch);
-            setDataNoti((prev) => [...prev, ...dataNotiFetch]);
+            setDataNoti((prev) => {
+              const newData = Array.isArray(prev) ? prev : [];
+              if (newData.findIndex((item) => item.id == dataNotiFetch[0].id)) {
+                return [...dataNotiFetch, ...newData];
+              } else {
+                return newData;
+              }
+            });
           };
           socket.on("getNotifications", handleGetNotifications);
 

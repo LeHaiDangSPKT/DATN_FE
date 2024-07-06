@@ -16,9 +16,9 @@ function UploadFile(props: UploadFileProps) {
   const [scanning, setScanning] = React.useState(false);
   const { index, setProduct, dataOrigin } = props;
   return (
-    <div className="relative">
+    <div className="relative mx-auto">
       <div
-        className="w-[200px] h-[250px] border border-[#d9d9d9] flex justify-center items-center cursor-pointer"
+        className="w-[100px] h-[125px] sm:w-[200px] sm:h-[250px] border border-[#d9d9d9] flex justify-center items-center cursor-pointer"
         onClick={(e) => {
           const input = document.getElementById(`upload-img-${index}`);
           if (input) {
@@ -42,7 +42,7 @@ function UploadFile(props: UploadFileProps) {
         />
       </div>
       {scanning && (
-        <div className="absolute top-0 w-[200px] h-[250px] border border-[#d9d9d9] flex justify-center items-center bg-white opacity-50">
+        <div className="absolute top-0 w-[100px] h-[125px] sm:w-[200px] sm:h-[250px] border border-[#d9d9d9] flex justify-center items-center bg-white opacity-50">
           <Spinner />
         </div>
       )}

@@ -386,26 +386,28 @@ function Home(props: HomeProps) {
         <div className="text-center text-blue-500 font-bold text-2xl mb-2">
           Trạng thái cửa hàng
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="sm:grid grid-cols-3 gap-4 ">
           <div
-            className="col-span-1 text-center rounded-md bg-blue-300 p-4 hover:bg-blue-400 cursor-pointer"
+            className="col-span-1 text-center rounded-md my-2 sm:my-0 bg-current p-4 hover:bg-blue-200 cursor-pointer"
             onClick={(e) => setActive("new")}
           >
-            <span className="text-lg font-bold mr-2">Đơn mới:</span>
+            <span className="sm:text-lg font-bold mr-2">Đơn mới:</span>
             {dataState.NEW}
           </div>
           <div
-            className="col-span-1 text-center rounded-md bg-blue-300 p-4 hover:bg-blue-400 cursor-pointer"
+            className="col-span-1 text-center rounded-md my-2 sm:my-0 bg-current p-4 hover:bg-blue-200 cursor-pointer"
             onClick={(e) => setActive("preparing")}
           >
-            <span className="text-lg font-bold mr-2">Đơn đang chuẩn bị:</span>
+            <span className="sm:text-lg font-bold mr-2">
+              Đơn đang chuẩn bị:
+            </span>
             {dataState.CONFIRMED}
           </div>
           <div
-            className="col-span-1 text-center rounded-md bg-blue-300 p-4 hover:bg-blue-400 cursor-pointer"
+            className="col-span-1 text-center rounded-md my-2 sm:my-0 bg-current p-4 hover:bg-blue-200 cursor-pointer"
             onClick={(e) => setActive("shipping")}
           >
-            <span className="text-lg font-bold mr-2">Đơn đang giao:</span>
+            <span className="sm:text-lg font-bold mr-2">Đơn đang giao:</span>
             {dataState.DELIVERING}
           </div>
         </div>
@@ -414,19 +416,19 @@ function Home(props: HomeProps) {
       <div className="bg-white rounded-md p-4 mb-5">
         {/* For sell */}
         <Line data={dataSellState} options={optionsSell} />
-        <div className="grid gap-2 grid-cols-2 mb-10 rounded-md border-2 p-2 border-red-400">
-          <div className="font-bold text-red-500 text-center col-span-1">
+        <div className="sm:grid gap-2 grid-cols-2 mb-10 rounded-md border-2 p-2 border-red-400">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Tổng doanh thu: {FormatMoney(dataSellState.revenueTotalAllTime)}
           </div>
-          <div className="font-bold text-red-500 text-center col-span-1">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Tổng doanh thu của năm:{" "}
             {FormatMoney(dataSellState.revenueTotalInYear)}
           </div>
-          <div className="font-bold text-red-500 text-center col-span-1">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Doanh thu cao nhất: {FormatMoney(dataSellState.maxRevenue.revenue)}{" "}
             ({dataSellState.maxRevenue?.month})
           </div>
-          <div className="font-bold text-red-500 text-center col-span-1">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Doanh thu thấp nhất: {FormatMoney(dataSellState.minRevenue.revenue)}{" "}
             ({dataSellState.minRevenue?.month})
           </div>
@@ -436,14 +438,14 @@ function Home(props: HomeProps) {
       <div className="bg-white rounded-md p-4 mb-5">
         {/* For charity */}
         <Line data={dataCharityState} options={optionsCharity} />
-        <div className="grid gap-2 grid-cols-2 mb-10 rounded-md border-2 p-2 border-red-400">
-          <div className="font-bold text-red-500 text-center col-span-1">
+        <div className="sm:grid gap-2 grid-cols-2 mb-10 rounded-md border-2 p-2 border-red-400">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Tổng sản phẩm đã tặng: {dataCharityState.charityTotalAllTime}
           </div>
-          <div className="font-bold text-red-500 text-center col-span-1">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Tổng sản phẩm đã tặng của năm: {dataCharityState.charityTotalInYear}
           </div>
-          <div className="font-bold text-red-500 text-center col-span-1">
+          <div className="font-bold text-red-500 text-center col-span-1 text-sm sm:text-base">
             Số lượng sản phẩm tặng nhiều nhất:{" "}
             {dataCharityState.maxGive?.numOfGive} (
             {dataCharityState.maxGive?.month})

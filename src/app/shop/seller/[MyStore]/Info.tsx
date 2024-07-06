@@ -254,8 +254,8 @@ function Info(props: Props) {
         (Số lần cảnh báo:
         <span className="font-bold">{data.warningCount}</span>)
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4">
-        <div className="flex items-center p-4 bg-white shadow-md rounded-md">
+      <div className="sm:grid grid-cols-2 gap-4">
+        <div className="flex items-center sm:my-0 my-4 p-4 bg-white shadow-md rounded-md">
           <div className="text-2xl mr-3">
             <FaRegCircleUser />
           </div>
@@ -273,7 +273,7 @@ function Info(props: Props) {
             />
           </div>
         </div>
-        <div className="flex items-center p-4 bg-white shadow-md rounded-md">
+        <div className="flex items-center sm:my-0 my-4 p-4 bg-white shadow-md rounded-md">
           <div className="text-2xl mr-3">
             <FaAddressCard />
           </div>
@@ -291,7 +291,7 @@ function Info(props: Props) {
             />
           </div>
         </div>
-        <div className="flex items-center p-4 bg-white shadow-md rounded-md">
+        <div className="flex items-center sm:my-0 my-4 p-4 bg-white shadow-md rounded-md">
           <div className="text-2xl mr-3">
             <FaPhone />
           </div>
@@ -310,7 +310,7 @@ function Info(props: Props) {
             />
           </div>
         </div>
-        <div className="flex items-center p-4 bg-white shadow-md rounded-md">
+        <div className="flex items-center sm:my-0 my-4 p-4 bg-white shadow-md rounded-md">
           <div className="text-2xl mr-3">
             <FaPhone />
           </div>
@@ -388,7 +388,7 @@ function Info(props: Props) {
         </>
       ) : (
         <div className="flex justify-center my-5">
-          <Button loading={scanning} onClick={(e) => UpdateInfo()}>
+          <Button color="blue" loading={scanning} onClick={(e) => UpdateInfo()}>
             Cập nhật thông tin
           </Button>
         </div>
