@@ -7,6 +7,7 @@ import { APIUploadImage } from "@/services/UploadImage";
 import { APIGetUserById } from "@/services/User";
 import CheckValidInput from "@/utils/CheckValidInput";
 import Toast from "@/utils/Toast";
+import { Button } from "@material-tailwind/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -16,6 +17,7 @@ function CreateStore() {
   const router = useRouter();
   const [acceptPolicy, setAcceptPolicy] = React.useState(false);
   const [store, setStore] = React.useState<any>({});
+  const [creating, setCreating] = React.useState(false);
   const [policies, setPolicies] = React.useState<
     {
       content: string;
@@ -128,6 +130,7 @@ function CreateStore() {
       phoneNumber.push(store.phoneNumber1);
       phoneNumber.push(store.phoneNumber2);
       if (store.avatar) {
+        setCreating(true);
         let formData = new FormData();
         formData.append("file", store.avatar);
         const rs = await APIUploadImage(formData);
@@ -138,13 +141,14 @@ function CreateStore() {
           description: store.description,
           avatar: rs.data.url,
         });
-        if (storeRes.status === 200 || storeRes.status === 201) {
-          Toast("success", "Tạo cửa hàng thành công", 2000);
+        if (storeRes?.status === 200 || storeRes?.status === 201) {
+          setCreating(false);
         } else {
-          Toast("error", storeRes.message, 2000);
+          Toast("error", storeRes?.data.message, 2000);
+          return;
         }
         document.getElementById("loading-page")?.classList.remove("hidden");
-        router.push("/shop/seller/" + storeRes.metadata?.data._id);
+        router.push("/shop/seller/" + storeRes?.data.metadata?.data._id);
       } else {
         Toast("error", "Bạn chưa chọn ảnh", 2000);
       }
@@ -157,14 +161,14 @@ function CreateStore() {
 
   return (
     mounted && (
-      <div className="min-h-screen flex px-[150px] my-4">
+      <div className="min-h-screen flex sm:px-[150px] sm:my-4">
         <div className="bg-white rounded-md p-4 mb-5 w-full">
           <div className="text-center text-blue-500 font-bold text-2xl">
             TẠO CỬA HÀNG CỦA BẠN
           </div>
-          <div className="flex mt-5">
+          <div className="sm:flex mt-5">
             <div
-              className="w-[16%] h-[165px] border border-[#d9d9d9] rounded-full flex justify-center items-center cursor-pointer mr-3"
+              className="w-[50%] sm:w-[16%] h-[165px] border border-[#d9d9d9] rounded-full flex justify-center items-center cursor-pointer mx-auto sm:mr-3"
               onClick={(e) => {
                 const input = document.getElementById("upload-avatar");
                 if (input) {
@@ -300,12 +304,13 @@ function CreateStore() {
             </div>
           </div>
           <div className="flex justify-center mt-5">
-            <button
-              className="bg-blue-500 text-white rounded-md px-4 py-2"
+            <Button
+              color="blue"
+              loading={creating}
               onClick={(e) => CreateStore()}
             >
-              Tạo cửa hàng
-            </button>
+              {creating ? "Hệ thống đang tạo cửa hàng" : "Tạo cửa hàng"}
+            </Button>
           </div>
         </div>
       </div>

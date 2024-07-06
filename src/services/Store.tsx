@@ -10,7 +10,6 @@ export const APIUploadImage = async (file: any) => {
 };
 
 export const APICreate = async (body: any) => {
-  document.getElementById("loading-page")?.classList.remove("hidden");
   const headers = GetHeaders();
   if (headers) {
     const res = await axiosInstance.post(
@@ -18,8 +17,7 @@ export const APICreate = async (body: any) => {
       body,
       { headers }
     );
-    document.getElementById("loading-page")?.classList.add("hidden");
-    return res.data;
+    return res;
   }
 };
 

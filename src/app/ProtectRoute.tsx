@@ -2,10 +2,12 @@
 import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import FullPageLoader from "./FullPageLoader";
+import AlertMobile from "@/components/AlertMobile";
 
 function ProtectRoute({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [loading, setLoading] = React.useState(true);
+  const [isHidden, setIsHidden] = React.useState(false);
 
   React.useEffect(() => {
     const user =
@@ -63,10 +65,17 @@ function ProtectRoute({ children }: { children: React.ReactNode }) {
         return;
       }
     }
-
     setLoading(false);
+
+    if (
+      (pathname.startsWith("/shop/seller") || pathname.startsWith("/admin")) &&
+      window.innerWidth <= 360
+    ) {
+      setIsHidden(true);
+    }
   }, []);
   if (loading) return <FullPageLoader state={loading} />;
+  if (isHidden) return <AlertMobile pathname={pathname} />;
 
   return children;
 }

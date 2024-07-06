@@ -133,29 +133,6 @@ function Cart(props: CartProps) {
             Xóa
           </Button>
         </div>
-        <Dialog open={isShow} handler={() => setIsShow(false)}>
-          <DialogHeader>Xoá sản phẩm</DialogHeader>
-          <DialogBody>
-            Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?
-          </DialogBody>
-          <DialogFooter>
-            <Button
-              variant="text"
-              color="red"
-              onClick={() => setIsShow(false)}
-              className="mr-1"
-            >
-              <span>Đóng</span>
-            </Button>
-            <Button
-              variant="gradient"
-              color="red"
-              onClick={() => ConfirmDel(id, dispatch)}
-            >
-              <span>Xoá</span>
-            </Button>
-          </DialogFooter>
-        </Dialog>
       </>
     );
   };
@@ -261,26 +238,36 @@ function Cart(props: CartProps) {
       </span>
 
       <div className="hidden sm:flex flex-col items-center justify-end w-[15%]">
-        <span
-          className="text-[14px] text-red-500 hover:text-[#648fe3] cursor-pointer hover:font-bold"
-          onClick={(e) => setIsShow(true)}
-        >
+        <Button color="red" size="sm" onClick={(e) => setIsShow(true)}>
           Xóa
-        </span>
-        <Modal
-          isShow={isShow}
-          setIsShow={(data: any) => setIsShow(data)}
-          confirm={() => ConfirmDel(id, dispatch)}
-          title="Xoá sản phẩm"
-        >
-          <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-            Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?
-          </p>
-        </Modal>
+        </Button>
       </div>
       <div className="block sm:hidden">
         <Element />
       </div>
+      <Dialog open={isShow} handler={() => setIsShow(false)}>
+        <DialogHeader>Xoá sản phẩm</DialogHeader>
+        <DialogBody className="text-center">
+          Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setIsShow(false)}
+            className="mr-1"
+          >
+            <span>Đóng</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="red"
+            onClick={() => ConfirmDel(id, dispatch)}
+          >
+            <span>Xoá</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 }

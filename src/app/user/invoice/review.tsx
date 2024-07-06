@@ -1,6 +1,7 @@
 import FormatMoney from "@/utils/FormatMoney";
 import GetNumberInString from "@/utils/GetNumberInString";
 import Image from "next/image";
+import Link from "next/link";
 
 import React from "react";
 interface Props {
@@ -10,6 +11,11 @@ interface Props {
 
 function Review(props: Props) {
   const { bill, setChanged } = props;
+  const dict = {
+    PAYPAL: "Thanh toán qua Paypal",
+    VNPAY: "Thanh toán qua VNPAY",
+    CASH: "Thanh toán tiền mặt",
+  } as any;
   return (
     // <div className="overscroll-contain hidden-scrollbar justify-center items-center flex overflow-x-hidden overflow-y-auto absolute inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
     <div className="justify-center items-center flex overflow-x-hidden fixed inset-0 z-50 outline-none focus:outline-none bg-gray-500 bg-opacity-50">
@@ -101,9 +107,7 @@ function Review(props: Props) {
                       Phương thức thanh toán:
                     </span>
                     <span className="block text-sm font-medium text-gray-800 dark:text-gray-200">
-                      {bill.paymentMethod == "CashOnDelivery"
-                        ? "Thanh toán tiền mặt khi nhận hàng"
-                        : bill.paymentMethod}
+                      {dict[bill.paymentMethod]}
                     </span>
                   </div>
 
@@ -163,10 +167,11 @@ function Review(props: Props) {
                       className=" py-3 px-4 text-sm border text-gray-800  first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:border-gray-700 dark:text-gray-200"
                     >
                       <div className="flex items-center justify-between w-full">
-                        <span>
-                          {item.name} x{" "}
-                          <span className="font-bold">{item.quantity}</span>
-                        </span>
+                        <Link href={`/product/${item.id}`}>
+                          <span className="cursor-pointer hover:font-bold">
+                            {item.name} x <span>{item.quantity}</span>
+                          </span>
+                        </Link>
                         <span>
                           {FormatMoney(item.newPrice * item.quantity)}
                         </span>

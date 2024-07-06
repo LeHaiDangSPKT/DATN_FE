@@ -14,6 +14,7 @@ import ProtectRoute from "./ProtectRoute";
 import { Providers } from "./providers";
 import FullPageLoader from "./FullPageLoader";
 import Authprovider from "./Authprovider";
+import AlertMobile from "@/components/AlertMobile";
 
 const lora = Roboto({
   weight: ["400", "500", "700"],

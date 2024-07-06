@@ -104,7 +104,7 @@ function Create() {
   const [openDialogPolicy, setOpenDialogPolicy] = React.useState(false);
   return (
     <div className="bg-white rounded-md p-4 mb-5">
-      <div className="flex justify-between items-center">
+      <div className="sm:flex justify-between items-center grid grid-cols-2 gap-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <UploadFile
             index={index}
