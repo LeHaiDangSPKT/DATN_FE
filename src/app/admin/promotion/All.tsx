@@ -189,7 +189,6 @@ function All() {
     handleOpen();
     const res = await APIUpdatePromotion(curentPromo._id, {
       isActive: isPublic,
-      endTime: isPublic ? new Date().toISOString() : curentPromo.endTime,
     });
     if (res?.status == 200 || res?.status == 201) {
       if (isPublic) {
