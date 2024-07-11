@@ -52,11 +52,21 @@ export const APIGetStoreReputation = async (
   storeId: string,
   userId: string
 ) => {
-  var userId = userId ? userId : "";
-  const res = await axiosInstance.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/store-reputation?storeId=${storeId}&userId=${userId}`
-  );
-  return res.data;
+  if (userId) {
+    const headers = GetHeaders();
+    if (headers) {
+      const res = await axiosInstance.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/store-reputation?storeId=${storeId}`,
+        { headers }
+      );
+      return res.data;
+    }
+  } else {
+    const res = await axiosInstance.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/store-reputation?storeId=${storeId}`
+    );
+    return res.data;
+  }
 };
 
 // /api/store/123

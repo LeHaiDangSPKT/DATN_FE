@@ -4,11 +4,22 @@ import { barClassName } from "@material-tailwind/react/types/components/slider";
 
 // /api/promotions/65f314993331cabe697a318f
 
-export const APIPromotion = async (storeId: string) => {
-  const res = await axiosInstance.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/promotions/${storeId}`
-  );
-  return res;
+export const APIPromotion = async (storeId: string, hasLogin: boolean) => {
+  if (hasLogin) {
+    const headers = GetHeaders();
+    if (headers) {
+      const res = await axiosInstance.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/promotions/${storeId}`,
+        { headers }
+      );
+      return res;
+    }
+  } else {
+    const res = await axiosInstance.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/promotions/${storeId}`
+    );
+    return res;
+  }
 };
 
 // /api/promotions/65f5edefff37ad301b196cdd/voucher

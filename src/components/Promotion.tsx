@@ -26,16 +26,15 @@ function Promotion(props: PromotionInterface) {
   const [showLogin, setShowLogin] = React.useState(false);
 
   React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") as string);
+    setUser(user);
     const fetchPromotion = async () => {
-      const res = await APIPromotion(storeId);
+      const res = await APIPromotion(storeId, user!!);
       setPromotion(res?.data.metadata.data);
     };
     fetchPromotion();
   }, [storeId]);
-  React.useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") as string);
-    setUser(user);
-  }, []);
+  React.useEffect(() => {}, []);
   const SavePromotion = async (id: string) => {
     setLoading(true);
     setCurrentId(id);
