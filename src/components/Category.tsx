@@ -9,9 +9,7 @@ function Category() {
       const lst = await APIGetAllCategory().then((res) => res);
       setCategory(lst.metadata.data);
     };
-    !localStorage.getItem("category")
-      ? fetchData()
-      : setCategory(JSON.parse(localStorage.getItem("category") || ""));
+    fetchData();
   }, []);
   const router = useRouter();
 
