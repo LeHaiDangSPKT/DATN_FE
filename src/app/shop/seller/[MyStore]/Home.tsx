@@ -459,11 +459,11 @@ function Home(props: HomeProps) {
       </div>
 
       {/* For bill */}
-      <div className="bg-white rounded-md p-4 mb-5">
+      {/* <div className="bg-white rounded-md p-4 mb-5">
         <div className="max-w-[50%] mx-auto flex justify-center ">
           <Pie data={dataBillState} options={optionsBill} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
