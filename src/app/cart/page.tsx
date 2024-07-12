@@ -3,6 +3,7 @@ import Cart from "@/components/Cart";
 import FrameCart from "@/components/FrameCart";
 import { clickAll } from "@/redux/features/cart/cartpopup-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
+import { setCartPopUp } from "@/redux/features/cart/cartpopup-slice";
 import { useDispatch } from "react-redux";
 import FormatMoney from "@/utils/FormatMoney";
 import Toast from "@/utils/Toast";
@@ -17,6 +18,23 @@ function CartPage() {
   React.useEffect(() => {
     document.getElementById("loading-page")?.classList.add("hidden");
     localStorage.removeItem("listProductIdChecked");
+    dispatch(
+      setCartPopUp({
+        isCheckAll: false,
+        store: dataCarts.store.map((item) => {
+          return {
+            ...item,
+            isChecked: false,
+            product: item.product.map((product) => {
+              return {
+                ...product,
+                isChecked: false,
+              };
+            }),
+          };
+        }),
+      })
+    );
   }, []);
   const router = useRouter();
   const totalChecked = useAppSelector(
