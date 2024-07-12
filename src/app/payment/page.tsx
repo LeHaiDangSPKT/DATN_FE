@@ -1,7 +1,6 @@
 "use client";
 import DialogVoucher from "@/components/DialogVoucher";
 import CustomInput from "@/components/Input";
-import Modal from "@/components/Modal";
 import ModalRequired from "@/components/ModalRequired";
 import { useAppSelector } from "@/redux/store";
 import { APICreateBill } from "@/services/Bill";
@@ -157,7 +156,10 @@ function Payment() {
     const listProductIdChecked = JSON.parse(
       localStorage.getItem("listProductIdChecked") || "[]"
     );
-
+    if (listProductIdChecked.length === 0) {
+      router.push("/");
+      return;
+    }
     listProductIdChecked.map((item: any) => {
       store?.store?.map((store: any) => {
         var obj = {
@@ -177,7 +179,21 @@ function Payment() {
           }
         });
 
-        obj.products.length > 0 && listProducts.push(obj);
+        if (obj.products.length > 0) {
+          if (
+            listProducts.findIndex((item) => item.storeId === obj.storeId) !==
+            -1
+          ) {
+            listProducts.map((item) => {
+              if (item.storeId === obj.storeId) {
+                item.products.push(...obj.products);
+                item.totalPrice += obj.totalPrice;
+              }
+            });
+          } else {
+            listProducts.push(obj);
+          }
+        }
         obj.products.length > 0 && listStoreIds.push(store.id);
       });
     });
@@ -304,7 +320,7 @@ function Payment() {
   };
 
   const CraeteBill = async () => {
-    const listProducts = [] as any[];
+    var listProducts = [] as any[];
     data?.map((item) => {
       const obj = {
         storeId: item.storeId,
@@ -328,12 +344,12 @@ function Payment() {
       const index = listProducts.findIndex(
         (item) => item.storeId === obj.storeId
       );
-      if (index !== -1) {
-        listProducts[index].listProducts.push(...obj.products);
-        listProducts[index].totalPrice += obj.totalPrice;
-      } else {
-        listProducts.push(obj);
-      }
+      // if (index !== -1) {
+      //   listProducts[index].listProducts.push(...obj.products);
+      //   listProducts[index].totalPrice += obj.totalPrice;
+      // } else {
+      listProducts.push(obj);
+      // }
     });
     const obj = {
       data: listProducts,

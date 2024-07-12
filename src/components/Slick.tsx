@@ -56,7 +56,7 @@ function Slick({
     ...config,
   };
   return (
-    <Slider {...settings} className="rounded-xl">
+    <Slider {...settings} className="rounded-xl h-full w-full">
       {children}
     </Slider>
   );
