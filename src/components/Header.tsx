@@ -210,16 +210,22 @@ function Header() {
             limit: 10,
           });
           const handleGetNotifications = (data: any) => {
-            const dataNotiFetch = data.data as NotificationInterface[];
-            setDataNotiCheck(dataNotiFetch);
-            setDataNoti((prev) => {
-              const newData = Array.isArray(prev) ? prev : [];
-              if (newData.findIndex((item) => item.id == dataNotiFetch[0].id)) {
-                return [...dataNotiFetch, ...newData];
-              } else {
-                return newData;
-              }
-            });
+            try {
+              const dataNotiFetch = data.data as NotificationInterface[];
+              setDataNotiCheck(dataNotiFetch);
+              setDataNoti((prev) => {
+                const newData = Array.isArray(prev) ? prev : [];
+                if (
+                  newData.findIndex((item) => item.id == dataNotiFetch[0]?.id)
+                ) {
+                  return [...dataNotiFetch, ...newData];
+                } else {
+                  return newData;
+                }
+              });
+            } catch (error) {
+              console.log(error);
+            }
           };
           socket.on("getNotifications", handleGetNotifications);
 
