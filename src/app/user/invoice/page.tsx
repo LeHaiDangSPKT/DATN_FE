@@ -238,7 +238,7 @@ function Info() {
         var arrBill = {} as TableInvoice;
         arrBill.id = lstProduct._id;
         const createdAtDate = new Date(lstProduct.createdAt);
-        createdAtDate.setDate(createdAtDate.getDate() + 3);
+        createdAtDate.setDate(createdAtDate.getDate() + 5);
         arrBill.recievedDate = formatToDDMMYYYY(createdAtDate);
         arrBill.createdAt = ConvertDate(lstProduct.createdAt);
         arrBill.totalPricePayment = lstProduct.totalPricePayment;

@@ -69,7 +69,7 @@ function DetailStore() {
   return (
     <div className="min-h-screen sm:px-[150px] sm:my-4">
       {storeProps._id && (
-        <Info detailStore={detailStore} storeProps={storeProps} />
+        <Info storeId={storeProps._id} storeProps={storeProps} />
       )}
       {user && <Promotion storeId={storeProps._id} />}
 
