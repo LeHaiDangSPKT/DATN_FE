@@ -80,12 +80,13 @@ function Promotion(props: PromotionInterface) {
                   </Typography>
                   <Progress
                     className="mt-2"
-                    value={item.usagePercent}
-                    label={item.usagePercent >= 50 ? "Đã sử dụng" : ""}
+                    value={item.usagePercent * 100}
+                    label={item.usagePercent * 100 >= 50 ? "Đã sử dụng" : ""}
                   />
                 </CardBody>
                 <CardFooter className="pt-0 mx-auto">
                   <Button
+                    color={item.isSaved ? "red" : "blue"}
                     loading={loading && item.id == currentId}
                     onClick={(e) => SavePromotion(item.id)}
                   >
