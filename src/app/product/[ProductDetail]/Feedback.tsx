@@ -77,7 +77,7 @@ function Feedback(props: Props) {
   };
   const HandleClick = (star: number) => {
     setFeedback({ ...feedback, star: star });
-    const feedbackEle = document.getElementById("feedback");
+    const feedbackEle = document.getElementById("feedback_dtex");
     const starList = feedbackEle?.getElementsByTagName("svg");
     for (let i = 0; i < starList!.length; i++) {
       if (i < star) {
@@ -202,7 +202,10 @@ function Feedback(props: Props) {
 
       {user && isPurchase ? (
         <>
-          <div id="feedback" className="flex items-center justify-center mb-2 ">
+          <div
+            id="feedback_dtex"
+            className="flex items-center justify-center mb-2 "
+          >
             <svg
               className="cursor-pointer w-5 h-5 text-yellow-300 me-1"
               onClick={() => HandleClick(1)}

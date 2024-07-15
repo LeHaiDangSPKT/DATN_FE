@@ -294,7 +294,11 @@ function Profile(props: ProfileProps) {
         </div>
         {!idProps && (
           <div className="flex justify-center my-5">
-            <Button loading={scanning} onClick={(e) => UpdateInfo()}>
+            <Button
+              color="blue"
+              loading={scanning}
+              onClick={(e) => UpdateInfo()}
+            >
               Cập nhật thông tin
             </Button>
           </div>
