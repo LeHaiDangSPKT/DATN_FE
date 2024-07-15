@@ -1,4 +1,8 @@
-import { APIGetMyStore, APIUpdateMyStore } from "@/services/Store";
+import {
+  APIGetMyStore,
+  APIGetStoreAdmin,
+  APIUpdateMyStore,
+} from "@/services/Store";
 import { APIUploadImage } from "@/services/UploadImage";
 import ConvertDate from "@/utils/ConvertDate";
 import FormatMoney from "@/utils/FormatMoney";
@@ -43,12 +47,33 @@ interface DetailStore {
 
 interface Props {
   storeProps: StoreProps;
-  detailStore: DetailStore;
+  // detailStore: DetailStore;
+  storeId: string;
   setIsShowDetail?: (data: boolean) => void;
 }
 
 function Info(props: Props) {
-  const { storeProps = null, detailStore, setIsShowDetail } = props;
+  const { storeProps = null, storeId, setIsShowDetail } = props;
+  const [detailStore, setDetailStore] = React.useState<DetailStore>();
+  console.log("detailStore", storeId);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const res = await APIGetStoreAdmin(storeId);
+      if (res?.status == 200 || res?.status == 201) {
+        const data = res.data.metadata.data;
+        console.log("data_DANG", data);
+        setDetailStore({
+          averageStar: data.averageStar || 0,
+          totalFeedback: data.totalFeedback || 0,
+          totalFollow: data.totalFollow || 0,
+          totalRevenue: data.totalRevenue || 0,
+          totalDelivered: data.totalDelivered || 0,
+        });
+        localStorage.removeItem("storeId");
+      }
+    };
+    fetchData();
+  }, [storeId]);
   const [data, setData] = React.useState<Store>({} as Store);
   const [description, setDescription] = React.useState<string>("" as string);
   const [scanning, setScanning] = React.useState(false);
@@ -361,24 +386,24 @@ function Info(props: Props) {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-5">
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold">Đánh giá (sao)</p>
-              <p className="">{detailStore.averageStar}</p>
+              <p className="">{detailStore?.averageStar}</p>
             </div>
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold">Người theo dõi</p>
-              <p className="">{detailStore.totalFollow}</p>
+              <p className="">{detailStore?.totalFollow}</p>
             </div>
 
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold">Đơn bán</p>
-              <p className="">{detailStore.totalDelivered}</p>
+              <p className="">{detailStore?.totalDelivered}</p>
             </div>
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold">Bình luận</p>
-              <p className="">{detailStore.totalFeedback}</p>
+              <p className="">{detailStore?.totalFeedback}</p>
             </div>
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold">Doanh thu</p>
-              <p className="">{FormatMoney(detailStore.totalRevenue)}</p>
+              <p className="">{FormatMoney(detailStore?.totalRevenue!)}</p>
             </div>
             <div className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-md cursor-pointer hover:shadow-xl hover:scale-105 transition-all ease-in">
               <p className=" font-semibold text-red-500">Cảnh báo</p>

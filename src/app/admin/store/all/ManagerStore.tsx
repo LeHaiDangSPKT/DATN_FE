@@ -100,17 +100,6 @@ function ManagerStore() {
     setIsShowDetail(true);
     ref.current?.scrollIntoView({ behavior: "smooth" });
     // get api APIGetProductAdmin
-    await APIGetStoreAdmin(store._id).then((res) => {
-      const data = res.metadata;
-      setDetailStore({
-        averageStar: data.averageStar || 0,
-        totalFeedback: data.totalFeedback || 0,
-        totalFollow: data.totalFollow || 0,
-        totalRevenue: data.totalRevenue || 0,
-        totalDelivered: data.totalDelivered || 0,
-      });
-    });
-    localStorage.removeItem("storeId");
   };
 
   const ExportExcel = async () => {
@@ -214,7 +203,7 @@ function ManagerStore() {
       {currentStore && isShowDetail && (
         <Info
           storeProps={currentStore}
-          detailStore={detailStore}
+          storeId={currentStore._id}
           setIsShowDetail={(data) => setIsShowDetail(data)}
         />
       )}

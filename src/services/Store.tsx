@@ -118,7 +118,7 @@ export const APIGetStoreAdmin = async (id: any) => {
       `${process.env.NEXT_PUBLIC_API_URL}/store/admin/${id}`,
       { headers }
     );
-    return res.data;
+    return res;
   }
 };
 
