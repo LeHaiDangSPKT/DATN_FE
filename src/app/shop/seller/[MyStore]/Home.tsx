@@ -16,6 +16,8 @@ import {
   APIGetRevenueByYear,
 } from "@/services/Bill";
 import FormatMoney from "@/utils/FormatMoney";
+import { Typography } from "@material-tailwind/react";
+import { APIGetStoreWallet } from "@/services/Store";
 
 Chart.register(
   CategoryScale,
@@ -104,6 +106,7 @@ function Home(props: HomeProps) {
     revenueTotalAllTime: 0,
     revenueTotalInYear: 0,
   });
+  const [wallet, setWallet] = React.useState<number>(0);
   const [dataCharityState, setDataCharityState] =
     React.useState<ChartCharityData>({
       labels: [],
@@ -380,11 +383,23 @@ function Home(props: HomeProps) {
     fetchData();
   }, []);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const res = await APIGetStoreWallet();
+      setWallet(res);
+      console.log("wallet", res);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="bg-white rounded-md p-4 mb-5">
         <div className="text-center text-blue-500 font-bold text-2xl mb-2">
           Trạng thái cửa hàng
+          <Typography color="blue-gray" variant="h6">
+            (Tổng tiền đã bán: {FormatMoney(wallet)})
+          </Typography>
         </div>
         <div className="sm:grid grid-cols-3 gap-4 ">
           <div

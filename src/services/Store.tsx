@@ -162,3 +162,15 @@ export const APISelectStore = async () => {
     return res.data.metadata.data;
   }
 };
+
+// /api/store-wallet
+export const APIGetStoreWallet = async () => {
+  const headers = GetHeaders();
+  if (headers) {
+    const res = await axiosInstance.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/store-wallet`,
+      { headers }
+    );
+    return res.data.metadata.data;
+  }
+};
