@@ -22,6 +22,7 @@ import {
 import { FaBoxes, FaInbox, FaStore } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { PowerIcon } from "@heroicons/react/24/solid";
+import { FaRegHandshake } from "react-icons/fa6";
 interface ChildrenProps {
   code: string;
 }
@@ -325,7 +326,15 @@ function Sidebar(props: ChildrenProps) {
             Chính sách
           </ListItem>
         )}
-
+        <ListItem
+          onClick={() => router.push("/admin/marketing")}
+          selected={code == "marketing"}
+        >
+          <ListItemPrefix>
+            <FaRegHandshake className="h-5 w-5" />
+          </ListItemPrefix>
+          Cửa hàng đăng ký quảng cáo
+        </ListItem>
         <ListItem
           className="text-red-500 hover:text-red-500"
           onClick={(e) => {

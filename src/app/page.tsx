@@ -14,6 +14,7 @@ import {
   APIGetListProductLasted,
 } from "@/services/Product";
 import ListProductRandomHomePage from "@/components/ListProductRandomHomePage";
+import ListProductHot from "@/components/ListProductHot";
 
 export default function Home() {
   const [listProduct, setListProduct] = React.useState([]);
@@ -92,10 +93,11 @@ export default function Home() {
               title="Có thể bạn sẽ thích"
               listProduct={listProduct}
             />
-            <ListProductHomePage
-              title="Cửa hàng nổi bật"
+            {/* <ListProductHomePage
+              title="Các sản phảm nổi bật"
               listHighLight={listProductMost}
-            />
+            /> */}
+            <ListProductHot />
             <ListProductRandomHomePage />
           </div>
         </div>

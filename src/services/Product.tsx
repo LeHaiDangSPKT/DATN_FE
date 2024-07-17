@@ -187,3 +187,11 @@ export const APIGetListProductInStore = async (
   );
   return res.data;
 };
+// /api/store-proposes/products?limit=10
+export const APIGetListProductPropose = async (limit?: any) => {
+  var limit = limit ? limit : 10;
+  const res = await axiosInstance.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-proposes/products?limit=${limit}`
+  );
+  return res.data.metadata.data;
+};
