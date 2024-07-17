@@ -32,6 +32,8 @@ import {
   BsFillBookmarksFill,
 } from "react-icons/bs";
 import { BiSolidBookmarkAlt } from "react-icons/bi";
+import { FaRegHandshake } from "react-icons/fa6";
+import Marketing from "@/app/shop/seller/[MyStore]/Marketing";
 export const CATEGORYSTORE = [
   {
     title: "Trang chủ",
@@ -92,6 +94,12 @@ export const CATEGORYSTORE = [
     value: "warehouse",
     element: Warehouse,
     icon: <FaWarehouse />,
+  },
+  {
+    title: "Tăng lượt tiếp cận",
+    value: "marketing",
+    element: Marketing,
+    icon: <FaRegHandshake />,
   },
   {
     title: "Thông tin cửa hàng",

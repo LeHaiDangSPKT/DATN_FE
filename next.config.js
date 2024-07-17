@@ -12,9 +12,10 @@ const nextConfig = {
       "lh3.googleusercontent.com",
       "cdn.chotot.com",
       "salt.tikicdn.com",
+      "thumbs.dreamstime.com",
     ],
   },
-  output: 'standalone',
+  output: "standalone",
 };
 
 module.exports = withBundleAnalyzer(nextConfig);

@@ -53,7 +53,7 @@ interface Props {
 }
 
 function Info(props: Props) {
-  const { storeProps = null, storeId, setIsShowDetail } = props;
+  const { storeProps = null, storeId = "", setIsShowDetail } = props;
   const [detailStore, setDetailStore] = React.useState<DetailStore>();
   console.log("detailStore", storeId);
   React.useEffect(() => {
@@ -72,7 +72,9 @@ function Info(props: Props) {
         localStorage.removeItem("storeId");
       }
     };
-    fetchData();
+    if (storeId) {
+      fetchData();
+    }
   }, [storeId]);
   const [data, setData] = React.useState<Store>({} as Store);
   const [description, setDescription] = React.useState<string>("" as string);

@@ -18,6 +18,8 @@ import {
 import FormatMoney from "@/utils/FormatMoney";
 import { Typography } from "@material-tailwind/react";
 import { APIGetStoreWallet } from "@/services/Store";
+import { APIGetMyPropose } from "@/services/Propose";
+import ConvertDate from "@/utils/ConvertDate";
 
 Chart.register(
   CategoryScale,
@@ -383,11 +385,19 @@ function Home(props: HomeProps) {
     fetchData();
   }, []);
 
+  const [propose, setPropose] = React.useState<any>({});
+
   React.useEffect(() => {
     const fetchData = async () => {
-      const res = await APIGetStoreWallet();
-      setWallet(res);
-      console.log("wallet", res);
+      const [res1, res2] = await Promise.all([
+        APIGetStoreWallet(),
+        APIGetMyPropose(),
+      ]);
+      setWallet(res1);
+      if (res2) {
+        localStorage.setItem("marketing", "true");
+        setPropose(res2);
+      }
     };
     fetchData();
   }, []);
@@ -399,6 +409,10 @@ function Home(props: HomeProps) {
           Trạng thái cửa hàng
           <Typography color="blue-gray" variant="h6">
             (Tổng tiền đã bán: {FormatMoney(wallet)})
+          </Typography>
+          <Typography color="red" variant="h6">
+            ({propose?.title}: {ConvertDate(propose?.startTime)} -{" "}
+            {ConvertDate(propose?.endTime)})
           </Typography>
         </div>
         <div className="sm:grid grid-cols-3 gap-4 ">
