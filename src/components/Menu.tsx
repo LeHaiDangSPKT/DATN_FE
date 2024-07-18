@@ -19,6 +19,8 @@ export function MenuHeaderInfoUser(props: MenuHeaderInfoUserProps) {
   const router = useRouter();
   const Singout = async () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("marketing");
+
     await signOut({
       callbackUrl: "/login",
     });
