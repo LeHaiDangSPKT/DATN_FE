@@ -395,6 +395,7 @@ function Home(props: HomeProps) {
       ]);
       setWallet(res1);
       if (res2) {
+        console.log(res2);
         localStorage.setItem("marketing", "true");
         setPropose(res2);
       }
@@ -410,10 +411,12 @@ function Home(props: HomeProps) {
           <Typography color="blue-gray" variant="h6">
             (Tổng tiền đã bán: {FormatMoney(wallet)})
           </Typography>
-          <Typography color="red" variant="h6">
-            ({propose?.title}: {ConvertDate(propose?.startTime)} -{" "}
-            {ConvertDate(propose?.endTime)})
-          </Typography>
+          {JSON.stringify(propose) !== "{}" && (
+            <Typography color="red" variant="h6">
+              ({propose?.title}: {ConvertDate(propose?.startTime)} -{" "}
+              {ConvertDate(propose?.endTime)})
+            </Typography>
+          )}
         </div>
         <div className="sm:grid grid-cols-3 gap-4 ">
           <div

@@ -34,27 +34,31 @@ function Marketing() {
     id: "",
     paymentMethod: "",
   });
-  const HandleBuy = async () => {
-    const res = await APIPurchasePropose(info.id, info.paymentMethod);
+  const HandleBuy = async (id?: string, paymentMethod?: string) => {
+    if (!id || !paymentMethod) {
+      id = info.id;
+      paymentMethod = info.paymentMethod;
+    }
+    const res = await APIPurchasePropose(id, paymentMethod);
     if (res?.status == 200 || res?.status == 201) {
       router.push(res.data.metadata.data.urlPayment);
     } else {
       Toast("error", "Đã xảy ra lỗi, vui lòng thử lại", 2000);
     }
   };
-  const CheckValid = () => {
+  const CheckValid = (id: string, paymentMethod: string) => {
     if (localStorage.getItem("marketing") == "true") {
       handleOpen();
     } else {
-      HandleBuy();
+      HandleBuy(id, paymentMethod);
     }
   };
 
   return (
     <div>
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-3 gap-4">
         {listPrice.map((item: any, index: number) => (
-          <Card key={index} className="w-80 mb-4">
+          <Card key={index} className="mb-4">
             <CardHeader color="blue-gray" floated={false} className="h-56">
               <Image src={item.image} alt="..." layout="fill" />
             </CardHeader>
@@ -79,7 +83,7 @@ function Marketing() {
                     id: item.id,
                     paymentMethod: "VNPAY",
                   });
-                  CheckValid();
+                  CheckValid(item.id, "VNPAY");
                 }}
               >
                 Thanh toán VNPAY
@@ -91,7 +95,7 @@ function Marketing() {
                     id: item.id,
                     paymentMethod: "PAYPAL",
                   });
-                  CheckValid();
+                  CheckValid(item.id, "PAYPAL");
                 }}
               >
                 Thanh toán PAYPAL
